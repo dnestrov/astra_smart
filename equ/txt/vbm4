@@ -1,0 +1,127 @@
+ =====   Variables definition   =====
+!--------------------------------------------------------------------------
+! V&B series. Test # I.1.4-5
+! Conservation check. Diffusion + convection
+!--------------------------------------------------------------------------
+ NEQUIL=-2.d0
+ TAUMIN=1.d-3
+ TAUMAX=TAUMIN
+ DROUT=0.d0
+ DPOUT=1.d2
+ DTOUT=0.d0
+ TSCALE=-2.d0
+!DTOUT=10*TAUMIN;TSCALE=-25;
+!assign(NE,NI):;
+ CV1=CF2*ABC/CF1
+ CV2=VINT(CAR8)(a)/VINT(CAR7)(a)
+!TEB=1;		TIB=1;
+!APRINT:;
+!-----------------------------------------------------------------------------
+!-----------------------------------------------------------------------------
+ CAR7(r)=CV1*CV1*EXP(CV1*FX(r))/(1.d0+(CV1-1.d0)*EXP(CV1))
+ CAR8(r)=1.d0+2.d0*FPR(r)
+ CAR1(r)=1.d0
+ CAR2(r)=PRESE(r)
+ CAR3(r)=PRESI(r)
+ CAR4(r)=NE(r)-NEO(r)
+ CAR5(r)=TE(r)-TEO(r)
+ CAR6(r)=TI(r)-TIO(r)
+ =====   Initial distributions   =====
+ NE(r)=1.d0+2.d0*FPR(r)
+ TE(r)=(1.d0+5.d0*FPR(r))
+ TI(r)=(1.d0+5.d0*FPR(r))
+ CU(r)=1.d1/(GP*ABC**2.d0)
+ F0(r)=2.d0*FPR(r)+1.d0
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         dne   NE(r)-CV2*CAR7(r)
+  2  -3     Gne   QN(r)
+  3         dTe   TE(r)-1.d0-5.d0*FPR(r)
+  4         GTe   QE(r)
+  5         n_e   NE(r)
+  6  -3     Gni   QF0(r)
+  7  -4     T_e   TE(r)
+  8         GTi   QI(r)
+  9         dni   NI(r)-CV2*CAR7(r)
+ 10  -3     Qne   QNTOT(r)
+ 11         dTi   TI(r)-1.d0-5.d0*FPR(r)
+ 12         QTe   QETOT(r)
+ 13         n_i   NI(r)
+ 14  -3     Qni   Q0TOT(r)
+ 15  -4     T_i   TI(r)
+ 16         QTi   QITOT(r)
+ 17         j     CU(r)
+ 18         sigm  CC(r)
+ 19         dn    CAR4(r)
+ 20         dTe   CAR5(r)
+ 21  1      mu    MU(r)
+ 22         p_e   NE(r)*TE(r)
+ 23         VdTe  VINT(CAR5)(r)
+ 24         Upl   UPL(r)
+ 25         jbs   CUBS(r)
+ 26         Vdn   VINT(CAR4)(r)
+ 27         dTi   CAR6(r)
+ 28  5      q     1.d0/MU(r)
+ 29         p_i   NI(r)*TI(r)
+ 30               0.d0
+ 31         VdTi  VINT(CAR6)(r)
+ 32         g11   G11(r)
+ 33         g22   G22(r)
+ 34         jbs   CUBS(r)
+ 35         tria  TRIA(r)
+ 36         V     VR(r)
+ 37         g33   G33(r)
+ 38  1      mu    MU(r)
+ 39         shif  SHIF(r)
+ 40         a     AMETR(r)
+ 41         Upl   UPL(r)
+ 42         j     CU(r)
+ 43         beta  BETAJ(r)
+ 44         Vo    VRO(r)
+ 45         IPOL  IPOL(r)
+ 46  5      q     1.d0/MU(r)
+ 47         elon  ELON(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  -3     Te0   TEN
+  2         ne0   NEN
+  3  -3     <Te>  TEAV(a)
+  4         <nT>  VINT(CAR3)(a)/VINT(CAR1)(a)
+  5  -3     Ti0   TIT
+  6         <ne>  NEAV(a)
+  7  -3     <Ti>  TIAV(a)
+  8         Wblk  WTOT(a)
+  9         Vol   VOLUME
+ 10         VolB  VOLUM(a)
+ 11         VolI  VINT(CAR1)(a)
+ 12         VolN  VOLUME/(GP2*GP*ABC*ABC*RTOR)
+ 13         We    WE(a)
+ 14  .1     tauE  TAUE(a)
+ 15         Wi    WI(a)
+ 16             
+ 17         QEB   QE(a)
+ 18         QNB   QN(a)
+ 19         QIB   QI(a)
+ 20         N/N0  CV2
+ 21         Ee    VINT(CAR2)(a)
+ 22         Ei    VINT(CAR3)(a)
+ 23         Ne    VINT(NE)(a)
+ 24             
+ 25         Iqe   TIMINT(QE(a))
+ 26         Iqi   TIMINT(QI(a))
+ 27         Iqn   TIMINT(QN(a))
+ 28         V(a)  UPL(a)
+ 29         Poh   QJOUL(a)
+ 30         li    LINT(a)
+ 31  1      betj  BETAJ(a)
+ 32         q(0)  1.d0/MUN
+ 33         ne  NECH(0)

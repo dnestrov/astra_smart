@@ -1,0 +1,59 @@
+  08           !  nr      -  number of points on Rad-direction
+
+  0.99500d0      !  alp
+  0            !  keyctr =1 - tor.curr.+q-prof.; =2 - (Psi_ax-Psi_bou)+q-prof.;
+  1            !  nctrl  =0 - no lim.points; =1 - lim.points (file limpnt.dat);
+  1.43d0 ! 1.53d0 ! 1.33d0         !  ron_max
+
+
+  45           !  nr      -  number of points on Rad-direction
+  95           !  nt      -  number of points on teta-direction
+  31           !  iplas   -  number of points in plasma
+
+  0.980d0      !  alp
+  2            !  keyctr =1 - tor.curr.+q-prof.; =2 - (Psi_ax-Psi_bou)+q-prof.;
+  0            !  nctrl  =0 - no lim.points; =1 - lim.points (file limpnt.dat);
+
+
+
+  63           !  nr      -  number of points on Rad-direction
+  93           !  nt      -  number of points on teta-direction
+  51           !  iplas   -  number of points in plasma
+
+  0.98d0       !  alp
+  1            !  keyctr =1 - tor.curr.+q-prof.; =2 - (Psi_ax-Psi_bou)+q-prof.;
+  0            !  nctrl  =0 - no lim.points; =1 - lim.points (file limpnt.dat);
+
+
+
+
+
+
+  45           !  nr      -  number of points on Rad-direction
+  95           !  nt      -  number of points on teta-direction
+  31           !  iplas   -  number of points in plasma
+
+  0.970d0      !  alp
+  2            !  keyctr =1 - tor.curr.+q-prof.; =2 - (Psi_ax-Psi_bou)+q-prof.;
+  0            !  nctrl  =0 - no lim.points; =1 - lim.points (file limpnt.dat);
+
+
+
+
+
+
+
+  48           !  nr      -  number of points on Rad-direction
+  95           !  nt      -  number of points on teta-direction
+  38           !  iplas   -  number of points in plasma
+
+  0.980d0      !  alp
+  2            !  keyctr =1 - tor.curr.+q-prof.; =2 - (Psi_ax-Psi_bou)+q-prof.;
+  0            !  nctrl  =0 - no lim.points; =1 - lim.points (file limpnt.dat);
+
+
+
+
+
+
+

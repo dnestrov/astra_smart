@@ -1,0 +1,24 @@
+-1  ! print in spider (0 - no print, -1 - no write)
+1   ! k_grid= 0   rect. grid
+1.0d-7 ! fixed boundary equilibrium accuracy
+1.0d-5 ! circuit equation accuracy
+1        ! key_plc  1 to fix current input to spider and output
+4    ! toric fourc
+0 			!	toric_file
+0				! torba
+0				! strahl
+1    ! eqdsk
+3				! strahl fourc
+0				! file number to save diagnostic coilc urrents and voltages in a_spider
+EXPFMT
+ WGT     12.0    -1.0 
+WGT     0.0     -1.0 
+WGT     0.02    -1.0
+WGT     0.021   -0.25
+WGT     0.055   -0.25
+ WGT     0.056   -1.0
+WGHT    0.0     -0.75
+WGHT    0.02    -0.75
+WGHT    0.021   -0.5
+WGHT    0.055   -0.5
+ WGHT    0.056   -0.75

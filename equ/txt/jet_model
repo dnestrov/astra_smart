@@ -1,0 +1,232 @@
+ =====   Variables definition   =====
+! Check for JET transport model OH  au7745OH
+!				NBI aug7781
+!CV4, CV10, CV11
+!CF7, CV7 - reconnection model
+ MESHEQ=4.1d1
+ AIM1=1.2d1
+!PEX=CAR7X;			PIX=CAR8X;
+!The best fit:	CHE1=.5, CHE2=.2;	
+ >>> Subroutine MIXINT will be called after all transport equations
+ >>> Coefficient string error <<< =====================
+!   NBI heating:	CF9 - tang. power;	CV9 - perp. power
+!CV16=5*FRAMP(.8,.81)+5*FRAMP(1.,1.01)+5*FRAMP(1.2,1.21);
+!CV9=FTAV(CV16,.005);		!CF9=5*FRAMP(CF3,CF3+.01)
+!NBIMIX:;			!NBI package
+! For the shots ## 6905, 6919 NBI sources are taken form u-files!!
+! For those shots NBIAU call should be suppressed!
+ CBM1=1.d0
+ CBMI1=0.d0
+ CBMH1=0.d0
+ CBMS1=0.d0
+ CBMS4=0.d0
+ CBMS2=0.d0
+ CBMS3=0.d0
+!EBEAM=60;	DBM1=.65;	DBM2=.25;	DBM3=.1;
+!EBEAM=49.5;	DBM1=.5;	DBM2=.3;	DBM3=.2;
+!QBEAM=CBMS1+CBMS2+CBMS3+CBMS4;			NBIAU:.01;
+!biE0\SNIBM1;	biE2\SNIBM2;	biE3\SNIBM3;	jbm\CUBM\\CUX\-5;
+!Pebm\PEBM;	Pibm\PIBM;	plon\PBLON\-4;	pper\PBPER\-4;
+!Ix_IXB;		IFWB_IFWB;
+!etaE_0.1*RTOR*NEAVB*IECRB/QECR;	
+ ZEF(r)=ZEFX(r)
+ ZEF(r)=1.d0
+ AMAIN(r)=2.d0
+ ZMAIN(r)=1.d0
+ ZIM1(r)=6.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ PEBM(r)=PEX(r)
+ PIBM(r)=PIX(r)
+ CAR13(r)=XSTEP(CV2)(r)-9.9d-1*XSTEP(9.d-1)(r)*FJUMP(6.d-1)
+ CAR13(r)=CAR13(r)/(1.d0+EXP(CV4*(CV3-SHEAR(r))))
+ CAR11(r)=(CHE1*HATL(r)+CHE2*HAGB(r))*CAR13(r)
+ CAR12(r)=(CHE1*2.d0*HATL(r)+CHE2*HAGB(r))*CAR13(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TEX(r)
+ NE(r)=NEX(r)
+ CU(r)=FPR(r)**2.d0
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  Subroutine  1: NEUT
+        is called at -99999<TIME< 99999 with dt=.1    
+ ---->  Subroutine  2: GNXSRC
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  NE  is assigned
+ NE(r)=NEX(r)
+ NE(a_b)=NEX(a)
+ ---->  Equation for TE 
+ TE(r)=TEX(r)
+ TE(a_b)=TEX(a)
+ PET(r)=-PEI(r)
+ PE(r)=POH(r)-PENEU(r)-PET(r)*TI(r)-PRADX(r)+PEECR(r)+PEX(r)
+ HE(r)=HNGSE(r)+CAR14(r)
+ ---->  Equation for TI 
+ TI(r)=TEX(r)
+ TI(a_b)=TIX(a)
+ PIT(r)=PET(r)
+ PI(r)=PINEU(r)-PIREC(r)-PET(r)*TE(r)+PIX(r)
+ XI(r)=HNCHI(r)*FOWC(r)+HNPSI(r)+CAR15(r)
+ ---->  Subroutine  3: SMEARR(CV14,CAR11,CAR14)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  4: SMEARR(CV14,CAR12,CAR15)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Equation for CU 
+ HC(r)=HCKIM(r)
+ DC(r)=DCKIM(r)
+ XC(r)=XCKIM(r)
+ CC(r)=CNHR(r)
+ CU(r)=FPR(r)**2.d0
+ CD(r)=CUBM(r)+CUECR(r)
+ ---->  Subroutine  5: MIXINT(CV7,CF7)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ Iterative correction algorithm is added
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -3     Te    TE(r)
+  2         Upl   UPL(r)
+  3         He    HE(r)
+  4         sigm  CC(r)
+  5  3      q     1.d0/MU(r)
+  6         jdrv  CD(r)+CUBS(r)
+  7         Hi    XI(r)
+  8         Pjou  POH(r)
+  9  -3     Ti    TI(r)
+ 10         ne    NE(r)
+ 11         htl   HATL(r)
+ 12         jOH   CUOHM(r)
+ 13  1      mu    MU(r)
+ 14         j     CU(r)
+ 15         hneo  HNCHI(r)
+ 16         Ptot  PETOT(r)+PITOT(r)
+ 17  -5     jtot  CU(r)
+ 18         betj  BETAJ(r)
+ 19         Upl   UPL(r)
+ 20               0.d0
+ 21         jcd   CD(r)
+ 22         q     1.d0/MU(r)
+ 23               0.d0
+ 24               0.d0
+ 25  -5     jOH   CUOHM(r)
+ 26               0.d0
+ 27         ULON  ULON(r)
+ 28         bett  BETT(r)
+ 29  -5     jbs   CUBS(r)
+ 30  1      mu    MU(r)
+ 31               0.d0
+ 32               0.d0
+ 33  -3     Te    TE(r)
+ 34  .5     jNBx  0.d0
+ 35  -2     Qesr  QETOT(r)
+ 36  .5     PEBM  PEBM(r)
+ 37         Pe    PETOT(r)
+ 38         He    HE(r)
+ 39  -7     hgBs  HAGBS(r)
+ 40  -8     hBs   HATLS(r)
+ 41  -3     Ti    TI(r)
+ 42               0.d0
+ 43  -2     Qefl  QE(r)
+ 44  .5     PIBM  PIBM(r)
+ 45         Pi    PITOT(r)
+ 46         Hi    XI(r)
+ 47  -7     hgB   HAGB(r)
+ 48  -8     hB    HATL(r)
+ 49         Pett  PETOT(r)
+ 50         PRDX  PRADX(r)
+ 51         PEC   PEECR(r)
+ 52         PEX   PEX(r)
+ 53         PENE  PENEU(r)
+ 54         PEIC  PET(r)*(TE(r)-TI(r))
+ 55  -1     Qifl  QI(r)
+ 56         Qen   QN(r)
+ 57         Bmx   BMAXT(r)
+ 58         jEC   CUECR(r)
+ 59         Pjou  PJOUL(r)
+ 60         PIX   PIX(r)
+ 61         Bmn   BMINT(r)
+ 62         CUX   CUX(r)
+ 63  -1     Qisr  QITOT(r)
+ 64         Qen   2.5d0*GNX(r)*TE(r)*NE(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Tex0  TEX(0)
+  2  1      Ipl   IPL
+  3         Te0   TE(0)
+  4         betj  BETAJ(a)
+  5         <Te>  TEAV(a)
+  6         Qtot  QTOT(a)
+  7         <ne>  NEAV(a)
+  8  1      li    LINT(a)
+  9  1      Ipl   IPL
+ 10  5      qa    1.d0/MU(a)
+ 11         iter  TITER(r)
+ 12  5      qmin  QMIN(a)
+ 13         tauE  TAUE(a)
+ 14  5      q0    1.d0/MU(0)
+ 15         Upl   UPL(a)
+ 16             
+ 17         Qet   QETOT(a)
+ 18         IEC   IECR(a)
+ 19         QOH   QOH(a)
+ 20         Ibm   IBM(a)
+ 21         Qit   QITOT(a)
+ 22         Iohm  IOHM(a)
+ 23         Qei   QEICL(a)
+ 24         Ibs   IBS(a)
+ 25         Wkin  WTOT(a)
+ 26         H-89  (TAUE(a)+(CV10+CV11)/(1.E-6+QTOT(a)))/(CAR12(a)+1.E-6)
+ 27         Wfir  (CV10+CV11)/WTOT(a)
+ 28         QABS  QBTOT(a)
+ 29         Pe%   1.d2*VINT(PEBM)(a)/(QBEAM+.1E-6)
+ 30         Wequ  WTOT(a)+7.5d-1*CV11+1.5d0*CV10
+ 31         Pi%   1.d2*VINT(PIBM)(a)/(QBEAM+.1E-6)
+ 32         Wtot  WTOT(a)+CV10+CV11
+ 33         Stot  VINT(SNNBM)(a)+VINT(SNEBM)(a)
+ >>> Warning: unrecognized variable EBEAM
+ >>> Warning: unrecognized variable DBM1
+ >>> Warning: unrecognized variable DBM2
+ >>> Warning: unrecognized variable DBM3
+ 34         Sbea  QBEAM/EBEAM*6.25d2*(DBM1+2.d0*DBM2+3.d0*DBM3)
+ 35         Wpar  CV10
+ 36         Wper  CV11
+ 37         verh  IBS(a)/ITOT(a)
+ >>> Warning: unrecognized variable CBMS1
+ 38         Q1    CBMS1
+ 39         tauP  VINT(NE)(a)/QN(a)
+ >>> Warning: unrecognized variable CBMS2
+ 40         Q2    CBMS2
+ 41         peak  NE(0)/NEAV(a)
+ >>> Warning: unrecognized variable CBMS3
+ 42         Q3    CBMS3
+ >>> Warning: unrecognized variable EBEAM
+ 43         Ebm   EBEAM
+ >>> Warning: unrecognized variable CBMS4
+ 44         Q4    CBMS4
+ 45         Zeff  ZEF(0)
+ 46         PEC   QECR
+ 47         Qbm   QBEAM
+ 48         bett  BETT(a)
+ 49         PECR  VINT(PEECR)(a)
+ 50         Qex   QEX(a)
+ 51         Qix   QIX(a)
+ 52         NA1   NA1
+ 53         ABC   ABC
+ 54         NB1   NB1
+ 55         ROC   ROC
+ 56         NAB   NAB
+ 57         AB    AB
+ 58         amb   AMETR(a)
+ 59         ROB   HRO*(NB1-5.d-1)
+ 60         QNBa  VINT(PEBM)(a)+VINT(PIBM)(a)

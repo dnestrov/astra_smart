@@ -1,0 +1,60 @@
+astra_core:
+    get_mode: release
+    name: 1.4.16
+    version: 1.4.16
+    filename: astra_core_iter-1.4.16.zip
+    unpack_dir: astra_core
+    unpack_subset:
+        - Astra/**
+        - bin_grp/MAKER
+        - bin_grp/MAUSER
+    build_steps:
+        - ['module', 'load', 'intel-compilers/2021.1.2']
+        - ['/bin/tcsh', '-f', 'astra_core/bin_grp/MAKER', '$(pwd)/astra_core/Astra', 'Intel']
+        - ['/bin/tcsh', '-f', 'astra_core/bin_grp/MAUSER', '$(pwd)/astra_core/Astra', 'astra_user', 'Intel']
+        - ['module', 'unload', 'intel-compilers/2021.1.2', 'GCCcore/10.2.0', 'zlib/1.2.11-GCCcore-10.2.0', 'binutils/2.35-GCCcore-10.2.0']
+    relative_repo_path: 'physics/astra_core_iter'
+
+spider:
+    get_mode: release
+    name: 1.4.15
+    version: 1.4.15
+    filename: astra_core_iter-1.4.15.zip
+    unpack_dir: spider
+    unpack_subset:
+        - EQUIL/COUPLING_SCHEME/**
+        - EQUIL/SPIDER/**
+        - Makefile_intel
+    build_steps:
+        - ['module', 'load', 'intel-compilers/2021.1.2']
+        - ['make', '-C', 'spider/', '-f', 'Makefile_intel']
+        - ['module', 'unload', 'intel-compilers/2021.1.2', 'GCCcore/10.2.0', 'zlib/1.2.11-GCCcore-10.2.0', 'binutils/2.35-GCCcore-10.2.0']
+    relative_repo_path: 'physics/astra_core_iter'
+
+# needs libraries like netcdf to run plasma forward modelling in Astra-Spider
+centos7_dev:
+    get_mode: release
+    name: 1.0.0
+    version: 1.0.0
+    filename: centos7_dev-1.0.0.zip
+    unpack_dir: centos7_dev
+    unpack_subset: 
+        - opt/lib/**
+    relative_repo_path: 'cicd/environments/centos7_dev'
+
+# "sophia", its dependencies ("pcs") and dependencies of its dependencies ("mds_corrected" and "pfit"):
+sophia:
+    get_mode: release
+    name: 1.1.0_beta
+    version: 1.1.0_beta
+    filename: sophia-1.1.0_beta.zip
+    relative_repo_path: 'st40/ops/sophia'
+    unpack_dir: sophia
+
+pcs:
+    get_mode: release
+    name: 3.0.0
+    version: 3.0.0
+    filename: pcs-3.0.0.zip
+    unpack_dir: pcs
+    relative_repo_path: 'ST40/ops/pcs'

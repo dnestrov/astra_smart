@@ -1,0 +1,241 @@
+ =====   Variables definition   =====
+!============================================================
+!============================================================
+! INPUTS
+!TPAUSE=0.06;			! how long to run simulation
+!============================================================
+! Equilibrium Solver
+ MESHEQ=4.1d1
+!			! 42:ESC
+!============================================================
+! Neutral Beam Injection via NBI package
+! CNB1=16; 	! number of NBI sources (pencil beams, use 16 for JET)
+! NBI:0.01;	! NBI package (off)
+ CF1=4.5d0
+!CF1=0.0		! no beam (use this setting for "withoutcore" case)
+!CF3=10.;	! 10 keV LTX beam energy (keV)
+ CF3=0.d0
+!NBI:;		! run NBI routine at each time step
+!CNB1=?;        ! number of beams
+!=============================================================
+! Neutrals model
+! Input: {NNCL,ENCL}, {NNWM,ENWM}
+!        {.001,.002}, {.0001,.02}
+!
+!+!!!!! NEUT:0.1;	! Recycling neutrals (off) !+!!!!
+!    Output:
+! NN - neutral density  (10^13)
+! EN - neutral temperature (1 keV)
+ CF4=1.d0
+!CNEUT1=20;			!
+!NNCL=.001;			! Density of incoming neutrals (1st component) (10^13)
+!ENCL=.002;			! Energy of incoming neutrals (1st component) (keV)
+!NNWM=.0000;			! Density of incoming neutrals (2nd component) (10^13)
+!ENWM=.02;			! Energy of incoming neutrals (2nd component) (keV)
+ NNCX=CNEUT1
+!				!  (similar to charge exchange generations)
+!============================================================
+! Transport Model:
+! NCLASS can be run via either NEOCL2 or NEOCL3 returning values at different arrays:
+!
+!  Electrons:
+!  NEOCL2    	NEOCL3	       ITEM
+!  		work(j,301)    - particle radial net flux Gamma_electron, [1.e19/s]
+!  work(j,102)	work(j,302)    - particle diffusion coefficient Dn_electron, [m**2/s]
+!  work(j,103)	work(j,303)    - electron convective velocity Vn_electron, [m/s]
+!  			       	 (ie. pinch velocity)
+! 		work(j,304)    - radial net heat conduction flux
+!               	       	 q_cond_electron, [MW]
+!  work(j,105)	work(j,305)    - heat conductivity Chi_electron, [m**2/s]
+!  work(j,106)	work(j,306)    - heat convective velocity V_heat_electron, [m/s]
+! 		work(j,307)    - radial energy (conduction+convection) flux
+!               	         (electrons), [MW]
+! 		work(j,308)    - bootstrap current on (p'/p)_electron, [MA/m**2]
+! 		work(j,309)    - bootstrap current on (T'/T)_electron, [MA/m**2]
+!  work(j,110)	work(j,310)    - poloidal flow velocity of electrons
+!               	         on outside midplane, [m/s]
+!
+!  Deuterons: (I'm not sure about these, maybe need to use
+!  	       work(j,*2*) instead, see neocl3.f)
+!  NEOCL2	NEOCL3		ITEM
+!  work(j,161)	work(j,361) 	- particle radial net flux Gamma_deuterons,
+!               		  [1.e19/s]
+!  work(j,162)	work(j,362)	- particle diffusion coefficient Dn_deuteron, [m**2/s]
+!  work(j,163)	work(j,363) 	- particle convective velocity Vn_deuteron, [m/s]
+!  work(j,164)	work(j,364) 	- radial heat conduction net flux
+!  	             		  q_cond_deuteron, [MW]
+!  work(j,165)	work(j,365) 	- heat conductivity Chi_deuteron, [m**2/s]
+!  work(j,166)	work(j,366)  	- heat convective velocity V_heat_deuteron, [m/s]
+!  work(j,167)	work(j,367) 	- radial energy (conduction+convection) flux
+!               		  (deuterons), [MW]
+!  work(j,168)	work(j,368)	- bootstrap current on (p'/p)_deuteron, [MA/m**2]
+!  work(j,169)	work(j,369) 	- bootstrap current on (T'/T)_deuteron, [MA/m**2]
+!  work(j,170)	work(j,370) 	- poloidal flow velocity of deuterons
+!               		  on outside midplane, [m/s]
+!
+!NEOCL2:;			! currently not calling either
+!NEOCL3:;
+!===========================================================
+! General Particle transport
+!NE=.2*CF1*FPR+0.05*CF1;
+!NEB=0.1
+!				! HNASI is ion neoclassical heat diffusivity
+!SN=SNEBM;			! SNEBM is source of electrons due to NBI (p.85)
+!SN=0.0
+!SN=CF1*GAUSS(1.5*ROC,0.1*ROC)		! edge fueling
+!============================================================
+! Thermal Transport
+!TE:A;
+!TI:A;
+!TE*::2.5;
+!TI*::2.5;
+ CF5=1.d1
+!				  ! QNB is boundary flux not proportional to NEB
+!============================================================
+! Current transport (for poloidal field evolution)
+!============================================================
+! Rotation and electric field
+!============================================================
+!============================================================
+! OUTPUTS
+!============================================================
+! Profiles to display
+!QeSr\QETOT\-3;	TG_e\1.6d-3*GN2E*TE*QN\-3; G_Sr\QNTOT;	P_e\PETOT;
+!QiSr\QITOT\-3; TG_i\1.6d-3*GN2I*TI*NI/NE*QN\-3; T_e\TE\5;	S_e\SNTOT;
+!Q_e\QE\-3;		q_e\QE\-3;	G_Fl\QN;	P_i\PITOT;
+!Q_i\QI\-3;		q_i\QI\-3;	T_i\TI\5;		n_e\NE;
+!============================================================
+! Profiles to write to file
+!============================================================
+! Time output
+! p. 77
+ CV2=4.44d5*(NNCL*SQRT(ENCL)+NNWM*SQRT(ENWM))*SLAT(a)/SQRT(AMJ)
+ >>> Warning: Too long name in channel 27 <<<
+ NDEUT(r)=NI(r)
+ CAR3(r)=CF3*CF1*FPR(r)/6.25d2
+ VPOL(r)=VPSWW(r)
+ ER(r)=BTOR*(FRS(r)*MU(r)*VTOR(r)/RTOR+VDIA(r)-VPOL(r))
+ =====   Initial distributions   =====
+ NE(r)=2.5d0*FPR(r)+NE(a)
+ TE(r)=1.d-1*FPR(r)+5.d-2
+ TI(r)=1.d-1*FPR(r)+1.d-2
+ CU(r)=FPR(r)+1.d1
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -1     gY    FP(r)
+  2         S_e   SNTOT(r)
+  3  -3     TG_e  1.6d-3*GN2E*TE(r)*QN(r)
+  4         ne-i  NE(r)-NI(r)
+  5  -5     j     CU(r)
+  6  2      T_e   TE(r)
+  7  -3     TG_i  1.6d-3*GN2I*TI(r)*NI(r)/NE(r)*QN(r)
+  8         G_Sr  QNTOT(r)
+  9         Vlt   UPL(r)
+ 10  4      n_e   NE(r)
+ 11  -3     q_e   QE(r)
+ 12         ne0i  NEO(r)-NI(r)
+ 13         q     1.d0/MU(r)
+ 14  2      T_i   TI(r)
+ 15  -3     q_i   QI(r)
+ 16         G_Fl  QN(r)
+ 17  -1     gY    FP(r)
+ 18  -5     j     CU(r)
+ 19         Pe    PETOT(r)
+ 20         V_NC  WORK(J,103)
+ 21  -4     T_e   TE(r)
+ 22         q     1.d0/MU(r)
+ 23         U_pl  UPL(r)
+ 24         k_i   XI(r)
+ 25         Vlt   UPL(r)
+ 26         j_BS  CUBS(r)
+ 27         Pi    PITOT(r)
+ 28         D_e   DN(r)
+ 29  -4     T_i   TI(r)
+ 30  -5     j_NB  CUBM(r)
+ 31         Zeff  ZEF(r)
+ 32         k_e   HE(r)
+ 33         P_e   PETOT(r)
+ 34         P_N   PINEU(r)-PENEU(r)
+ 35         S_e   SNTOT(r)
+ 36         j     CU(r)
+ 37         T_e   TE(r)
+ 38         PeNB  PEBM(r)
+ 39         n_e   NE(r)
+ 40         mu    MU(r)
+ 41         P_i   PITOT(r)
+ 42         P_OH  POH(r)
+ 43         Flux  QN(r)
+ 44         U_pl  UPL(r)
+ 45         T_i   TI(r)
+ 46         PiNB  PIBM(r)
+ 47         n_i   NI(r)
+ 48         q     1.d0/MU(r)
+ 49         P_e   PETOT(r)
+ 50         ccHr  CNHR(r)
+ 51         q_e   -HE(r)*GRAD(TE)(r)
+ 52         q_i   -XI(r)*GRAD(TI)(r)
+ 53         nbmA  NIBM(r)
+ 54         ccSp  CCSP(r)
+ 55         rho   RHO(r)
+ 56         rhoa  ROC
+ 57         P_i   PITOT(r)
+ 58         ccNC  WORK(J,503)
+ 59         SeA   SNEBM(r)
+ 60         taup  TAUP(r)
+ 61         rotA  SCUBM(r)
+ 62         ccHH  WORK(J,503)/CNHR(r)
+ 63         PiDT  PIDTF(r)
+ 64         tauE  TAUE(r)
+ 65         rhoh  RHO(r)/ROC
+ 66         amid  AMETR(r)
+ 67         rmaj  SHIF(r)+RTOR
+ 68         shiv  SHIV(r)
+ 69         kapp  ELON(r)
+ 70         delt  TRIA(r)
+ 71         Zeff  ZEF(r)
+ 72         Er    ER(r)
+ 73         vtor  VTOR(r)
+ 74         vpol  VPOL(r)
+ 75         peic  PEICL(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  -4     Te0   TE(0)
+  2  -3     <Te>  TEAV(a)
+  3  -2     Teb   TE(a)
+  4         ne0   NE(0)
+  5  -4     Ti0   TI(0)
+  6  -3     <Ti>  TIAV(a)
+  7  -2     Tib   TI(a)
+  8         <ne>  NEAV(a)
+  9         Ipl   IPL
+ 10         q0    1.d0/MU(0)
+ 11         taup  TAUP(a)
+ 12         tau1  VOLUME*NEAV(a)/(QN(a)+1.d-6)
+ 13  1      betj  BETAJ(a)
+ 14         li    LINT(a)
+ 15         beTr  BETR(a)
+ 16         tauE  TAUE(a)
+ 17         Ptot  QETOT(a)+QITOT(a)
+ 18  1      PNBI  VINT(CAR3)(a)
+ 19         Ti0   TI(0)
+ 20         Pe    QETOT(a)
+ 21         Te0   TE(0)
+ 22         Gesr  QNTOT(a)
+ 23         Gefl  QN(a)
+ 24         GNin  CV2
+ 25         GNou  ALBPL*CV2
+ 26         albd  ALBPL
+ 27         Rcyc  ALBPL*CV2/(QN(a)+ALBPL*CV2)
+ 28         RcyE  (1.d0-1.d0/CF4)
+ 29         QNB   QN(a)
+ 30         Ehs   CF5

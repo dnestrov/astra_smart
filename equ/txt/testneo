@@ -1,0 +1,95 @@
+ =====   Variables definition   =====
+! The model checks stability properties of the loop equilibrium <-> diffusion
+! Has to be run with aug11841
+ MESHEQ=4.1d1
+!TE=.05+1.05*FPR;
+!TI=.1+0.9*FPR;
+!NE=1.+3.*sqrt(FPR);
+ AIM1=1.2d1
+ R2POT3=
+ ZEF(r)=1.8d0
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZIM1(r)=6.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ CAR1(r)=4.d-1*GP*(PRESE(r)+PRESI(r)+5.d-1*NB2EQL*(PBLON(r)+PBPER(r)))
+ CAR2(r)=4.d-1*GP*RTOR/(RTOR+SHIF(0))*CU(r)/(IPOL(r)*G33(r))
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=CC(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  TE  is assigned
+ TE(r)=TEX(r)
+ ---->  TI  is assigned
+ TI(r)=TIX(r)
+ ---->  NE  is assigned
+ NE(r)=NEX(r)
+ ---->  Equation for CU 
+ CC(r)=CNHR(r)
+ CU(r)=CC(r)
+ ---->  Subroutine  1: NEOCL3
+        is called at -99999<TIME< 99999 with dt=Def.  
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -2     T_i   TI(r)
+  2  1      ncla  WORK(J,365)
+  3         nui*  NUIS(r)
+  4         a3    AMETR(r)**3.d0
+  5         n_e   NE(r)
+  6  1      CH    HNCHI(r)
+  7         nui   NUI(r)
+  8  1      AS    HNASI(r)
+  9  -2     T_e   TE(r)
+ 10  1      AS    HNASI(r)
+ 11         nui^  NUIS(r)*SQEPS(r)**1.5d0
+ 12         r3    1.3555d2*RTOR*(3.235d-3*SQRT(AMAIN(r)*TI(r))/BTOR/MU(r))**2.d0
+ 13         n_i   NI(r)
+ 14  1      CH+   HNCHC(r)
+ 15  1      GS    HNGSI(r)
+ 16  1      AS+   HNASC(r)
+ 17         FP    FP(r)
+ 18         EQFF  EQFF(r)
+ 19         G33   G33(r)
+ 20         G11   G11(r)
+ 21         Jpar  CAR2(r)
+ 22         elon  ELON(r)
+ 23  -3     j     CU(r)
+ 24         EQPF  EQPF(r)
+ 25  -3     jbs   CUBS(r)
+ 26         G22   G22(r)
+ 27         Pres  CAR1(r)
+ 28         tria  TRIA(r)
+ 29         a     AMETR(r)
+ 30  2      Upl   UPL(r)
+ 31         shif  SHIF(r)
+ 32         bepl  BETPL(r)
+ 33         CC    CC(r)
+ 34  2      U||   ULON(r)
+ 35         ud    SHIV(r)
+ 36         Betj  BETAJ(r)
+ 37         FPO   FPO(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         IPL   IPL
+  2         h     HROA/HRO
+  3         NA1   NA1
+  4         ROC   ROC
+  5         V(a)  UPL(a)
+  6         Te0   TE(0)
+  7         Ti0   TI(0)
+  8         tau   TAU

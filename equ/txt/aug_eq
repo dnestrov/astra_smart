@@ -1,0 +1,385 @@
+ =====   Variables definition   =====
+!--------------------------------------------------------------------------
+!
+!--------------------------------------------------------------------------
+!==================== Grad-Shafranov equation =============================
+ NEQUIL=4.1d1
+!====================  Ion densities ========================================
+!ZEF=max(1.1,ZEFX)+CIMP2*CAR32;		! Z_eff		
+ AIM1=1.2d1
+!NDEUT=NE-NIBM-ZIM1*NIZ1;		! n_D
+!====================  Impurity radiation ==================================
+!----------------------------------------------------------------------------
+!==================== Auxiliary heating =====================================
+!----------------------------------------------------------------------------
+!==================== Wall neutrals =========================================
+ NNCX=CNEUT1
+!----------------------------------------------------------------------------
+!==================== MMM95 transport model =================================
+!   Arrays CAR17->19,CAR22->27, CAR29->32 are used for exchange with MMM
+! mmm42 returns K_e & K_i due to Weiland, res. and kin. bal. modes
+!    The output is:
+!  Interface  | Internal  |  Description of a quantity
+!  array name |   name    |
+!----------------------------------------------------------------------------
+!  work(j,20) = thiig(jz) = ion thermal diffusivity from the Weiland model
+!  work(j,21) = thdig(jz) = hydrogenic ion diffusivity from the Weiland model
+!  work(j,22) = theig(jz) = electron thermal diffusivity from the Weiland model
+!
+!  work(j,24) = thirb(jz) = ion thermal diffusivity from RB modes
+!  work(j,25) = thdrb(jz) = hydrogenic ion diffusivity from RB modes
+!  work(j,26) = therb(jz) = electron thermal diffusivity from RB modes
+!
+!  work(j,16) = thikb(jz) = ion thermal diffusivity from KB modes
+!  work(j,17) = thdkb(jz) = hydrogenic ion diffusivity from KB modes
+!  work(j,18) = thekb(jz) = electron thermal diffusivity from KB modes
+!----------------------------------------------------------------------------
+!   CAR27 - ion diffusivity, m^2/s (can be negative)
+!   CAR22 - growth rate ( 1/sec )
+!   CAR23 - electron thermal diffusivity, m^2/s
+!   CAR24 - ion thermal diffusivity, m^2/s
+!
+!-------------------------------------------------------------------------
+!-------------------------------------------------------------------------
+!CAR15=xstep(0.92)*SQZ;		! Optionally, a squeezing factor due to
+!CV15=frmax(CAR15);		!    Shaing-Hazeltine can be included
+!DN=HNGSE+min(5.,max(0.1,CAR19));	! 0.1 < Total D_i = DN < 5.
+!CN="work(j,67)"-VP*VRHH;		! Total pinch velocity
+!CN=max(-RHO,CN);			! Limit negative values
+!XI=CAR18+HNCHI;				! Total chi_i
+!----------------------------------------------------------------------------
+!====================  Particle transport ===================================
+!NE=ZRD10X*NEX/NEXAVB;		! Time evolution is prescribed for n_e
+!NE=CF1*CAR1X;			! n_e from DCN
+!NE=CF1*CAR3X;			! n_e from YPR [Thomson scattering (fit)]
+!NE=CF1*CAR4X;			! n_e from ZES
+!----------------------------------------------------------------------------
+!====================  Heat transport equations =============================
+!TE:AS;		TI:A[1,.8\];		! Eqns for T_e,i
+!TE:AS;		TI:AS;			! Eqns for T_e,i
+!SMEARR(CV1,CAR1,TI):;
+!TE=CAR2X;	TI=TE;			! T_e from Thomson scattering
+!----------------------------------------------------------------------------
+!----------------------------------------------------------------------------
+!	ECRH, & CD
+!CV16=1-exp(-2.7*NE(CV8*ABC)*TE(CV8*ABC));	! Optical depth
+! Gaussian profile of additional heating ~exp{-[(a-cv8)/(a_b*cf8)]^2}
+!FGAUSS(CV8,CF8,CAR8):;
+!PEECR=QECR*CV16*CAR8;
+!CUECR=.11*PEECR*TE/NE;		! CUECR is scaled using Peeters's calculation
+!====================  Poloidal field equation ==============================
+!NEOCL1(CAR3,CAR4,VTOR,VPOL):.01;	! (BS, CC, HE, XI)
+!HC=HCKIM;	DC=DCKIM;	XC=XCKIM;	! Bootstrap due to Kim
+!CC=CF9*CAR4+(1-CF9)*CNHR;	! If CF9=1/0 CC by Houlberg/Hirshman is used
+!CAR2=CUBS+CV9*(CAR3-CUBS);	! Actual BS current
+!CD=CUBM+CUECR+CV9*(CAR3-CUBS);	! If CV9=1/0 BS by Houlberg/SA/Kim is used
+!----------------------------------------------------------------------------
+!MSE(1.d1,CAR21):;
+!====================  Time step control  ===================================
+!====================  Sawtooth oscillations ================================
+!CF10 output mode, (use 0. to suppress output). CF11=given_period
+!----------------------------------------------------------------------------
+!==================== Auxiliary quantities ==================================
+ CF6=8.d-4*VINT(PBLON)(a)
+ CF7=1.6d-3*VINT(PBPER)(a)
+!CV1=(WTOTB+0.75*CF7+1.5*CF6);		! equilibrium energy (Wmhd)
+!CV2=(WTOTB+1.5*CF7);			! diamagnetic energy (Wdia)
+ CV5=8.d-4*VINT(PBLON)(a)
+ CV6=1.6d-3*VINT(PBPER)(a)
+ CV14=VINT(PEBM)(a)+VINT(PIBM)(a)+QEX(a)+QIX(a)
+ CF16=QJOUL(a)+CV14-QRAD(a)+6.67d-1*QRADX(a)
+ CV4=THQ99(r)/MAX(1.d-1,CF16)**6.9d-1
+ CV3=6.67d0/(GP*(RTOR+SHIF(0))*IPL**2.d0)
+ CV13=RTOR/(RTOR+SHIF(0))
+ CV12=CV13*LINT(a)
+ CV11=TIMDER(CV12)
+!==================== Plasma rotation =======================================
+ CNEUT4=VINT(CAR11)(a)
+!--------------------------------------------------------------------------
+!===================== Profile output =====================================
+!gamm\CAR22\1.e5	V_pm\CAR30\.1;	D_ef\CAR19\5;	V_in\CN\-24;
+!K_is\CAR18\5;		K_em\CAR23\5;	K_im\CAR24\5;
+!----------------------------------------------------------------------------
+!---------  Current & Geometry ----------------------- Screen number (7) ----
+!-------  Current profile (3) ------------------------ Screen number (4) ----
+!--------  Kinetics  --------------------------------- Screen number (5) ----
+!--------  Particle balalnce ------------------------- Screen number (6) ----
+!-------  Overview  ---------------------------------- Screen number (1) ----
+!-------  Power balance (1) -------------------------- Screen number (2) ----
+!-------  Power balance (2) -------------------------- Screen number (3) ----
+!---------  Miscellaneous  --------------------------- Screen number (8) ----
+!NNCX_NNCX;		! Number of iterations in wall neutral solver
+!Teb_TEB;		! Edge temperature
+!betr_BETTB*ABC*BTOR/IPL;! beta_Troyon
+!PeN_QENEUB;		! Total electron energy source due to wall neutrals
+!Qea_QEB;		! Electron heat flux through the outermost surface
+!Pion_QINEUB;		! Total ion energy source due to the wall neutrals
+!PCX_QICXB;		! Charge exchange ion energy source
+!Qia_QIB;		! Ion heat flux through the outermost surface
+!nped_NEB;		! n_e(edge)
+!Tib_TIB;
+!H98y_(WIB+WEB)/QTOTB/CV4_1;	! Enhancement factor
+!tauE_(WIB+WEB)/QTOTB_10;! tau_E_instant defined as tau_E=W/P
+!ta98_CV4_10;		! ELMy H-mode scaling tau_E
+!----------------------------------------------------------------------------
+!dldt_CV11;		! d(l_i)/dt
+!Ne-6_CNEUT4;		! Neutron yield
+!Zef0_ZEFC;		! Z_eff(0)
+!U+dl_UPLC+.2*GP*(RTOR+SHIFC)*IPL*CV11;	! U(0)+d(L_i*I)/dt
+!U(0)_UPLC;		! U(0)
+ SBR No. 3 will be called from detvar.tmp
+ CAR32(r)=MAX(0.d0,1.d0-4.d0*(RHO(r)/ROC)**2.d0)
+ ZEF(r)=CIMP1
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZIM1(r)=ZICAR(r)
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NDEUT(r)=NE(r)-ZIM1(r)*NIZ1(r)
+ NI(r)=NDEUT(r)+NIZ1(r)
+ PRAD(r)=PRCAR(r)*NIZ1(r)*NE(r)
+ CAR27(r)=WORK(J,21)+WORK(J,25)+WORK(J,17)
+ CAR22(r)=WORK(J,28)
+ CAR23(r)=WORK(J,22)+WORK(J,26)+WORK(J,18)
+ CAR24(r)=WORK(J,20)+WORK(J,24)+WORK(J,16)
+ CAR19(r)=FTAV(CAR29(r),CV2)
+ CAR17(r)=FTAV(CAR25(r),CV2)
+ CAR18(r)=FTAV(CAR26(r),CV2)
+ CAR19(r)=MIN(5.d0,CAR19(r))
+ CAR17(r)=MIN(5.d0,CAR17(r))
+ CAR18(r)=MIN(5.d0,CAR18(r))
+ CAR14X(r)=SNN(r)*NE(r)
+ CAR1(r)=(1.d0-ASTEP(CV7)(r))*TIX(r)+ASTEP(CV7)(r)*TEX(r)
+ CAR28(r)=XIEFF(r)
+ CAR16(r)=F1(r)*CUBM(r)/(CUFI(r)+1.d-5)
+ CAR2(r)=CUBS(r)
+ VTOR(r)=VTORX(r)
+ VPOL(r)=VPSWW(r)
+ CAR31(r)=BTOR*FRS(r)*MU(r)*VTOR(r)/RTOR
+ ER(r)=CAR31(r)+BTOR*(VDIA(r)-VPOL(r))
+ CAR11(r)=1.d13*NDEUT(r)*NDEUT(r)*SVD1(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=CF1*NEX(r)
+ CU(r)=FPR(r)**2.d0
+F0(r)=1
+ F1(r)=0.d0
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  Subroutine  1: NBI
+        is called at -99999<TIME< 99999 with dt=0.1   
+ ---->  Subroutine  2: NEUT
+        is called at -99999<TIME< 99999 with dt=0.01  
+ ---->  Subroutine  3: MMM4A
+        is called at 1.    <TIME< 99999 with dt=Def.  
+ ---->  Subroutine  4: SMEARR(CV1,CAR27,CAR29)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  5: SMEARR(CV1,CAR23,CAR25)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  6: SMEARR(CV1,CAR24,CAR26)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  NE  is assigned
+ NE(r)=CF1*NEX(r)
+ SN(r)=SNEBM(r)
+ SNN(r)=SNNEU(r)
+ ---->  Equation for TE 
+ HE(r)=CHE1*HANAL(r)+HNGSE(r)+CAR17(r)
+ PE(r)=PEX(r)+PEBM(r)+POH(r)-PEICL(r)-PENEU(r)-PRAD(r)
+ TE(r)=TEX(r)
+ TE(a_b)=TEX(a)
+  >>> Warning: Initial condition for TI is not defined
+               TI=TIX(TSTART) will be used
+ ---->  Equation for TI 
+ XI(r)=CAR18(r)+HNCHC(r)
+ PI(r)=PIX(r)+PIBM(r)+PEICL(r)+PIONZ(r)-PICX(r)
+ TI(a_b)=TEX(a)
+ ---->  Equation for F1 
+ F1(r)=0.d0
+ F1(a_b)=0.d0
+ DF1(r)=MIN(5.d0,MAX(1.d-3,CAR28(r)))
+ SFF1(r)=-NUFE(r)
+ SF1(r)=NUFE(r)*CUFI(r)
+ ---->  Equation for CU 
+ HC(r)=HCSA(r)
+ DC(r)=DCSA(r)
+ XC(r)=XCSA(r)
+ CC(r)=CNHR(r)
+ CD(r)=CUBM(r)+CUECR(r)
+ CU(r)=FPR(r)**2.d0
+ ---->  Subroutine  7: TSCTRL(CAR23,CAR23,CAR24,CF3)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  8: MIXINT(CF10,CF11)
+        is called at 1000  <TIME< 99999 with dt=Def.        Key call:X     
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  5      k_i   XI(r)
+  2  5      k_ix  XEXP(r)
+  3  1      j_ef  CAR16(r)
+  4  1      t_NB  1.d0/NUFE(r)
+  5  1      k_nc  HNCHC(r)
+  6         P_e   PETOT(r)
+  7  1      j_fd  F1(r)
+  8  -3     T_e   TE(r)
+  9  5      Dfas  DF1(r)
+ 10  5      k_if  XIEFF(r)
+ 11  1      j_nb  CUBM(r)
+ 12  1      t_D   RHO(r)**2.d0/DF1(r)
+ 13               0.d0
+ 14         P_i   PITOT(r)
+ 15  1      j_fi  CUFI(r)
+ 16  -3     T_i   TI(r)
+ 17         Pax   PBEAM(r)
+ 18  -4     j     CU(r)
+ 19         Zeff  ZEF(r)
+ 20  -12    CC    CC(r)
+ 21  -3     T_e   TE(r)
+ 22  .5     Vtor  UPL(r)
+ 23  1      iota  MU(r)
+ 24  -16    jbs1  CUBS(r)
+ 25  -1     n_e   NE(r)
+ 26  -4     jBS   CAR2(r)
+ 27  -4     joh   CUOHM(r)
+ 28  -12    CCHr  CNHR(r)
+ 29  -3     T_i   TI(r)
+ 30  -4     jNB   CUBM(r)
+ 31  5      q     1.d0/MU(r)
+ 32  -16    jbsH  CAR3(r)
+ 33         n_e   NE(r)
+ 34         Zeff  ZEF(r)
+ 35  -26    Q_HE  -HE(r)*NE(r)*GRAD(TE)(r)
+ 36         Stor  SCUBM(r)
+ 37         Zn_I  ZIM1(r)*NIZ1(r)
+ 38  -3     T_i   TI(r)
+ 39         tauE  TAUE(r)
+ 40  5      K_e   HE(r)
+ 41         n_i   NI(r)
+ 42         Z_Im  ZIM1(r)
+ 43  -26    Q_XI  -XI(r)*NI(r)*GRAD(TI)(r)
+ 44         sddb  SVDBH(r)
+ 45         n_NB  NIBM(r)
+ 46  -3     T_n   TN(r)
+ 47         taEi  TAUEI(r)
+ 48               0.d0
+ 49  -4     j     CU(r)
+ 50  -17    jbs1  CUBS(r)
+ 51  2.     shat  SHEAR(r)
+ 52         wExB  ROTSH(r)
+ 53  -4     j_nI  CD(r)
+ 54         Zeff  ZEF(r)
+ 55         li    LINT(r)*CV13
+ 56         E_rt  CAR31(r)
+ 57  -4     joh   CUOHM(r)
+ 58  -17    jbsH  CAR3(r)
+ 59         tpf   TPF(r)
+ 60         E_r   ER(r)
+ 61  -4     jBS   CAR2(r)
+ 62         sigm  CC(r)
+ 63         betj  BETAJ(r)
+ 64         E_rp  BTOR*(VDIA(r)-VPOL(r))
+ 65         LTe   LTE(r)
+ 66         RLTi  RTOR/LTI(r)
+ 67         grVt  GRAD(VTORX)(r)
+ 68  1      nuis  NUIS(r)
+ 69         Lne   LNE(r)
+ 70         RLNe  RTOR/LNE(r)
+ 71         Gflx  QN(r)
+ 72         p     PREST(r)
+ 73         LTi   LTI(r)
+ 74         RLTe  RTOR/LTE(r)
+ 75         NN    NN(r)
+ 76  1      nues  NUES(r)
+ 77         Lni   LNI(r)
+ 78         SNNn  CAR14X(r)
+ 79  3e4    Gsrc  QNTOT(r)
+ 80         p_i   PRESI(r)
+ 81         QeFl  QE(r)
+ 82         QiN   QINEU(r)
+ 83         PeNB  PBEAM(r)
+ 84         Pe    PETOT(r)
+ 85         QiFl  QI(r)
+ 86         Qei   QEICL(r)
+ 87         PeN   PENEU(r)
+ 88         Pei   PEICL(r)
+ 89         QeSr  QETOT(r)
+ 90         QeN   QENEU(r)
+ 91         POH   POH(r)
+ 92         Pi    PITOT(r)
+ 93         QiSr  QITOT(r)
+ 94         Qrad  QRAD(r)
+ 95         Prad  PRAD(r)
+ 96         PN    PINEU(r)+PENEU(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Ipl   IPL
+  2  .2     U(a)  UPL(a)
+  3  .25    INB   IBM(a)
+  4  .4     Ifst  IINT(CUFI)(a)
+  5  10     Pnb   QNBI
+  6  0.5    U/I   UPL(a)/IOHM(a)
+  7  .25    INBd  IINT(CAR16)(a)
+  8  .4     Ifsd  IINT(F1)(a)
+  9  1      x2/1  RFVAL(MU,5.d-1)(r)/ROC
+ 10  1      li    CV12
+ 11  1      x3/2  RFVAL(MU,6.67d-1)(r)/ROC
+ 12  1      x5/4  RFVAL(MU,8.d-1)(r)/ROC
+ 13  1      x4/3  RFVAL(MU,7.5d-1)(r)/ROC
+ 14         INB   IBM(a)
+ 15  1      x1/1  RFVAL(MU,1.d0)(r)/ROC
+ 16         IBS   IINT(CAR2)(a)
+ 17  1      li    CV12
+ 18  2      B+li  CV3*(WTOT(a)+1.5d0*CV5+7.5d-1*CV6)+5.d-1*CV12
+ 19         Upl   UPL(a)
+ 20         Bequ  CV3*(WTOT(a)+1.5d0*CV5+7.5d-1*CV6)
+ 21  2      q0    1.d0/MU(0)
+ 22         Bthm  CV3*WTOT(a)
+ 23  1      x1/1  RFVAL(MU,1.d0)(r)/ROC
+ 24         Bdia  CV3*(WTOT(a)+1.5d0*CV6)
+ 25  10     ms10  CAR21(10)+2.d0
+ 26  10     mse9  CAR21(9)+2.d0
+ 27  10     mse8  CAR21(8)+2.d0
+ 28  10     mse7  CAR21(7)+2.d0
+ 29  10     mse6  CAR21(6)+2.d0
+ 30  10     mse5  CAR21(5)+2.d0
+ 31  10     mse4  CAR21(4)+2.d0
+ 32  10     mse3  CAR21(3)+2.d0
+ 33         Ipl   IPL
+ 34         PNBI  QNBI
+ 35         nlx   ZRD10X
+ 36         bet1  CV3*WTOT(a)
+ 37         nlc   NECH(0)
+ 38         betj  BETAJ(a)
+ 39         <ne>  NEAV(a)
+ 40  1      jnI%  (IINT(CAR2)(a)+IBM(a))/IPL
+ 41         Ptot  QTOT(a)
+ 42         PNB3  ZRD3X
+ 43         POH   QOH(a)
+ 44         Pnbi  VINT(PEBM)(a)+VINT(PIBM)(a)
+ 45         Pei   QEICL(a)
+ 46         PNB6  ZRD6X
+ 47         Prad  QRAD(a)
+ 48         shth  QNBI-QBTOT(a)
+ 49         Pi    QITOT(a)
+ 50  10     mse1  CAR21(1)+2.d0
+ 51         Pe    QETOT(a)
+ 52  10     mse2  CAR21(2)+2.d0
+ 53         PNB   QBTOT(a)
+ 54         ne0   NE(0)
+ 55         <ne>  NEAV(a)
+ 56         NA1   NA1
+ 57         V     VOLUME
+ 58         Te0   TE(0)
+ 59         <Te>  TEAV(a)
+ 60         Ti0   TI(0)
+ 61         <Ti>  TIAV(a)
+ 62         Tex0  TEX(0)
+ 63         Tex>  TEXAV(a)
+ 64         Tix0  TIX(0)
+ 65         Tix>  TIXAV(a)

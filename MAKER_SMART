@@ -1,0 +1,220 @@
+#!/bin/csh -f
+# Script file "MAKER_SMART" Expands Astra KERnel by Tokamak Energy (TE) stuff.
+# 
+# SYNOPSIS
+# 	./MAKER_SMART AROOT ASTRA_EXT PLATFORM 
+#
+# AROOT     is a name for the new Astra kernel directory to be created
+#           ($cwd/Astra by default)
+#
+# ASTRA_EXT is the name of astra extension folder 
+# PLATFORM  must be defined either (Intel)
+#           by the environment variable "ObjectCode" or
+#           by the command line, e.g.
+
+# ./astra_smart/MAKER_SMART . astra_smart Intel
+# Installation options:
+set IFICR = no
+set IFIPC = no
+set IFESP = no
+set IFNBI = yes
+set IFNUB = no
+
+set PROTECT = no
+set ASTRAEXT = $2
+if ( $1 != '' && $1 != ',' ) set AROOT = $1
+if ( !(${?AROOT}) ) set AROOT = $cwd/Astra
+if ( ${AROOT:t} == "" ) then
+   echo \ 
+   echo " >>> Wrong Astra kernel name: " ${AROOT}
+   goto End
+endif
+if ( ${AROOT} == ${AROOT:t} ) then
+   set AKERN = ${AROOT}
+   set AROOT = $cwd/$AROOT
+else
+   set AKERN = ${AROOT:t}
+endif
+echo '$AROOT ' = $AROOT
+echo '$AKERN ' = $AKERN
+
+echo '$ASTRAEXT ' = $ASTRAEXT
+echo '$PROTECT ' = $PROTECT
+set AKERN = $AKERN/Astra
+
+cd ${ASTRAEXT}
+
+
+set ARCH = $3
+if ( !(${?ObjectCode}) && ${ARCH} != '' )	then
+    set ObjectCode = $ARCH
+endif
+if ( $ARCH == "," ) set ARCH = 
+
+if ( ${?ObjectCode} && ${ARCH} != '' )	then
+   if ( ${ObjectCode}  == ${ARCH} )	goto	Start
+   echo \ 
+   echo \ 
+   echo " >>> Warning >>> Conflicting platform definitions"
+   echo "                 "\"$ARCH\" vs \"$ObjectCode\""(=ObjectCode)"
+   echo "                 Environment variable ObjectCode will be ignored"
+   goto	Start
+endif
+
+if ( ${ARCH} != '' )	then
+   goto	Start
+else if ( ${?ObjectCode} )	then
+   set ARCH = ${ObjectCode}
+else
+   echo " >>> Input error >>> Undefined platform" 
+   echo " >>> Please select the installation platform. Look into the file"
+   echo "     "`pwd`/.exe/astrarc \ for available options
+   goto	End
+endif
+
+Start:
+set ATEST = `grep -w case .exe/astrarc | grep -w ${ARCH}`
+if ( ${#ATEST} == '0' )	 goto	Unknown_platform
+
+echo \ 
+echo " Checking structure of the Astra_TE directory" \"${ASTRAEXT}\"
+echo \ 
+echo \ Creating ASTRA kernel: \"${ARCH}\"
+
+setenv ALBR .lbr/${ARCH}/
+#if ( !(-e .lbr) )     mkdir .lbr
+#if ( !(-e ${ALBR}) )  mkdir ${ALBR}
+if ( ${?ObjectCode} )	then
+   set OC = ${ObjectCode}
+   setenv ObjectCode ${ARCH}
+   source .exe/astrarc 	||	goto	End
+   setenv ObjectCode ${OC}
+   unset OC
+else
+   setenv ObjectCode ${ARCH}
+   source .exe/astrarc 	||	goto	End
+   unsetenv ObjectCode
+endif
+
+echo '$AROOT ' = $AROOT
+echo '$AKERN ' = $AKERN
+echo '$ASTRAEXT ' = $ASTRAEXT
+echo '$ARCH  ' = $ARCH
+echo '$ALBR  ' = $ALBR
+echo '$PROTECT ' = $PROTECT
+echo '$PLATFORM' = $PLATFORM
+echo '$ObjectCode' = $ObjectCode
+#goto End
+unset ARCH
+pwd
+if ( !(-e for) )	ln -s ${AROOT}/Astra/for   for
+foreach SUBD (fml)
+   foreach A ( ${AROOT}/Astra/${SUBD}/* )
+     if ( !(-e "$SUBD/$A:t") ) ln -s $A $SUBD/
+   end
+   echo -n \ $SUBD
+end 
+
+Libsbr:
+
+echo \ 
+echo " Updating library ./${AKERN}/${ALBR}sbr.a"
+
+#ar c ${AROOT}/${ALBR}sbr.a
+foreach A (sbr/a2mdsastra2.f90 sbr/a2mdsastra.f90 sbr/a2mdsspider.f90 sbr/a2mdsvac2.f90 sbr/a2mdsvac.f90 sbr/af902db_access.f90  sbr/*.f90 sbr/*.f)
+   set B = ${A:t}
+   set B = ${B:r}
+   echo $B.o
+   if ( -e $B.o ) then
+      echo $B.o
+      echo \ 
+   endif
+   if ( !(-e $B.o) ) then
+      ((${AFC} $A > /dev/null) >& /dev/tty) || goto LibError
+   endif
+end
+
+
+
+   foreach A (*.o)
+      ar rv ../${AKERN}/${ALBR}sbr.a $A			> /dev/null
+   end
+   ranlib  ../${AKERN}/${ALBR}sbr.a		>& /dev/null
+   rm *.o
+echo "sbr done Press enter to continue"
+
+goto NUBEAM
+Libfnc:
+#if ( ${PROTECT} == yes ) rm -r nbi	>& /dev/null
+echo \ 
+echo "Updating library ./${AKERN}/${ALBR}fnc.a"
+
+#ar c ${AROOT}/${ALBR}fnc.a
+    foreach A (fnc/*.f)
+      set B = ${A:t}
+      set B = ${B:r}
+	if ( -e $B.o ) then
+	     echo $B.o
+	     echo \ 
+	else
+	   ((${AFC} $A > /dev/null) >& /dev/tty) || goto LibError
+	endif
+    end
+
+
+    foreach A (*.o)
+    ar rv fnc.a $A			> /dev/null
+    end
+    mv fnc.a ../${AKERN}/${ALBR}fnc.a
+
+    ranlib ../${AKERN}/${ALBR}fnc.a		>& /dev/null
+    rm *.o
+echo "fnc done Press enter to continue"
+NUBEAM:
+if ( ${IFNUB} == no ) goto CLEAN #Creating NUBEAM library libasdrive.a in 
+    foreach A (nub/asdrive_namelist.f90 nub/asdrive_common.f90 nub/*.f90 nub/*.f)
+	set B = ${A:t}
+	set B = ${B:r}
+	echo $B.o
+	if ( -e $B.o ) then
+	     echo $B.o
+	     echo \ 
+	else
+	   ((${AFC} $A > /dev/null) >& /dev/tty) || goto LibError
+	endif
+    end
+    foreach A (*.o)
+	ar rv libasdrive.a $A			> /dev/null
+    end
+    ranlib libasdrive.a		>& /dev/null
+    rm *.o
+echo "NUBEAM done Press enter to continue"
+CLEAN:
+find -L fml  -xtype l -delete
+rm for
+
+echo \ 
+echo \ 
+echo "      *********************************"
+echo "      **                             **"
+echo "      ** THE ASTRA KERNEL IS UPDATED **" 
+echo "      **       with ASTRA_TE         **"
+echo "      **                             **"
+echo "      *********************************"
+echo \ 
+echo \ 
+
+goto End
+
+LibError:
+echo \ 
+echo \ 
+echo \ 
+echo \>\>\>\ \ INSTALLATION \ ERROR:
+echo \ 
+echo Fix error\[s\] in the file \"${AKERN}/$A\" and call MAKER again
+goto End
+
+End:
+echo \ 
+echo \ 

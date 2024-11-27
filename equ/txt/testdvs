@@ -1,0 +1,449 @@
+ =====   Variables definition   =====
+!============================================================================
+!====================  Grad-Shafranov equation ==============================
+!NEQUIL=42;
+!====================  Ion densities ========================================
+! Assume that Z_eff is due to Carbon
+ AIM1=1.2d1
+!----------------------------------------------------------------------------
+!====================  Impurity radiation ==================================
+!   Contribution to Z_eff:
+!ZEF1=ZIBE*(ZIBE-1.)*NIZ1/NE;	! Delta(Z_eff) due to Be
+!ZEF2=ZIAR*(ZIAR-1.)*NIZ2/NE;	! Delta(Z_eff) due to Ar
+!ZEF3=ZICAR*(ZICAR-1.)*NIZ3/NE;	! Delta(Z_eff) due to C
+!ZEF=ZZEF;			! Here: ZEF=1+2*NALF+ZEF1+ZEF2+ZEF3
+!PBOL1=PRBER*NIZ1*NE;		! PBOL1 - entire radiation due to Be
+!PBOL2=PRARG*NIZ2*NE;		! PBOL2 - entire radiation due to Ar
+!PBOL1=PBOL1-PBR1;		! PBOL1 - line radiation due to Be, MW/m^3
+!-------------------- NB heating -------------------------------------
+ CNB1=2.d0
+!PEICR=CAR7X;		PIICR=CAR8X;
+!----------------------------------------------------------------------------
+!======================  Transport reduction  ===============================
+!---------------------  Radial electric field  ------------------------------
+!----------------------------------------------------------------------------
+!==================== Gas puff neutrals =====================================
+ CV8=1.d-1
+! ATCI06:;	CV8=100.1;	! GLF from TCI interface
+! WORK(j,1)  - ion thermal diffusivity       [m^2/s]	!-> CAR21
+! WORK(j,2)  - electron thermal diffusivity, [m^2/s]	!-> CAR22
+! WORK(j,3)  - ion diffusivity    [m^2/s]		!-> CAR23+CAR24
+! WORK(j,4)  - torque diffusivity [m^2/s]	!-> CAR4X (not used)
+! WORK(j,8)  - ExB shear rate    [CS/ROC]	!-> CAR9X (not used)
+! WORK(j,10) - leading mode rate [CS/ROC]	!-> CAR10X
+! WORK(j,11) - 2nd mode rate     [CS/ROC]	! (not used)
+! WORK(j,12) - leading mode frequency [CS/ROC]	!-> CAR12X (not used)
+! WORK(j,13) - 2nd mode frequency     [CS/ROC]	!-> CAR13X (not used)
+!CAR4X="work(j,4)";			CAR9X="work(j,8)"*CS/ROC;
+!=====================  Particle transport ==================================
+!----------------------------------------------------------------------------
+!			Auxiliary arrays
+!	CAR24=-min(0.d0,CAR23);			! Get negative part (CAR24>0)
+!	CAR23=max(0.d0,CAR23);			! Get positive part
+!	SMEARR(CF12,CAR24,CAR25):;
+!	CAR23=CAR23+CF6*CAR25;		CAR23=max(CV13,CAR23);
+!	CAR16=CAR27/max(1.d-1,NE);	CAR16=min(-1.d-1,CAR16);    ! 1/L_n
+!	SMEARR(CV8,CAR16,CAR17):;		! 1/L_n smoothed
+!	CAR29=(CAR24+CF6*CAR25)*CAR17;	CAR29=max(-3.*RHO,CAR29);
+!	CPEL4=5.d1*min(.5d0,max(0.d0,frmax(CAR27)));
+!	CAR27=grad(NE);	  CAR28=step(CAR27);	FEVEN(32,CAR28,work(1,14)):;
+!	CN=...+CAR29;	  DN=...+CAR23+CPEL4*work(j,14);
+!NE=7.5+4*FPR;			NEB=7.5;
+!NE=8.5+3*FPR**1.5;		NEB=8.5;
+!NEUTEX:;
+!----------------------------------------------------------------------------
+ CV12=1.d1*IPL/GP/ABC**2.d0
+!----------------------------------------------------------------------------
+!====================  Heat transport equations =============================
+!TE:AS;				TI:AS;
+!TE=TEX;				TI=TIX;
+!CAR6=min(1.d2,1r./(HE+1.d-3));	CAR7=min(1.d2,1./(XI+1.d-3));
+!SMEARR(CV13,CAR6,CAR8):;	SMEARR(CV13,CAR7,CAR9):;
+!DVE=CV15*CAR8;			DVI=CV15*CAR9;
+!DVE=CV15+CV14*FX;		DVI=DVE;
+! SMEARR(CV13,CAR1X,CAR4X):;
+!DVI=CV15*CAR4X;		DVE=DVI;
+!DVI=CV15*TI;			DVE=CV15*TI;
+!DSE=CV14;			DSI=CV14;
+!DSE=CV14*TI*CAR3;		DSE=DSI;
+!DSI=CV14*TI;			DSE=CV14*TI;
+!----------------------------------------------------------------------------
+!--------------------- Helium transport -------------------------------------
+!F1:;		DF1=0.;		DVF1=0.;	DSF1=0.;
+!----------------------------------------------------------------------------
+!====================  Poloidal field equation ==============================
+ CRF2=TIMAVG(UPL(NA),5.d-1)
+!----------------------------------------------------------------------------
+! Bootstrap current due to alpha-particles
+!BSAL(CAR4,CV4):;		! 1st - current density, 2nd - total current
+!----------------------------------------------------------------------------
+!CU=CUX;	!CU=FPR;	!MU=1/CAR15X;	MU=MUX;
+!====================  Time step control  ===================================
+!----------------------------------------------------------------------------
+!===================== Profile output =======================================
+!---------  Overview --------------------------------- Screen number (1) ----
+!orig\"work(j,3)";
+!---
+!dTi\timder(TI);
+! !n_e\NE\-6;	Pde\PDE;	gT_e\CAR8;		K_i\XI\-8;
+!T_e\TE\25;	H_or\CAR1X;	R/Li\CV15*CAR6;		K_e\HE\-8;
+!grTi\CAR12;	Pdi\PDI;	gT_i\CAR9;		K_iA\"work(j,1)"\-8;
+!T_i\TI\25;	H_sm\CAR4X;	Dsvi\DSI;		K_eA\"work(j,2)"\-8;
+!---
+!---
+!---------  Integrated power sources ---------------- Screen number (2) ----
+!----------  Local power densities ------------------- Screen number (4) ----
+!-----------------------
+!Qicx\QICX;
+!---------  Current balance -------------------------- Screen number (6) ----
+!-----------------
+!---------  Overview --------------------------------- Screen number (*) ----
+!-------------------
+!----------------------------------------------------------------------------
+!Kneo\HNASC;
+!rpol\RLS/RTOR*RHO/MU;	! rho_pol
+!------------- Derivation of tht GLF transport ------------------------------
+!==================== Auxiliary parameters for output =======================
+ CFUS1=QDTF(a)
+ CV9=TIMDER(CFUS1)
+ CF15=CFUS1+QOH(a)+QEX(a)+QIX(a)
+ CSOL1=CF15-QRAD(a)
+ CF16=CSOL1+6.67d-1*QRADX(a)
+ CV3=MAX(1.d-8,CF16)
+ CV1=THQ99(r)/CV3**6.9d-1
+ CV2=MAX(1.d-6,TAUE(a))
+ CV5=(WTOT(a))/CV3
+!----------------------------------------------------------------------------
+ CV6=1.6d-3*VINT(PBPER)(a)
+ CV7=8.d-4*VINT(PBLON)(a)
+!----------------------------------------------------------------------------
+ CV10=NEAV(a)
+ CV11=TIMDER(CV10)
+!----------------------------------------------------------------------------
+ CV16=AFR(RFVAL(CAR26,9.5d-1)(r))
+!----------------------------------------------------------------------------
+!====================  Time output ==========================================
+!-------  Overview  ---------------------------------- Screen number (1) ----
+!-----------------------
+!--------  Kinetics  --------------------------------- Screen number (2) ----
+!--------
+!---------  Current & Geometry ----------------------- Screen number (3) ----
+!--------
+! ILH_ILHB_-18;		! LH driven current
+!---------  Miscellaneous  --------------------------- Screen number (5) ----
+!--------  Particle balalnce ------------------------- Screen number (4) ----
+!--------
+!-------  Power balance (1) -------------------------- Screen number (6) ----
+!-----------------------
+!-------  Power balance (2) -------------------------- Screen number (7) ----
+!-----------------------
+!-------  Power balance (3) -------------------------- Screen number (8) ---
+!--------
+!---------  Ballooning limit  ------------------------ Screen number (9) ---
+!----------
+!----------------------------------------------------- Screen number (10) ---
+!--------
+!----------------------------------------------------- Screen number (11) ---
+!pped_1.6d-3*(NE(AFX(CBND1))*TE(AFX(CBND1))+NI(AFX(CBND1))*TI(AFX(CBND1)))_.25;
+!--------
+!---------  Miscellaneous  --------------------------- Screen number (13) ----
+!---------
+!----------------------------------------------------- Screen number (12) ---
+!----------------------------------------------------- Screen number (14) ---
+!hi1_FRMAX(QDI);
+!--------
+!he1_FRMAX(QDE);
+!<ta>_1.d3*FTAV1(TAU);
+ CV4=LOG(1.d0+(TAU-TAUMIN)/(TAUMAX-TAUMIN+1.d-9))/6.9315d-1
+!============= Thank you for using ASTRA transport code =====================
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZEF(r)=CF2
+ ZIM1(r)=6.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NTRIT(r)=5.d-1*(NE(r)-NIBM(r)-2.d0*NALF(r)-ZIM1(r)*NIZ1(r)-ZIM2(r)*NIZ2(r)-ZIM3(r)*NIZ3(r))
+ NDEUT(r)=NTRIT(r)+NIBM(r)
+ NI(r)=NDEUT(r)+NTRIT(r)+NALF(r)+NIZ1(r)+NIZ2(r)+NIZ3(r)
+ PBOL2(r)=PBOL2(r)-PBR2(r)
+ PBOL3(r)=PBOL3(r)-PBR3(r)
+ PRADX(r)=PBOL1(r)+PBOL2(r)+PBOL3(r)
+ PRAD(r)=PRADX(r)+PBRAD(r)+CRAD2*PSYNC(r)
+ PBOL3(r)=PRCAR(r)*NIZ3(r)*NE(r)
+ PEX(r)=PEBM(r)
+ PIX(r)=PIBM(r)
+ VTOR(r)=0.d0
+ VPOL(r)=0.d0
+ ER(r)=BTOR*(VDIA(r)-VPOL(r)+VTOR(r)*MU(r)*FRS(r)/RTOR)
+ CAR1X(r)=MAX(0.d0,MIN(1.d2,WORK(J,INT(CV8+1))))
+ CAR2X(r)=MAX(0.d0,MIN(1.d2,WORK(J,INT(CV8+2))))
+ CAR3X(r)=CUT(1.d2,WORK(J,3))
+ CAR10X(r)=WORK(J,INT(CV8+10))*CS(r)/ROC
+ CAR11X(r)=WORK(J,INT(CV8+11))*CS(r)/ROC
+ CAR12X(r)=-WORK(J,12)*CS(r)/ROC
+ CAR13X(r)=-WORK(J,13)*CS(r)/ROC
+ CAR1(r)=CAR1X(r)-1.d-3
+ CAR2(r)=STEP(CAR1(r))
+ CAR5(r)=STEP(SIGN(1.d0,CAR1(r)))
+ CAR6(r)=LTI(r)/RTOR
+ CAR7(r)=LTE(r)/RTOR
+ NALF(r)=F1(r)
+ CAR11(r)=-GRAD(TE)(r)
+ CAR12(r)=-GRAD(TI)(r)
+ CAR13(r)=(1.d0-XSTEP(6.d-1)(r))
+ CAR26(r)=(FP(r)-FP))/(FP(a)-FP))
+ =====   Initial distributions   =====
+ NE(r)=CF5
+ TE(r)=CF4+2.d1*FPR(r)**2.d0
+ TI(r)=CF4+2.d1*FPR(r)**2.d0
+ CU(r)=7.d-1*FPR(r)+(FX(r)*FPR(r))**2.d0+1.8d0*CAR14(r)
+ F0(r)=1
+ F1(r)=0.d0
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  25     T_e   TE(r)
+  2  -8     K_iA  WORK(J,1)
+  3               0.d0
+  4               0.d0
+  5               0.d0
+  6               0.d0
+  7               0.d0
+  8               0.d0
+  9  25     T_i   TI(r)
+ 10  -8     K_eA  WORK(J,2)
+ 11               0.d0
+ 12               0.d0
+ 13               0.d0
+ 14               0.d0
+ 15               0.d0
+ 16               0.d0
+ 17         Pde   PDE(r)
+ 18         Qde   QDE(r)
+ 19         Sign  CAR3(r)
+ 20         QEdt  QEDWT(r)
+ 21  -4     QeSr  QETOT(r)
+ 22  -9     QiSr  QITOT(r)
+ 23         dTe   -GRAD(TE)(r)
+ 24         NN    NN(r)
+ 25         Pdi   PDI(r)
+ 26         Qdi   QDI(r)
+ 27         chan  CAR1X(r)
+ 28         QIdt  QIDWT(r)
+ 29  -4     QeFl  QE(r)
+ 30  -9     QiFl  QI(r)
+ 31         dTi   -GRAD(TI)(r)
+ 32         TN    TN(r)
+ 33         Pi+   PITOT(r)
+ 34         Pei   PEICL(r)
+ 35         Pde   PDE(r)
+ 36         Qedt  QEDWT(r)
+ 37         PDT+  PDTF(r)
+ 38         POH   POH(r)
+ 39         PeDT  PEDTF(r)
+ 40         PeNB  PEX(r)
+ 41         Pe+   PETOT(r)
+ 42         Prad  PRAD(r)
+ 43         Pdi   PDI(r)
+ 44         Qidt  QIDWT(r)
+ 45         PNB+  PEX(r)+PIX(r)
+ 46         PIC+  CAR7X(r)+CAR8X(r)
+ 47         PiDT  PIDTF(r)
+ 48         PiNB  PIX(r)
+ 49  -4     QeSr  QETOT(r)
+ 50         QDT   QDTF(r)
+ 51         QeDT  QEDTF(r)
+ 52         QOH   QOH(r)
+ 53  -9     QiSr  QITOT(r)
+ 54         QICR  VINT(CAR7X)(r)+VINT(CAR8X)(r)
+ 55         QeNB  VINT(PEX)(r)
+ 56         QeIC  VINT(CAR7X)(r)
+ 57  -4     QeFl  QE(r)
+ 58         QNBI  VINT(PEX)(r)+VINT(PIX)(r)
+ 59         QiDT  QIDTF(r)
+ 60         Qei   QEICL(r)
+ 61  -9     QiFl  QI(r)
+ 62  -7     Qrad  QRAD(r)
+ 63         QiNB  VINT(PIX)(r)
+ 64         QiIC  VINT(CAR8X)(r)
+ 65         Qei   QEICL(r)
+ 66         PeNB  PEBM(r)
+ 67         Pedt  PEDTF(r)
+ 68         Pi    PITOT(r)
+ 69         PDTf  PDTF(r)
+ 70         PiNB  PIBM(r)
+ 71         Pe    PETOT(r)
+ 72         PeIC  PEICR(r)
+ 73         QeiG  QEIGN(r)
+ 74         Pex   PEX(r)
+ 75         Pidt  PIDTF(r)
+ 76         Pei   PEICL(r)
+ 77         PDT1  PEDT1(r)+PIDT1(r)
+ 78         Pix   PIX(r)
+ 79         Prad  PRAD(r)
+ 80         PiIC  PIICR(r)
+ 81  1.25   j     CU(r)
+ 82  1      nuis  NUIS(r)
+ 83  2.     shir  SHEAR(r)
+ 84  -1     Vtor  UPL(r)
+ 85  1      nues  NUES(r)
+ 86  1      mu    MU(r)
+ 87  1.25   jNB   CUBM(r)
+ 88         aMHD  ALMHD(r)
+ 89  1.25   joh   CUOHM(r)
+ 90         sigm  CC(r)
+ 91         betj  BETAJ(r)
+ 92  -1     V||   ULON(r)
+ 93  1.25   jBS   CUBS(r)
+ 94         q     1.d0/MU(r)
+ 95  2      Z_ef  ZEF(r)
+ 96  .125   jBSa  CAR4(r)
+ 97         L_Te  LTE(r)/ABC
+ 98  -5     tauE  TAUE(r)
+ 99         L_Ti  LTI(r)/ABC
+100  -5     taEe  TAUEE(r)
+101         L_ne  LNE(r)/ABC
+102  -5     taEi  TAUEI(r)
+103         L_ni  LNI(r)/ABC
+104         taSk  4.d-1*GP*CC(r)*RHO(r)**3.d0/G22(r)
+105         I_NB  IBM(r)
+106  -11    gGLF  CAR10X(r)
+107         p     1.6d-3*(NE(r)*TE(r)+NI(r)*TI(r)+5.d-1*NB2EQL*(PBLON(r)+PBPER(r)))
+108  -12    gGLF  WORK(J,10)
+109         w/g   WORK(J,8)/(WORK(J,10)+0.001)
+110         tpf   TPF(r)
+111  -11    wExB  ROTSH(r)
+112  -12    wExB  WORK(J,8)
+113  10     Dine  WORK(J,50)
+114  10     Dene  WORK(J,51)
+115  10     Dnne  WORK(J,52)
+116         1mf   CAR12X(r)
+117  10     DiTi  WORK(J,44)
+118  10     DeTi  WORK(J,45)
+119  10     DnTi  WORK(J,46)
+120         1mg   CAR10X(r)
+121  10     Dini  WORK(J,53)
+122  10     Deni  WORK(J,54)
+123  10     Dnni  WORK(J,55)
+124         2mf   CAR13X(r)
+125  10     DiTe  WORK(J,47)
+126  10     DeTe  WORK(J,48)
+127  10     DnTe  WORK(J,49)
+128         2mg   CAR11X(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Pfus  CFUS1*5.d0
+  2         Psep  CSOL1
+  3         Q     5.d0*CFUS1/(QEX(a)+QIX(a)+1.d-3)
+  4  -6     tauE  CV5
+  5         H98y  CV5/CV1
+  6         Paux  (QEX(a)+QIX(a))
+  7         <ne>  CV10
+  8  -6     ta98  CV1
+  9         Te0   TE0
+ 10         H89   TAUE(a)/TITER(r)
+ 11         Ti0   TIE
+ 12         Wequ  WTOT(a)+7.5d-1*CV6+1.5d0*CV7
+ 13         <Te>  TEAV(a)
+ 14             
+ 15         <Ti>  TIAV(a)
+ 16         Wtot  WTOT(a)+CV7+CV6
+ 17  .1     U(0)  UPL(2)
+ 18  -18    Ipl   IPL
+ 19  .1     <U>   CRF2
+ 20  -18    InI   ILH(a)+IBM(a)+IBS(a)
+ 21  .1     U(a)  UPL(a)
+ 22  -18    IBS   IBS(a)
+ 23  .1     U->   CF4
+ 24         INB   IBM(a)
+ 25  5      pemx  FRMAX(PDE)(r)
+ 26             
+ 27  5      pimx  FRMAX(PDI)(r)
+ 28             
+ 29  5      pemn  FRMIN(PDE)(r)
+ 30             
+ 31  5      pimn  FRMIN(PDI)(r)
+ 32             
+ 33  1.e2   dndt  CV11
+ 34  -5     n->   CBND4*CV12
+ 35         -ne-  NECH(0)
+ 36  -5     ne0   NEH
+ 37         NNCL  NNCL
+ 38  -5     <ne>  CV10
+ 39         nGr   CV12
+ 40         taup  TAUP(a)
+ 41         Ptot  QTOT(a)
+ 42         PeDT  QEDTF(a)
+ 43         POH   QOH(a)
+ 44         PeNB  VINT(PEBM)(a)
+ 45         Pei   QEICL(a)
+ 46         PiDT  QIDTF(a)
+ 47  100    dQdt  CV9
+ 48         PiNB  VINT(PIBM)(a)
+ 49         Pi    QITOT(a)
+ 50         PeN   QENEU(a)
+ 51         Qea   QE(a)
+ 52         Pion  QINEU(a)
+ 53         Pe    QETOT(a)
+ 54         PCX   QICX(a)
+ 55         Qia   QI(a)
+ 56         PNB   QBTOT(a)
+ 57         Palf  CFUS1
+ 58         Prad  QRAD(a)
+ 59         PrBe  VINT(PBOL1)(a)
+ 60         PAr   VINT(PBOL2)(a)
+ 61         Pscl  CF15
+ 62         Pbrs  QBRAD(a)
+ 63         Psyn  CRAD2*QSYNC(a)
+ 64         Plin  QRADX(a)
+ 65         ctrl  CMHD1
+ 66         li    LINT(a)
+ 67         a/p   CMHD2
+ 68         beTr  BETR(a)
+ 69  10     alim  CMHD3
+ 70         S     SLAT(a)
+ 71         betp  BETAJ(a)
+ 72         V     VOLUME
+ 73         q(0)  1.d0/MUY
+ 74         q95   1.d0/MU(CV16)
+ 75         qmin  1.d0/FRMAX(MU)(r)
+ 76         <He>  VINT(NALF)(a)/VOLUME
+ 77         q(a)  1.d0/MU(a)
+ 78         Iax   IX(a)
+ 79         qmax  1.d0/FRMIN(MU)(r)
+ 80         <ni>  VINT(NI)(a)/VOLUME
+ 81         drpd  1.d0-CBND1
+ 82         <nD>  VINT(NDEUT)(a)/VOLUME
+ 83         PFus  5.d0*QDT(a)
+ 84         <nT>  VINT(NTRIT)(a)/VOLUME
+ 85         dapd  ABC-AFX(CBND1)
+ 86         SeNB  VINT(SNEBM)(a)
+ 87         dpdr  CF11
+ 88         SeNN  VINT(CAR14)(a)
+ 89         NA1   NA1
+ 90         Np2   NODE(CBND1*ROC)+1.d0
+ 91         n1e   NA1E
+ 92         Nped  NA1-INT(CF2)
+ 93         n1n   NA1N
+ 94         shth  QNBI-QBTOT(a)
+ 95         Nmin  MIN(NA1,NA1N,NA1E,NA1I)
+ 96         Ised  IINT(CAR5)(a)
+ 97         Fedg  ROC*ROC*BTOR*GP
+ 98         Wtot  WTOT(a)
+ 99         Dgr+  CPEL4
+100             
+101         minD  -CHE4
+102         We    WE(a)
+103         Tedg  CF4
+104         Wi    WI(a)
+105         <dt>  1.d3*TIMAVG(TAU,5.d-1)
+106  1      lndt  TIMAVG(CV4,5.d-1)
+107  1      tauN  CV4
+108         Deff  CV15
+109         Stab  CF3

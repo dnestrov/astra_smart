@@ -1,0 +1,75 @@
+ =====   Variables definition   =====
+!------------------------------------------------------------------------------
+! Two equations, F0 and F1, describe stiff model behaviour
+! F0 includes transport barrier, F1 does not
+! In both models, confinement becomes anomalous if |dFj/dx|-1>0
+! Additionally, the confinement improvement is enabled if |dF0/dx|-1>sqrt(0.07)
+! Typically, the coefficient in front of stiff transport should be
+! of the order of DVFj (both are CF1=1 in this model)
+!------------------------------------------------------------------------------
+! Additional check: Disable stiff transport, disable DVF1 but keep DVF0=1.d0
+! Compare F0 and F1, QF0 and QF1, etc.
+!------------------------------------------------------------------------------
+ NEQUIL=-2.d0
+ TAUMIN=1.d-6
+ DROUT=0.d0
+ DPOUT=1.d2
+ CF4=FRMAX(CAR1)(r)
+!------------------------------------------------------------------------------
+!Perr\PDE;	Pirr\PDI;	Qerr\QDE;	Qirr\QDI;
+!1/q\MU;	q\1/MU;		j\CU\-4;
+!------------------------------------------------------------------------------
+!------------------------------------------------------------------------------
+ CAR2(r)=1.d-1+FX(r)**1.d1
+ CAR3(r)=MAX(1.d-3,-GRAD(F0)(r)-1.d0)
+ CAR4(r)=7.d-2/CAR3(r)
+ CAR1(r)=-GRAD(F0)(r)
+ =====   Initial distributions   =====
+ NE(r)=1.d0
+ TE(r)=1.d0
+ TI(r)=1.d0
+ F0(r)=1.d-1
+ F1(r)=1.d-1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -1     u     F0(r)
+  2  -2     Q_Sr  Q0TOT(r)
+  3         Serr  SD0(r)
+  4  1      D_an  MAX(0.d0,-GRAD(F0)(r)-1.d0)
+  5  1      D_an  DF0(r)-CAR2(r)
+  6  2      u_x   CAR1(r)
+  7         S     SF0(r)
+  8         DF0   DF0(r)
+  9  -1     u1    F1(r)
+ 10  -2     Q_Fl  QF0(r)
+ 11         Qerr  QD0(r)
+ 12  1      D_br  CAR4(r)
+ 13  1      D_rs  CAR2(r)
+ 14  2      u_cr  1.d0
+ 15               0.d0
+ 16         DF1   DF1(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Fxmx  CF4
+  2         Cmx   CF3
+  3         2-Fx  2.d0-CF4
+  4         tamx  1.d3*TAUMAX
+  5         F0    F0(0)
+  6         <F0>  VINT(F0)(a)/VOLUME
+  7             
+  8         Ipl   IPL
+  9         Te0   TE(0)
+ 10         ne0   NE(0)
+ 11         <Te>  TEAV(a)
+ 12         Vol   VOLUME
+ 13         Ti0   TI(0)
+ 14         <ne>  NEAV(a)
+ 15         <Ti>  TIAV(a)

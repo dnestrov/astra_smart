@@ -1,0 +1,37 @@
+ =====   Variables definition   =====
+ CAR1(r)=CF2*FX(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=CC(r)*const
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ Start-up with a prescribed MU distribution
+ =====   Equations & subroutines  =====
+ ---->  No equation for NE 
+ ---->  No equation for TE 
+ ---->  No equation for TI 
+ ---->  CU  is assigned
+ >>> Warning: "CC" is not defined in the model
+ MU(r)=1.d0/CF1
+ >>> Warning: "CC" is not defined in the model
+ CC(r)=CCSP(r)
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         alim  5.d-1*ALT(r)/GP2
+  2         shir  CAR1(r)
+  3         mu    MU(r)
+  4         elon  ELONG
+  5         tria  TRIAN
+  6         sqe   ABC/RTOR
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression

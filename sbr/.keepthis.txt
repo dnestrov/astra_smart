@@ -1,0 +1,1 @@
+dir for softlinks to Astra core

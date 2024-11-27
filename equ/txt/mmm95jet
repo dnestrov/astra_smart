@@ -1,0 +1,234 @@
+ =====   Variables definition   =====
+!============================================================
+! Thermal transport in plasma with T puff, full MMM matrix
+! reduce time step during power rise and T puff
+! Plasma densities:
+! ND = NDEUT = CAR2
+! NT = NTRIT = CAR3
+! = NALF =
+! = NIMP = CAR5X
+! = NFI = fusion fast ion density
+! TE, TI, CUR(CU), ZEFFPRO(ZEF), OMEGA(VTORX/R)
+! Heat sources:
+! TRANSP ASTRA  file extension
+! PBE	CAR6X	pbe
+! PBI   CAR7X	pbi
+! PBTH  CAR8X	pth
+! POH   CAR9X	poh
+! PRAD  PRADX	rad - electron losses
+! PION  CAR10X	pio - electron losses
+! P0NET	CAR15X	pnt - ion losses
+! PEICH CAR11X  pfe - ICRF electron heating
+! PIICH CAR16X  pfi - ICRF ion heating
+! Particle sources:
+! SVD	CAR12X	svd	
+! SVT	CAR13X	svt
+! SWD	CAR14X	swd
+! SWT   CAR1X	swt
+! start time: 21 (61132)-bad with ExB, 21 s (61097)-ok, 18 (61138) - ok
+!
+! dt = 1ms,
+! 61161 - start_time = 5.5 s, 61520 - 17.6 s
+!============================================================
+ MESHEQ=2.1d1
+ AIM1=1.2d1
+!NDEUT=F2;
+!neocl2:;
+!========	Transport coefficients from MMM (full matrix)
+!mmm4b::::;
+!=========	(2) version with full matrix		======
+!		thermal ion transport	
+!		thermal electron transport
+!		DEUTERIUM TRANSPORT
+!CAR19=-CAR11-CAR12-CAR13;	CUTF(0.1,CAR19,CAR18):;
+!============================================================
+!F2:[2,0.9];  F2=CAR2X;		! for Deuterium
+!SF2=CAR12X+CAR14X;
+!========	Electric field	=====================
+ CF3=0.d0
+ >>> Warning: Too long name in channel 44 <<<
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ NALF(r)=0.d0
+ NTRIT(r)=CAR3X(r)
+ NIZ1(r)=CAR5X(r)
+ ZIM1(r)=6.d0
+ NDEUT(r)=CAR2X(r)
+ NI(r)=NDEUT(r)+NTRIT(r)+NALF(r)+CAR5X(r)
+ ZEF(r)=(NDEUT(r)+NTRIT(r)+NALF(r)*4.d0+ZIM1(r)*ZIM1(r)*NIZ1(r))/(NE(r)+1.d-4)
+ CAR25(r)=GRAD(NDEUT)(r)/(NDEUT(r)+1.d-4)
+ CAR27(r)=GRAD(NIZ1)(r)/(NIZ1(r)+1.d-6)
+ CAR22(r)=WORK(J,78)
+ CAR1(r)=CAR22(r)
+ CAR29(r)=WORK(J,66)+WORK(J,90)*CAR25(r)+WORK(J,114)*CAR27(r)
+ CAR2(r)=CAR29(r)
+ CAR20(r)=WORK(J,104)
+ CAR14(r)=CAR20(r)
+ CAR28(r)=WORK(J,68)+WORK(J,92)*CAR25(r)+WORK(J,116)*CAR27(r)
+ CAR15(r)=CAR28(r)
+ CAR3(r)=WORK(J,91)
+ CAR16(r)=CAR3(r)
+ CAR5(r)=WORK(J,79)
+ CAR7(r)=WORK(J,103)
+ CAR9(r)=WORK(J,115)
+ CAR11(r)=CAR6(r)*GRAD(TI)(r)/TI(r)
+ CAR12(r)=CAR8(r)*GRAD(TE)(r)/TE(r)
+ CAR13(r)=CAR10(r)*CAR27(r)
+ PRAD(r)=PRADX(r)
+ VTOR(r)=RTOR*VTORX(r)
+ VPOL(r)=VPSWW(r)
+ ER(r)=BTOR*(FRS(r)*MU(r)*VTOR(r)/RTOR+VDIA(r)-VPOL(r))
+ CAR30(r)=CF3*ROTSH(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=CUX(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  NE  is assigned
+ NE(r)=NEX(r)
+ NE(a_b)=NEX(a)
+ ---->  Subroutine  1: mmm4a
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  2: SMEARR(0.01,CAR1,CAR23)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  3: SMEARR(0.01,CAR2,CAR17)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  4: SMEARR(0.01,CAR14,CAR21)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  5: SMEARR(0.01,CAR15,CAR31)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  6: SMEARR(0.01,CAR16,CAR4)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  7: SMEARR(0.01,CAR5,CAR6)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  8: SMEARR(0.01,CAR7,CAR8)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  9: SMEARR(0.01,CAR9,CAR10)
+        is called at -99999<TIME< 99999 with dt=Def.  
+  >>> Warning: Boundary condition for TE is not set.
+              TEX(t) will be used at the shifted boundary
+ ---->  Equation for TE 
+ HE(r)=CAR21(r)+HNGSE(r)+WORK(J,26)
+ DE(r)=0.d0
+ XE(r)=WORK(J,80)
+ CE(r)=-CAR31(r)
+ TE(r)=TEX(r)
+ PET(r)=-PEI(r)
+ PE(r)=CAR6X(r)-PET(r)*TI(r)-PRAD(r)+CAR9X(r)-CAR10X(r)+CAR11X(r)
+  >>> Warning: Boundary condition for TI is not set.
+              TIX(t) will be used at the shifted boundary
+ ---->  Equation for TI 
+ XI(r)=CAR23(r)+HNCHI(r)+HNPSI(r)+WORK(J,24)
+ HI(r)=WORK(J,102)
+ DI(r)=0.d0
+ CI(r)=-CAR17(r)
+ TI(r)=TIX(r)
+ PIT(r)=PET(r)
+ PI(r)=-PET(r)*TE(r)+CAR7X(r)+CAR8X(r)-CAR15X(r)+CAR16X(r)
+ ---->  CU  is assigned
+ CC(r)=CNHR(r)
+ CU(r)=CUX(r)
+ HC(r)=HCHR(r)
+ DC(r)=DCHR(r)
+ XC(r)=XCHR(r)
+ Iterative correction algorithm is added
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -4     Te    TE(r)
+  2  -6     ne    NE(r)
+  3         Pbi   CAR7X(r)+CAR8X(r)
+  4  -1     ke    HE(r)
+  5  -5     Ti    TI(r)
+  6  -3     nd    F2(r)
+  7         ZEFx  ZEFX(r)
+  8  -1     ki    XI(r)
+  9  -4     Tex   TEX(r)
+ 10  -6     nd    NDEUT(r)
+ 11         Pbe   CAR6X(r)
+ 12  -1     keW   CAR21(r)
+ 13  -5     Tix   TIX(r)
+ 14  -3     ndx   CAR2X(r)
+ 15         Zef   ZEF(r)
+ 16  -1     kiW   CAR23(r)
+ 17         om1   WORK(J,42)
+ 18         om2   WORK(J,43)
+ 19         om3   WORK(J,44)
+ 20         om4   WORK(J,45)
+ 21         om5   WORK(J,46)
+ 22         om6   WORK(J,47)
+ 23         om7   WORK(J,48)
+ 24         om8   WORK(J,49)
+ 25         g_1   WORK(J,30)
+ 26         g_2   WORK(J,31)
+ 27         g_3   WORK(J,32)
+ 28         g_4   WORK(J,33)
+ 29         g_5   WORK(J,34)
+ 30         g_6   WORK(J,35)
+ 31         g_7   WORK(J,36)
+ 32         g_8   WORK(J,37)
+ 33  -2     gmax  WORK(J,28)
+ 34         Dd    DF2(r)
+ 35         Vd    VF2(r)
+ 36         Pion  CAR10X(r)
+ 37         P0nt  CAR15X(r)
+ 38         kinc  HNCHI(r)+HNPSI(r)
+ 39         om10  WORK(J,51)
+ 40         beta  BETAJ(r)
+ 41  -2     wExB  ROTSH(r)
+ 42         omax  WORK(J,29)
+ 43         Vncl  -WORK(J,163)
+ 44         rrPr  PRAD(r)
+ 45         g_9   WORK(J,38)
+ 46         kenc  HNGSE(r)
+ 47         g_10  WORK(J,39)
+ 48         om9   WORK(J,50)
+ 49         CI    CI(r)
+ 50         XE    XE(r)
+ 51         Er    ER(r)
+ 52         Edia  BTOR*VDIA(r)
+ 53         Pfi   CAR16X(r)
+ 54         q     1.d0/MU(r)
+ 55         nimp  CAR5X(r)
+ 56         kRBM  WORK(J,24)
+ 57         HI    HI(r)
+ 58         CE    CE(r)
+ 59         Etor  BTOR*FRS(r)*MU(r)*VTOR(r)/RTOR
+ 60         Epol  BTOR*VPOL(r)
+ 61         Pfe   CAR11X(r)
+ 62         j     CU(r)
+ 63         betN  BETR(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  -4     Te0   TE(0)
+  2  -5     Ti0   TI(0)
+  3  -12    Te05  TE(5.d-1)
+  4  -11    Ti05  TI(5.d-1)
+  5  -4     Tex0  TEX(0)
+  6  -5     Tix0  TIX(0)
+  7  -12    Tex5  TEX(5.d-1)
+  8  -11    Tix5  TIX(5.d-1)
+  9         Pnbi  VINT(CAR7X)(a)+VINT(CAR8X)(a)
+ 10  -1     Wblk  WTOT(a)
+ 11  -3     <Te>  TEAV(a)
+ 12         tauE  TAUE(a)
+ 13         Pnbe  VINT(CAR6X)(a)
+ 14         li    LINT(a)
+ 15  1      betj  BETAJ(a)
+ 16         Qlos  VINT(CAR10X)(a)+VINT(CAR15X)(a)+VINT(PRADX)(a)
+ 17         Prf   VINT(CAR11X)(a)+VINT(CAR16X)(a)
+ 18         <ne>  NEAV(a)
+ 19         Ipl   ITOT(a)
+ 20         q(0)  1.d0/MU(0)
+ 21         betN  WTOT(a)/BTOR/IPL*AMETR(a)*4.d0*3.14d-1

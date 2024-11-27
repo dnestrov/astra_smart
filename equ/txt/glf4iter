@@ -1,0 +1,235 @@
+ =====   Variables definition   =====
+!--------------------------------------------------------------------------
+! Equ file "glf4iter" is based on the GLF23 transport model. Start file "feat"
+! The model of 16-Sep-2005 is changed after 8-May-2008
+!--------------------------------------------------------------------------
+!==================== Grad-Shafranov equation =============================
+ NEQUIL=4.1d1
+!==================== Electron and ion densities ==========================
+ AIM1=1.2d1
+!==================== Auxiliary heating ===================================
+ CNB1=2.d0
+! Note: Parameters CF7, CF8 are used in feat.nbi for the beam power
+!==================== Plasma rotation =====================================
+!==================== GLF23 transport model ===============================
+! Output parameters:
+! (1) R/L_Tcrit for ITG mode, (2) R/L_Tcrit for C branch,
+! (3) not used, (4) gamma_l, (5) chi_i, (6) chi_e
+! IFSPPL(CAR19,CAR20,CAR21,CAR22,CAR24,CAR23):;
+! CAR19 - ion diffusivity, m^2/s (not used)
+! CAR20 - toroidal velocity diffusivity, m^2/s (not used)
+! CAR21 - ExB shear rate in units of CS/ROC
+! CAR22 - leading mode rate in units of CS/ROC
+! CAR24 - ion thermal diffusivity, m^2/s
+! CAR23 - electron thermal diffusivity, m^2/s
+ CV2=CV4*TAU
+!CAR31=HNGSE+CAR17*CAR30;	CAR32=HNASC*CF5+CAR18*CAR30;
+!SETRAN(HE,CAR31,XI,CAR32):;	HE=HE;	XI=XI;
+!====================  Heat transport equations ===========================
+!====================  Particle transport =================================
+!====================  Poloidal field equation ============================
+!====================  Time step control  =================================
+!==================== Auxiliary quantities ================================
+ CV5=8.d-4*VINT(PBLON)(a)
+ CV6=1.6d-3*VINT(PBPER)(a)
+ CV7=FRMAX(CAR16)(r)
+ CV8=QDT(a)
+ CV9=TIMDER(CV8)
+ CV10=NEAV(a)
+ CV11=TIMDER(CV10)
+ >>> Warning: Too long name in channel  3 <<<
+ CAR14=1.8
+ >>> Warning: Too long name in channel 18 <<<
+ CAR1=1.8
+ CAR1=1.5
+ CAR1=1.5
+! Output for GLF23 model:
+!gamm\CAR22*CS/ROC\-8;	D\CAR19\5;	K_t\CAR20;
+!gamma\CAR22[.9]@2;
+ ZEF(r)=ZEFX(r)
+ ZEF(r)=1.5d0
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZIM1(r)=6.d0
+ ZEF1(r)=ZIM1(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=5.d-1*(NI(r)-NIZ1(r)-NIBM(r))
+ NTRIT(r)=NDEUT(r)
+ VTOR(r)=VTORX(r)
+ VPOL(r)=VPSWW(r)
+ ER(r)=BTOR*(FRS(r)*MU(r)*VTOR(r)/RTOR+VDIA(r)-VPOL(r))
+ CAR28(r)=BTOR*FRS(r)*MU(r)*VTOR(r)/RTOR
+ CAR19(r)=WORK(J,3)
+ CAR20(r)=WORK(J,4)
+ CAR21(r)=WORK(J,8)
+ CAR22(r)=1.d0+WORK(J,10)
+ CAR24(r)=WORK(J,1)
+ CAR23(r)=WORK(J,2)
+ CAR17(r)=FTAV(CAR25(r),CV2)
+ CAR18(r)=FTAV(CAR26(r),CV2)
+ CAR30(r)=1.d0-EXP(-((AMETR(r)-ABC)/CF3)**4.d0)
+ PRAD(r)=PRADX(r)+PBRAD(r)+PSYNC(r)
+ CAR16(r)=XSTEP(9.d-1)(r)*SQZ(r)
+ CAR15(r)=RTOR/LTI(r)-CAR19(r)
+ CAR15(r)=STEP(CAR15(r))*CAR15(r)
+ CAR15(r)=SQRT(CAR15(r))
+ CAR14(r)=SNN(r)*NE(r)
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -1     n_e   NE(r)
+  2  -2     RLTc  CAR22(r)
+  3  1.e4   gamm  CAR22(r)
+  4  -7     KDis  CAR4(r)
+  5  -3     Te    TE(r)
+  6         c15   CAR15(r)
+  7  5      KDes  CAR17(r)
+  8  -7     KDis  CAR18(r)
+  9  -1     n_d   NDEUT(r)
+ 10  -2     RLTi  RTOR/LTI(r)
+ 11         wExB  ROTSH(r)
+ 12  -7     KDi   CAR24(r)
+ 13  -3     Ti    TI(r)
+ 14         w/g   ROTSH(r)/CAR22(r)
+ 15  5      KDe   CAR23(r)
+ 16  -7     KDi   CAR24(r)
+ 17  -5     ErVd  BTOR*VDIA(r)
+ 18  -8     gamm  CAR22(r)
+ 19         Pedt  PEDT(r)
+ 20         Pbrm  PBRAD(r)
+ 21  -5     Er    ER(r)
+ 22         rhos  RLS(r)
+ 23         Pe    PETOT(r)
+ 24         PNBe  PEBM(r)
+ 25  -5     ErVp  -VPOL(r)*BTOR
+ 26  -8     wExB  ROTSH(r)
+ 27         Pidt  PIDT(r)
+ 28         Psnc  PSYNC(r)
+ 29  -5     ErVt  CAR28(r)
+ 30  1      w/g   ROTSH(r)/CAR22(r)
+ 31         Pi    PITOT(r)
+ 32         PNBi  PIBM(r)
+ 33         n_e   NE(r)
+ 34         n_d   NDEUT(r)
+ 35         D_e   DN(r)
+ 36         Gd    -DN(r)*GRAD(NE)(r)
+ 37  5000   Gflx  QN(r)
+ 38         NN    NN(r)
+ 39         Se    SNTOT(r)
+ 40         sqz   SQZ(r)
+ 41         n_i   NI(r)
+ 42         n_t   NTRIT(r)
+ 43         pinc  CN(r)
+ 44         Gv    -CN(r)*NE(r)
+ 45  5000   Gsrc  QNTOT(r)
+ 46         TN    TN(r)
+ 47         SeNB  SNEBM(r)
+ 48               0.d0
+ 49  -4     j     CU(r)
+ 50         p     PREST(r)
+ 51         p_e   PRESE(r)
+ 52         Vtor  UPL(r)
+ 53  -4     jNB   CUBM(r)
+ 54         Zeff  ZEF(r)
+ 55  2.     shat  SHEAR(r)
+ 56  1      mu    MU(r)
+ 57  -4     joh   CUOHM(r)
+ 58         tpf   TPF(r)
+ 59         p_i   PRESI(r)
+ 60         V||   ULON(r)
+ 61  -4     jBS   CUBS(r)
+ 62  -12    sigm  CC(r)
+ 63         betj  BETAJ(r)
+ 64  5      q     1.d0/MU(r)
+ 65  10     ncCH  HNCHI(r)
+ 66  10     GSba  HNGSB(r)
+ 67         grVt  GRAD(VTORX)(r)
+ 68         nuis  NUIS(r)
+ 69  10     ncPS  HNPSI(r)
+ 70  10     KDes  CAR17(r)
+ 71  10     KDis  CAR18(r)
+ 72         prad  PRADX(r)
+ 73  10     ncGS  HNGSI(r)
+ 74  10     GSpl  HNGSP(r)
+ 75         HeGS  HNGSE(r)
+ 76         nues  NUES(r)
+ 77         ncfw  FOWC(r)*HNCHI(r)
+ 78  10     KDe   CAR23(r)
+ 79  10     KDi   CAR24(r)
+ 80         PN    PENEU(r)-PINEU(r)
+ 81  -11    ne    NE(r)
+ 82         QeFl  QE(r)
+ 83         gIP   CAR22(r)
+ 84         nB    NIBM(r)
+ 85         pNBl  PBLON(r)
+ 86         QiFl  QI(r)
+ 87         RLIP  CAR19(r)
+ 88         nB1   NNBM1(r)
+ 89  -11    ni    NI(r)
+ 90         QeSr  QETOT(r)
+ 91         gA    GITG(r)
+ 92  1      c30   CAR30(r)
+ 93         pNBp  PBPER(r)
+ 94         QiSr  QITOT(r)
+ 95         RLA   RLTCR(r)
+ 96         Zeff  ZEF(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Palf  CV8
+  2         Ptot  QTOT(a)
+  3         PNBt  QBTOT(a)
+  4         Pe    QETOT(a)
+  5         Pi    QITOT(a)
+  6         Prad  QRAD(a)
+  7         POH   QOH(a)
+  8         Q     5.d0*CV8/QNBI
+  9         Ti0   TI(0)
+ 10         PNBI  QNBI
+ 11         Te0   TE(0)
+ 12         Wthm  WTOT(a)
+ 13         <Te>  TEAV(a)
+ 14         Wtot  WTOT(a)+CV5+CV6
+ 15         <Ti>  TIAV(a)
+ 16         Wequ  WTOT(a)+7.5d-1*CV6+1.5d0*CV5
+ 17         ne0   NE(0)
+ 18         ni0   NI(0)
+ 19         li    LINT(a)
+ 20         nz0   NIZ1(0)
+ 21         <ne>  CV10
+ 22         nlc   NECH(0)
+ 23         betp  BETAJ(a)
+ 24         Zef0  ZEF(0)
+ 25         TiB   TI(a)
+ 26         Ipl   IPL
+ 27         iter  TITER(r)
+ 28         INB   IBM(a)
+ 29         TeB   TE(a)
+ 30         Ulc   UPL(a)
+ 31         tauE  TAUE(a)
+ 32         IBS   IBS(a)
+ 33         PNB   QBEAM
+ 34         Gout  1.d-1*QN(a)
+ 35         shth  QBEAM-QBTOT(a)
+ 36         Gint  1.d-1*QNTOT(a)
+ 37         V     VOLUME
+ 38         S     SLAT(a)
+ 39         taup  TAUP(a)
+ 40         neo%  CV7
+ 41         dQdt  CV9/1.d2
+ 42         NNCL  NNCL
+ 43         dndt  CV11
+ 44         Ginc  1.d-1*VINT(CAR14)(a)

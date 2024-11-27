@@ -1,0 +1,201 @@
+ =====   Variables definition   =====
+!--------------------------------------------------------------------------
+!NEQUIL=-2;	! Cylinder
+ NEQUIL=1.01d2
+ NITREQ=3.d1
+!TAUMIN=1.d-3;	TAUMAX=TAUMIN;
+!TAUMIN=1.d-5;	TAUMAX=1.;
+ DROUT=0.d0
+ DTOUT=1.d-1
+ DPOUT=1.d-1
+ TSCALE=-1.d1
+ TAUINC=1.1d0
+ DELVAR=1.d-3
+! xpr/wcpo&<:0.1;
+!xpr/template&:;
+!xpr/tb/torbeam&:;
+!xpr/torbeam&:;
+!EQPR1D("solver2/EQOUT0000100.DAT"):1.d2;
+!NE:AS;	NE=5;
+!TE::2.5;	HE=1.5;		PE=0.05;	TE=.5+.95*FPR;	TEB=.5;
+!TI::2.5;	XI=1.5;		PI=0.05;	TI=.5+.95*FPR;	TIB=.5;
+!CU:;	CC=CNHR;	CU=FPR;		!CC=CCSP;
+!NI=NE;	
+!----------------------------------------------------------------------------
+!n_i\NI*1.d19;	n_e\NE*1.d19;	T_i\TI*1.d3;	T_e\TE*1.d3;
+!a\AMETR;	Psi\FP;		j\CU*1.d6;	q\1/MU;
+!U_pl\UPL;	\;		\;		\;
+!\;		\;		\;		\;
+!Phi\GP2*BTOR*RHO**2;	
+!gm1\"work1(j,1)";	Vpri\"work(j,5)";	gm5\"work1(j,5)";	A\CAR5X;
+!gm2\"work1(j,2)";	drda\DRODA;		q\"work(j,1)";		B\CAR6X;
+!gm3\"work1(j,3)";	p\"work(j,2)";		S\"work(j,6)";	j\"work(j,3)";
+!gm4\"work1(j,4)";	gm7\"work1(j,7)";	V\"work(j,4)";	apri\"work(j,7)";
+!VRS\VRS;	gsVS\grads(VRS);GRRO\GRADRO;	gsgr\GRADS(GRADRO);
+!----------------------------------------------------------------------------
+!	I_"IINT(WORK(1,3),ROC)";
+ VTOR(r)=F0(r)
+ ER(r)=BTOR*(VDIA(r)-VPOL(r)+VTOR(r)*MU(r)*FRS(r)/RTOR)
+ VPOL(r)=VPSWW(r)
+ =====   Initial distributions   =====
+ NE(r)=5.d0+5.d0*FPR(r)
+ TE(r)=5.d-1+9.5d-1*FPR(r)
+ TI(r)=5.d-1+9.5d-1*FPR(r)
+ CU(r)=FPR(r)
+ F0(r)=-2.d4*FPR(r)
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         G22   G22(r)
+  2         G11   G11(r)
+  3         A     CAR5(r)
+  4         j     CU(r)
+  5  -1     n_e   NE(r)
+  6         VR    VR(r)
+  7         pp    EQPF(r)
+  8  -8     q     1.d0/MU(r)
+  9         I_pl  ITOT(r)
+ 10         dVR   (VR(r)-VRO(r))/VR(r)
+ 11         B     CAR6(r)
+ 12         U_pl  UPL(r)
+ 13         a/rh  AMETR(r)/RHO(r)
+ 14         VRO   VRO(r)
+ 15         FFp   EQFF(r)
+ 16  1      mu    MU(r)
+ 17  -2     T_e   TE(r)
+ 18  -3     Pe_s  QETOT(r)
+ 19         pp    EQPF(r)
+ 20         j     CU(r)
+ 21  -1     n_e   NE(r)
+ 22  -4     Pi_s  QITOT(r)
+ 23         dVR   VR(r)-VRO(r)
+ 24  -8     q     1.d0/MU(r)
+ 25  -2     T_i   TI(r)
+ 26  -3     qe    QE(r)
+ 27         beta  BETAJ(r)
+ 28         U_pl  UPL(r)
+ 29  -1     n_i   NI(r)
+ 30  -4     qi    QI(r)
+ 31         a/rh  AMETR(r)/RHO(r)
+ 32  1      mu    MU(r)
+ 33         q     1.d0/MU(r)
+ 34         j     CU(r)
+ 35         PsiA  FP(r)
+ 36         V_t   F0(r)
+ 37         T_e   TE(r)
+ 38         T_i   TI(r)
+ 39         n_e   NE(r)
+ 40         n_i   NI(r)
+ 41         q_E   CAR2X(r)
+ 42         j_E   CUX(r)
+ 43         PsiE  CAR1X(r)
+ 44         U_pl  UPL(r)
+ 45         T_eE  TEX(r)
+ 46         T_iE  TIX(r)
+ 47         n_eE  NEX(r)
+ 48         n_iE  NIX(r)
+ 49         j     CU(r)
+ 50         sigm  CC(r)
+ 51         n_e   NE(r)
+ 52         PJol  CU(r)*ULON(r)/(GP2*RTOR*IPOL(r)*G33(r))
+ 53  1      mu    MU(r)
+ 54         p_e   PRESE(r)
+ 55         j||   CU(r)
+ 56         POH   CC(r)*(ULON(r)/(GP2*RTOR*IPOL(r)))**2.d0/G33(r)
+ 57         Upl   UPL(r)
+ 58         jbs   CUBS(r)
+ 59         n_i   NI(r)
+ 60         PJne  CUTOR(r)*UPL(r)/(GP2*RTOR)
+ 61  5      q     1.d0/MU(r)
+ 62         p_i   PRESI(r)
+ 63         jtor  CUTOR(r)
+ 64         P_i   PEICL(r)
+ 65         g11   G11(r)
+ 66         g22   G22(r)
+ 67         jbs   CUBS(r)
+ 68         tria  TRIA(r)
+ 69         V     VR(r)
+ 70         g33   G33(r)
+ 71  1      mu    MU(r)
+ 72         shif  SHIF(r)
+ 73         a     AMETR(r)
+ 74         Upl   UPL(r)
+ 75         j     CU(r)
+ 76         beta  BETAJ(r)
+ 77         Vo    VRO(r)
+ 78         IPOL  IPOL(r)
+ 79  5      q     1.d0/MU(r)
+ 80         elon  ELON(r)
+ 81         GM1   VR(r)*G33(r)/RTOR**2.d0
+ 82         Vpri  VRS(r)
+ 83         GM5   BDB02(r)*BTOR**2.d0
+ 84         n_an  NE(a)+1.25d0*(ABC**2.d0-RHO(r)**2.d0)
+ 85         GM2   G22(r)*IPOL(r)/RTOR*GP2**2.d0
+ 86         r/a   RHO(r)/AMETR(r)
+ 87         q     1.d0/MU(r)
+ 88         B     CAR6(r)
+ 89         GM3   G11(r)/VRS(r)
+ 90         p     PRESE(r)+PRESI(r)
+ 91         S     SLAT(r)
+ 92         j     CU(r)
+ 93         GM4   B0DB2(r)/BTOR**2.d0
+ 94         GM7   GRADRO(r)
+ 95         V     VOLUM(r)
+ 96         apri  GRADS(SLAT)(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  -1     Te0   TED
+  2         ne0   NED
+  3  -1     <Te>  TEAV(a)
+  4  -3     U(0)  UPLB
+  5  -1     Ti0   TIC
+  6         <ne>  NEAV(a)
+  7  -1     <Ti>  TIAV(a)
+  8  -3     U(a)  UPL(a)
+  9         Psi0  FPB
+ 10         Wblk  WTOT(a)
+ 11         Psi   FP(a)
+ 12         We    WE(a)
+ 13         q(0)  1.d0/MUA
+ 14         Wi    WI(a)
+ 15         q(a)  1.d0/MU(a)
+ 16         ha/h  HROA/HRO
+ 17         ROC   ROC
+ 18         H     HRO
+ 19         NA1   NA1
+ 20         HA    HROA
+ 21         li    LINT(a)
+ 22  1      betj  BETAJ(a)
+ 23         tauE  TAUE(a)
+ 24         tau   TAU
+ 25         QETB  QETOT(a)
+ 26         dQE   QETOT(a)-QE(a)
+ 27         QEB   QE(a)
+ 28         QJB   QJOUL(a)
+ 29         QITB  QITOT(a)
+ 30         dQI   QITOT(a)-QI(a)
+ 31         QIB   QI(a)
+ 32         QOH   QOH(a)
+ 33         Vol   VOLUME
+ 34         VolB  VOLUM(a)
+ 35         VolN  VOLUME/(GP2*GP*ABC*ABC*RTOR)
+ 36         ABC   ABC
+ 37         Iqe   TIMINT(QE(a))
+ 38         Iqi   TIMINT(QI(a))
+ 39         Iqn   TIMINT(QN(a))
+ 40         Poh   QJOUL(a)
+ 41         Nste  NSTEPS
+ 42         nec   NECH(0)
+ 43         ITrE  ITREQ
+ 44         CF1   CF1
+ 45         Tin   TINIT
+ 46         Tsc   TSCALE
+ 47         Tcmp  TINIT+1.025d0*ABS(TSCALE)

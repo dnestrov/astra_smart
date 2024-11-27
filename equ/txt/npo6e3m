@@ -1,0 +1,154 @@
+ =====   Variables definition   =====
+ NEQUIL=1.d2
+ MEQUIL=1.d2
+!ESP:;
+ NITREQ=1.d2
+!TAUMIN=.001;	TAUMAX=1;
+!CD=CCD1*fpr**CCD2+ CCD3*flin*(1-flin);
+!HC=HCSA;	DC=DCSA;	XC=XCSA;
+!j_||\CU-CAR19;	IPOL\IPOL-CAR13;rho\RHO-CAR3;	T_e\TE-CAR15;
+!\;		IPOL\IPOL\1;	\;		\;
+!\;		\;		\;		\;
+!CU\CU;		c13\CAR13\1;	rho\RHO;	T_e\TE;
+!j_bs\CUBS-CAR17;j_cd\CD-CAR16;	EQPF\EQPF-CAR1;	EQFF\EQFF-CAR2;
+!\;		\;		\;		\;
+!\;		\;		\;		\;
+!j_bs\CUBS;	j_cd\CD;	EQPF\EQPF;	EQFF\EQFF;
+!VR\VR-CAR8;	VRS\VRS-CAR9;	FP\FP-CAR4;	pres\PREST-CAR18;
+!\;		\;		\;		\;
+!1\VR*G33*IPOL/(RHO*RTOR*GP2**2)-1;1\CAR8*CAR7*CAR13/(RHO*RTOR*GP2**2)-1; \; \;
+!VR\VR;		VRS\VRS;	FP\FP;		pres\PREST;
+!G11\G11-CAR5;	G22\G22-CAR6;	G33\G33-CAR7;	CC\CC-CAR14;
+!\;		\;		\;		\;
+!\;		\;		\;		\;
+!G11\G11;	G22\G22;	G33\G33;	CC\CC;
+ ZE=1.8
+ ZEF =1.8
+ ZEF=1.8
+ Z=1.8
+ ZE=1.8
+ ZEF =1.8
+!li3_eli3;	
+ NI(r)=NE(r)
+ ZEF(r)=2.d0
+ =====   Initial distributions   =====
+ NE(r)=1.d1*FPR(r)+2.d-2
+ TE(r)=2.d1*FPR(r)+2.d-1
+ TI(r)=1.5d1*FPR(r)+2.d-1
+ CU(r)=CC(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         j     CU(r)
+  2         fp    EQPF(r)
+  3         gG22  GRADS(G22)(r)
+  4               0.d0
+  5         CC    CC(r)
+  6               0.d0
+  7         G22   G22(r)
+  8         VR    VR(r)
+  9  .2     j     CU(r)
+ 10  .1     ff    EQFF(r)
+ 11         U_pl  UPL(r)
+ 12         U_pl  UPL(r)
+ 13               0.d0
+ 14               0.d0
+ 15               0.d0
+ 16         G11   G11(r)
+ 17  -1     J     CU(r)
+ 18  -3     Upl   UPL(r)
+ 19         dg22  CAR6(r)-G22(r)
+ 20         eqpf  EQPF(r)
+ 21  -1     Jbs   CUBS(r)
+ 22  -4     Ne    NE(r)
+ 23  -7     Ti    TI(r)
+ 24         q     1.d0/MU(r)
+ 25         cc    CC(r)
+ 26  -3     U_||  ULON(r)
+ 27               0.d0
+ 28         eqff  EQFF(r)
+ 29  -1     Jcd   CD(r)
+ 30  -4     Ni    NI(r)
+ 31  -7     Te    TE(r)
+ 32  1      ft    FTLLM(r)
+ 33  -18    bmin  BMINT(r)
+ 34         MU    MU(r)-CAR12(r)
+ 35  1      bdb0  BDB0(r)
+ 36         grho  GRADRO(r)-CAR11(r)
+ 37         SLAT  SLAT(r)-CAR10(r)
+ 38               0.d0
+ 39  1      b02b  B0DB2(r)
+ 40  1      Fp    (FP(r)-FP))/(FP(a)-FP))
+ 41  1      bmax  BMAXT(r)
+ 42               0.d0
+ 43  1      bb02  BDB02(r)
+ 44  -20    drda  DRODA(r)
+ 45               0.d0
+ 46               0.d0
+ 47               0.d0
+ 48  1      Fp0   (FPO(r)-FP))/(FP(a)-FP))
+ 49  -18    bmin  BMINT(r)
+ 50         vr    VR(r)
+ 51  1      bdb0  BDB0(r)
+ 52  -20    grad  GRADRO(r)
+ 53         g33   G33(r)
+ 54         g22   G22(r)
+ 55  1      b02b  B0DB2(r)
+ 56  1      Fp    (FP(r)-FP))/(FP(a)-FP))
+ 57  1      bmax  BMAXT(r)
+ 58         vrs   VRS(r)
+ 59  1      bb02  BDB02(r)
+ 60  -20    drda  DRODA(r)
+ 61         g11   G11(r)
+ 62         slat  SLAT(r)
+ 63  1.     ipol  IPOL(r)
+ 64  1      Fp0   (FPO(r)-FP))/(FP(a)-FP))
+ 65  2      a     AMETR(r)
+ 66         rho   RHO(r)
+ 67  3      elon  ELON(r)
+ 68         shiv  SHIV(r)
+ 69         tria  TRIA(r)
+ 70  1      x     RHO(r)/ROC
+ 71         Pi    PI(r)
+ 72               0.d0
+ 73         shif  SHIF(r)
+ 74         He    HE(r)
+ 75         Pe    PE(r)
+ 76         Xi    XI(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Vol   VOLUM(a)
+  2         NB1   NB1
+  3         ROC   ROC
+  4         shif  SHIFB
+  5             
+  6         NA1   NA1
+  7         li3   LINT(a)
+  8         betj  BETAJ(a)
+  9         Ipl   ITOT(a)
+ 10         Icd   ICD(a)
+ 11         a     ABC
+ 12         k     ELONG
+ 13         t     TRIAN
+ 14         HRO   HRO
+ 15         R0    RTOR+SHIF(
+ 16         HROA  HROA
+ 17         <ne>  NEAV(a)
+ 18         fpb   FP(a)
+ 19         Ub    UPL(a)
+ 20         fpc   FPB
+ 21         Ibs   IBS(a)
+ 22         leq5  LEQ(5)
+ 23         Neql  NEQUIL
+ 24         Meql  MEQUIL
+ 25         ha/h  HROA/HRO
+ 26         hs/h  (ROC-NA*HRO)/HRO

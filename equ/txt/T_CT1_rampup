@@ -1,0 +1,202 @@
+ =====   Variables definition   =====
+!============================================================
+! ITER-relevant current ramp up, Bohm-gyroBohm model:
+! Plasma densities:
+! ND = NDEUT = CAR2
+! NT = NTRIT = CAR3
+! = NALF =
+! = NIMP = CAR5X
+! = NFI = fusion fast ion density
+! NI	CAR15X
+! TE, TI, CUR(CU), ZEFFPRO(ZEF), OMEGA(VTORX/R)
+! Heat sources:
+! TRANSP ASTRA  file extension
+! POH   CAR9X	poh
+! PRAD  PRADX	rad - electron losses
+! PION  CAR10X	pio - electron losses
+! P0NET	CAR15X	pnt - ion losses
+! PEICH CAR11X  pfe - ICRF electron heating
+! PIICH CAR16X  pfi - ICRF ion heating
+! PLH	CAR13X	plh - LH electron heating
+!============================================================
+! 72460I09 time=2.2 - 10s (ramp up and OH plateau)
+! 72465I05 time=2.1 - 11.2s
+! run lines for OH shots:
+! A6 JET72460I12 T_CT_rampup 2. 11. file
+! A6 JET72464I07 T_CT_rampup 2. 6.2 file
+! A6 JET72465I09 T_CT_rampup 2.25 11. file
+! A6 JET72467I10 T_CT_rampup 2.3 8.5 file
+! A6 JET72504I10 T_CT_rampup 2. 8. file
+!	run lines for ICRH shots (NIZ1 from 72467 was used):
+! JET72507I05 T_BgB_rampup 3. 8. file
+! JET72505I12 T_BgB_rampup 3. 8. file
+ MESHEQ=4.1d1
+ TAUMIN=2.d-4
+ TAUMAX=5.d-4
+!NIZ1=CAR5X;	!run with 72460I09
+!NIZ1=(FPR**6.2+0.0001)*0.12*NEC;				!72464, 2-6.2s
+!NIZ1=(FPR**5.9+0.0001)*(0.14-0.025*framp(4.9,5.1))*NEC;	!72465, 2.25-5.5s(1st saw)
+!NIZ1=(FPR**4.8+0.0001)*(0.11-0.025*framp(4.9,5.1))*NEC;		!72467, 2.3-8.5 s (saw before 6s)
+!NIZ1=(FPR**6.5+0.0001)*(0.183-0.02*framp(2.3,2.5)-0.05*framp(2.5,4.0))*NEC;	!72504, 2.-5.5s(1st saw)
+ AIM1=1.2d1
+!NDEUT=CAR2X;	
+!NE=NDEUT+NTRIT+2.*NALF+CAR5X*6.+NIBM;
+!========	Transport coefficients from GLF (diagonal matrix)
+ CF10=(VINT(CAR21)(a)-VINT(PRADX)(a)+VINT(CAR11X)(a)+VINT(CAR16X)(a))
+!		thermal ion transport
+!		thermal electron transport
+!============================================================
+!TE:EQ;	TE=TEX;
+!TE:AS;		!TE=TEX;
+!!! PRAD=NIZ1*(0.115-0.04*framp(3.8,6.0));				!72460
+!!! PRAD=NIZ1*(0.13-0.01*framp(2.6,3.0)-0.032*framp(3.3,3.5));	!72464
+ CRAD1=VINT(PRADX)(a)
+ CRAD2=VINT(CAR6X)(a)
+!PRAD=(CRAD1/(CRAD2+0.0001))*CAR6X;		! for all shots
+!PE=PJOUL-PET*TI-PRAD-CAR10X+CAR11X;	!ouput files  with "_2"
+!TI:[2,0.85];	TI=TIX;	!TIB=TIXB;				
+!TI:EQ;	TI=TIX;	!TIB=TIXB;
+!CU:AS;
+!CC=CNHR+CCMHD;	!CU=CUX;
+!HC=HCHR;	DC=DCHR;	XC=XCHR;
+!========	Electric field	=====================
+ CF3=1.d0
+ CF2=1.d0
+!CAR30=RTOR*VTORX;	!VTOR=FRMAX(CAR30)*TIX/(TIXC+0.0001);	
+!ER=0.;
+!STATERR(6.0d0,10.0d0,TE,TEX,CV1,CV3,CV5):;
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ NALF(r)=1.d-4
+ NIBM(r)=0.d0
+ NTRIT(r)=0.d0
+ NIZ1(r)=(FPR(r)**6.2d0+1.d-4)*9.d-2*NE(0)
+ ZIM1(r)=6.d0
+ NDEUT(r)=NE(r)-NTRIT(r)-NALF(r)*2.d0-NIZ1(r)*ZIM1(r)
+ NI(r)=NTRIT(r)+NDEUT(r)+NALF(r)+NIZ1(r)
+ ZEF(r)=(NDEUT(r)+NTRIT(r)+NALF(r)*4.d0+ZIM1(r)*ZIM1(r)*NIZ1(r))/(NE(r)+1.d-4)
+ CAR21(r)=POH(r)
+ CAR23(r)=FRS(r)/ROC
+ CAR24(r)=(GP2*ROC/(FRS(r)+1.d-4))**2.d0/(G11(r)+1.d-4)
+ CAR25(r)=QETOT(r)/(QTOT(a)+1.d-4)
+ CAR26(r)=QITOT(r)/(QTOT(a)+1.d-4)
+ CAR6(r)=MIN(CAR5(r),5.d1)
+ CAR11(r)=MAX(CAR7(r),5.d-2)
+ CAR9(r)=MIN(CAR8(r),5.d1)
+ CAR12(r)=MAX(CAR10(r),5.d-2)
+ PRAD(r)=PRADX(r)
+ VPOL(r)=CF3*VPSWW(r)
+ VTOR(r)=0.d0
+ ER(r)=CF2*(BTOR*(FRS(r)*MU(r)*VTOR(r)/RTOR+VDIA(r)-VPOL(r)))
+ CAR13(r)=BTOR*FRS(r)*MU(r)*VTOR(r)/RTOR
+ CAR14(r)=BTOR*VDIA(r)
+ CAR15(r)=BTOR*VPOL(r)
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+  >>> Warning: Boundary condition for TE is not set.
+              TEX(t) will be used at the shifted boundary
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -4     Te    TE(r)
+  2  -6     ne    NE(r)
+  3  -20    POHx  CAR9X(r)
+  4  20     ke    HE(r)
+  5  -5     Ti    TI(r)
+  6  -3     nC    NIZ1(r)
+  7  5      ZEFx  ZRD4X
+  8  20     ki    XI(r)
+  9  -4     Tex   TEX(r)
+ 10  -6     nd    NDEUT(r)
+ 11  -20    POH   POH(r)
+ 12  20     keCT  CAR8(r)
+ 13  -5     Tix   TIX(r)
+ 14         nmin  0.d0
+ 15  5      Zef   ZEF(r)
+ 16  20     kiCT  CAR5(r)
+ 17         keNC  WORK(J,6)
+ 18  -9     j     CU(r)
+ 19         ExBG  0.d0
+ 20         Upl   UPL(r)
+ 21         kinc  HNCHI(r)+HNPSI(r)
+ 22         Pei   -PET(r)*TI(r)
+ 23  10     q     1.d0/MU(r)
+ 24         beta  BETAJ(r)
+ 25         kDNC  WORK(J,66)
+ 26  -9     jx    CUX(r)
+ 27         ExBA  ROTSH(r)
+ 28  -2     wExB  ROTSH(r)
+ 29         kiNC  WORK(J,66)
+ 30         Pie   -PET(r)*TE(r)
+ 31  10     qx    CAR1X(r)
+ 32         dTe   TE(0)/(TE(5.d-1)+1.d-4)
+ 33         Pion  CAR10X(r)
+ 34         Prcl  CAR6X(r)
+ 35  -7     Er    ER(r)
+ 36         qi    QITOT(r)/(QTOT(a)+1.d-4)
+ 37         Prfe  CAR11X(r)
+ 38         Prad  PRAD(r)
+ 39  -7     Edia  BTOR*VDIA(r)
+ 40         keta  CAR3(r)
+ 41         P0nt  CAR15X(r)
+ 42         frme  CAR23(r)
+ 43  -7     Etor  BTOR*FRS(r)*MU(r)*VTOR(r)/RTOR
+ 44         qe    QETOT(r)/(QTOT(a)+1.d-4)
+ 45         Prfi  CAR16X(r)
+ 46         Prdx  PRADX(r)
+ 47  -7     Epol  BTOR*VPOL(r)
+ 48         kTEM  CAR2(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  -4     Te0   TE(0)
+  2  -5     Ti0   TI(0)
+  3  -12    Te5   TE(5.d-1)
+  4  -11    Ti5   TI(5.d-1)
+  5  -4     Tex0  TEX(0)
+  6  -5     Tix0  TIX(0)
+  7  -12    Tex5  TEX(5.d-1)
+  8  -11    Tix5  TIX(5.d-1)
+  9  -6     ne0   NE(0)
+ 10  -14    ne05  NE(5.d-1)
+ 11         POHx  VINT(CAR9X)(a)
+ 12         Prfe  VINT(CAR11X)(a)
+ 13  -6     nd0   CAR2X(0)
+ 14  -14    ndx5  CAR2X(5.d-1)
+ 15         POH   VINT(CAR21)(a)
+ 16         Prfi  VINT(CAR16X)(a)
+ 17         rmsE  CV1
+ 18         offE  CV3
+ 19         Nte   CV5
+ 20         q0    1.d0/MU(0)
+ 21         rmsI  CV2
+ 22         offI  CV4
+ 23  1      betj  BETAJ(a)
+ 24         q0x   CAR1X(0)
+ 25         Qlos  VINT(CAR10X)(a)+VINT(CAR15X)(a)+VINT(PRADX)(a)
+ 26         Wblk  WTOT(a)
+ 27         li    LINT(a)
+ 28         <Te>  TEAV(a)
+ 29         Qle   VINT(CAR10X)(a)
+ 30         Qli   VINT(CAR15X)(a)
+ 31         tauE  TAUE(a)
+ 32         <ne>  NEAV(a)
+ 33  0.8    Prad  VINT(PRAD)(a)
+ 34         ofTe  CV8
+ 35         rmTi  CV9
+ 36         ofTi  CV10
+ 37  0.8    Prdx  VINT(PRADX)(a)
+ 38         nGr   1.d1*IPL/3.14d0/ABC/ABC
+ 39         nnGr  NECH(0)/((1.d1*IPL/3.14d0/ABC/ABC)+1.d-5)
+ 40         cf10  CF10
+ 41         Qtb   QTOT(a)

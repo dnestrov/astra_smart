@@ -1,0 +1,178 @@
+ =====   Variables definition   =====
+!------------------------ Model ----------------------------------------------
+ MESHEQ=41
+!------------------------ NBI heating & cold neutrals ------------------------
+ AIM1=12.
+ CNB1=8.
+ CV5=0.8E-3*VINT(PBLON)(a)
+ CV6=1.6E-3*VINT(PBPER)(a)
+!------------------------ Density, Te, Ti ------------------------------------
+!------------------------ ECRH, ICRH & CD ------------------------------------
+! Gaussian profile of additional heating ~exp{-[(a-CF5)/(a_b*CF7)]^2}
+! CUECR is scaled using Peeters's calculation.
+ CBND1=AMETR((ZRD20X)*ROC)/ABC
+ CBND2=(ZRD21X)/ABC
+ CBND3=AMETR((ZRD23X)*ROC)/ABC
+ CBND4=(ZRD24X)/ABC
+ CFUS1=AMETR((ZRD26X)*ROC)/ABC
+ CFUS2=(ZRD27X)/ABC
+ CV14=ZRD29X*(FJUMP(0.20)-FJUMP(2.20))
+ CV15=ZRD30X*(FJUMP(0.20)-FJUMP(2.20))
+ CV16=ZRD31X*(FJUMP(0.20)-FJUMP(1.20))
+ QECR=ZRD29X+ZRD30X+ZRD31X
+!------------------------ Poloidal field -------------------------------------
+!NEOCL(CAR20,CAR21,CAR22,CAR23):;
+!subroutine NEOCL (by Houlberg) not yet "official" (Preverzev, 04.04.00)
+!MSE(10.,CAR24):;
+! Input parameters:
+! CF9(=30) = q_tr, If q_min drops below q_tr re-distribution turns on
+! CF10(=20) q after redistribution
+!SMASH(CF13,CF14):;
+!------------------------ Radial output --------------------------------------
+!------------------------  ----------------------------------------------
+ >>> Warning: Too long name in channel 52 <<<
+ AMAIN(r)=2.
+ ZMAIN(r)=1
+ ZIM1(r)=6.
+ NIZ1(r)=NE(r)*(ZEF(r)-1.)/(ZIM1(r)-1.)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ PEECR(r)=CV14*CAR29(r)+CV15*CAR30(r)+CV16*CAR31(r)
+ CUECR(r)=(ZRD22X*CV14*CAR29(r)+ZRD25X*CV15*CAR30(r)+ZRD28X*CV16*CAR31(r))*TE(r)/NE(r)
+ PEICR(r)=0.
+ CUICR(r)=0.
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed MU distribution
+ =====   Equations & subroutines  =====
+ ---->  Subroutine  1: nbi
+        is called at -99999<TIME< 99999 with dt=0.1   
+ ---->  Subroutine  2: NEUT
+        is called at -99999<TIME< 99999 with dt=.1    
+ ---->  NE  is assigned
+ NE(a_b)=NEX(a)
+ ---->  Subroutine  3: SMEARR(CV9,NEX,NE)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  4: SMEARR(CV9,TEX,TE)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  5: SMEARR(CV8,TIX,TI)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  TE  is assigned
+ ---->  TI  is assigned
+ ---->  Subroutine  6: FGAUSS(CBND1,CBND2,CAR29)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  7: FGAUSS(CBND3,CBND4,CAR30)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  8: FGAUSS(CFUS1,CFUS2,CAR31)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Equation for CU 
+ CC(r)=CNSA(r)
+ MU(r)=MUX(r)
+ CD(r)=CUECR(r)+CUICR(r)+CUBM(r)
+ HC(r)=CV12*HCSA(r)
+ DC(r)=CV12*DCSA(r)
+ XC(r)=CV12*XCSA(r)
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -11    j     CU(r)
+  2  -11    j     CU(r)
+  3  2      Upl   UPL(r)
+  4  -11    j     CU(r)
+  5  -11    j     CU(r)
+  6  -11    jBSA  CUBS(r)
+  7         mu    MU(r)
+  8  -5     Te    TE(r)
+  9  -11    jBSA  CUBS(r)
+ 10  -11    jOH   CUOHM(r)
+ 11         shea  SHEAR(r)
+ 12  -11    jNI   CAR1(r)+CUBM(r)+CUBS(r)+CUECR(r)
+ 13  -11    jNB   CUBM(r)
+ 14  -11    jBSH  CAR20(r)
+ 15  10     q     1./MU(r)
+ 16  -5     Ti    TI(r)
+ 17  -5     Te    TE(r)
+ 18  -4     plon  1.6E-3*PBLON(r)
+ 19         PNBe  PEBM(r)
+ 20         ne    NE(r)
+ 21  -11    jECR  CUECR(r)
+ 22  -11    jBSH  CAR20(r)
+ 23         PNBi  PIBM(r)
+ 24         ni    NI(r)
+ 25  -5     Ti    TI(r)
+ 26  -4     pper  1.6E-3*PBPER(r)
+ 27  -4     p     PREST(r)
+ 28         +     CAR9(r)
+ 29  -11    jBSA  CUBS(r)
+ 30         jBSA  CUBS(r)
+ 31         btot  BETAJ(r)+BETBM(r)
+ 32  -1     betb  BETBM(r)
+ 33  -1     betj  BETAJ(r)
+ 34         CC    CC(r)
+ 35         NUe   NUES(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  1      Ipl   IPL
+  2  5      <ne>  NEAV(a)
+  3  1      li    LINT(a)
+  4         Upl   UPL(a)
+  5         betj  BETAJ(a)+BETBM(a)
+  6  1      Xmin  XQMIN(a)
+  7         bet%  BETT(a)
+  8  5      qmin  QMIN(a)
+  9  1      Ipl   IPL
+ 10         INB+  IBM(a)
+ 11         IBSA  IBS(a)
+ 12         INBp  IINT(CAR1)(a)
+ 13         Iohm  IOHM(a)
+ 14         IECR  IECR(a)
+ 15         IBSH  IINT(CAR20)(a)
+ 16         IICR  IICR(a)
+ 17  25     q0    1/MU(0)
+ 18         PNB   QBEAM
+ 19         nlin  NECH(0)
+ 20         PECR  QECR
+ 21         qa    1/MU(a)
+ 22         PICR  QICR
+ 23         Zeff  ZEF(0)
+ 24         Sh0%  SHIF(0)/ABC
+ 25  1      IBM%  IBM(a)/IPL
+ 26         betN  BETT(a)*ABC*BTOR/IPL
+ 27  1      IOH%  IOHM(a)/IPL
+ 28         ICD   ICD(a)
+ 29  1      IBS%  IBS(a)/IPL
+ 30         <n>G  2.7*IPL/ABC**2
+ 31  1      IRF%  (IECR(a)+IICR(a))/IPL
+ 32             
+ 33         Wkin  WTOT(a)
+ 34         Wpar  CV5
+ 35         Wper  CV6
+ 36         Wfir  (CV5+CV6)/WTOT(a)
+ 37         Wequ  WTOT(a)+0.75*CV6+1.5*CV5
+ 38         Wtot  WTOT(a)+CV5+CV6
+ 39         roc   ROC
+ 40         bpBM  BETBM(a)
+ 41         bpJ   BETAJ(a)
+ 42         betp  BETAJ(a)+BETBM(a)
+ 43         MSE1  CAR24(1)
+ 44         MSE2  CAR24(2)
+ 45         MSE3  CAR24(3)
+ 46         MSE4  CAR24(4)
+ 47         MSE5  CAR24(5)
+ 48         MSE6  CAR24(6)
+ 49         MSE7  CAR24(7)
+ 50         MSE8  CAR24(8)
+ 51         MSE9  CAR24(9)
+ 52         MSE1  CAR24(10)
+ 53         Time  TIME

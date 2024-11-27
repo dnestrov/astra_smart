@@ -1,0 +1,12 @@
+ 5.d-7         !   eps0
+ 1.d-6         !   eps
+ 1.d-6         !   epsin
+ 1.d-6         !   epscrz
+   2           !   iterbf
+   15 ! 9           !   Nitl
+  77           !   Nitin
+ 1000          !   nrun
+ 1000          !   nwr
+ 0.8           !   omg
+ 0.99          !   sigm
+ 0.005         !   0.02          !   ceps

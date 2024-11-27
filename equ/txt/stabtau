@@ -1,0 +1,69 @@
+ =====   Variables definition   =====
+! The model checks stability properties of the loop equilibrium <-> diffusion
+! Has to be run with aug11841
+ MESHEQ=4.1d1
+ CAR1(r)=4.d-1*GP*(PRESE(r)+PRESI(r)+5.d-1*NB2EQL*(PBLON(r)+PBPER(r)))
+ CAR2(r)=4.d-1*GP*RTOR/(RTOR+SHIF(0))*CU(r)/(IPOL(r)*G33(r))
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TEX(r)
+ NE(r)=NEX(r)
+ CU(r)=CC(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  TE  is assigned
+ TE(r)=TEX(r)
+ ---->  TI  is assigned
+ TI(r)=TEX(r)
+ ---->  NE  is assigned
+ NE(r)=NEX(r)
+ ---->  Equation for CU 
+ CC(r)=CNHR(r)
+ CU(r)=CC(r)
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -2     Te    TE(r)
+  2         FP    FP(r)
+  3         EQFF  EQFF(r)
+  4         G33   G33(r)
+  5         ne    NE(r)
+  6         G11   G11(r)
+  7         Jpar  CAR2(r)
+  8         elon  ELON(r)
+  9  -2     Ti    TI(r)
+ 10  -3     j     CU(r)
+ 11         EQPF  EQPF(r)
+ 12  -3     jbs   CUBS(r)
+ 13         I     ITOT(r)
+ 14         G22   G22(r)
+ 15         Pres  CAR1(r)
+ 16         tria  TRIA(r)
+ 17         a     AMETR(r)
+ 18  2      Upl   UPL(r)
+ 19         shif  SHIF(r)
+ 20         bepl  BETPL(r)
+ 21         CC    CC(r)
+ 22  2      U||   ULON(r)
+ 23         ud    SHIV(r)
+ 24         Betj  BETAJ(r)
+ 25         FPO   FPO(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         IPL   IPL
+  2         h     HROA/HRO
+  3         NA1   NA1
+  4         ROC   ROC
+  5         V(a)  UPL(a)
+  6         Te0   TE(0)
+  7         Ti0   TI(0)
+  8         tau   TAU

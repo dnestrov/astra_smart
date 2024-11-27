@@ -1,0 +1,213 @@
+ =====   Variables definition   =====
+ CFUS1=QDTF(a)
+ CF7=2.d1
+ CF8=2.d1
+ CNB1=2.d0
+!====================  Time output settings =================================
+!-------  Overview  ---------------------------------- Screen number (1) ----
+!-------  Power balance (1) -------------------------- Screen number (2) ----
+!-------  Power balance (2) -------------------------- Screen number (3) ----
+!-------  Power balance (3) -------------------------- Screen number (4) ----
+!--------  Kinetics  --------------------------------- Screen number (5) ----
+!--------  Particle balalnce ------------------------- Screen number (6) ----
+!---------  Current & Geometry ----------------------- Screen number (7) ----
+!---------  Miscellaneous  --------------------------- Screen number (8) ----
+!----------------------------------------------------------------------------
+!===================== Profile output =======================================
+!---------  Overview --------------------------------- Screen number (1) ----
+!---------  Overview --------------------------------- Screen number (2) ----
+!---------  Integrated power sources ---------------- Screen number (3) ----
+!----------  Local power densities ------------------- Screen number (4) ----
+!---------  Impurities ------------------------------- Screen number (5) ----
+!---------  Current balance -------------------------- Screen number (6) ----
+!============= Thank you for using ASTRA transport code =====================
+ NDEUT(r)=4.35d-1*NE(r)
+ NTRIT(r)=4.35d-1*NE(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=1.01d1
+ CU(r)=FPR(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  TE  is assigned
+ TE(r)=TEX(r)
+ ---->  TI  is assigned
+ TI(r)=TIX(r)
+ ---->  NE  is assigned
+ NE(r)=1.01d1
+ ---->  CU  is assigned
+ >>> Warning: "CC" is not defined in the model
+ CU(r)=FPR(r)
+ >>> Warning: "CC" is not defined in the model
+ CC(r)=CCSP(r)
+ ---->  Subroutine  1: NBI
+        is called at -99999<TIME< 99999 with dt=1.0   
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -1     n_e   NE(r)
+  2  -3     T_e   TE(r)
+  3         Pfus  PDTF(r)
+  4  20     RLcr  RLTCR(r)
+  5         PNBe  PEBM(r)
+  6  1.e5   gA    GAITG(r)
+  7  -1     n_d   NDEUT(r)
+  8  -3     T_i   TI(r)
+  9         PDTh  PDT(r)
+ 10  20     RLTi  RTOR/LTI(r)
+ 11         PDT   PDT(r)
+ 12         PNBi  PIBM(r)
+ 13         PDTF  PDTF(r)
+ 14  1500   Gsrc  QNTOT(r)
+ 15  1500   Gsrc  QNTOT(r)
+ 16         Se    SNTOT(r)
+ 17  -6     QeFl  QE(r)
+ 18  -2     QiFl  QI(r)
+ 19  -5     tauE  TAUE(r)
+ 20  -5     taEe  TAUEE(r)
+ 21  1500   Gflx  QN(r)
+ 22  1500   Gflx  QN(r)
+ 23         SeNB  SNEBM(r)
+ 24         QiN   QINEU(r)
+ 25         QeN   QENEU(r)
+ 26               0.d0
+ 27  -5     taEi  TAUEI(r)
+ 28  100    QeSr  QETOT(r)
+ 29         Qei   QEICL(r)
+ 30         QNBI  VINT(PBEAM)(r)
+ 31         Qion  VINT(CAR6)(r)
+ 32  100    QiSr  QITOT(r)
+ 33  -6     QeGN  2.5d0*GN(r)*TE(r)
+ 34         QeNB  VINT(PEBM)(r)
+ 35         QDTf  QDTF(r)
+ 36  100    QeFl  QE(r)
+ 37         QeiG  QEIGN(r)
+ 38         QOH   QOH(r)
+ 39         Qicx  QICX(r)
+ 40  100    QiFl  QI(r)
+ 41  -2     QiGN  2.5d0*GN(r)*TI(r)*NI(r)/NE(r)
+ 42         QiNB  VINT(PIBM)(r)
+ 43         Qrad  QRAD(r)
+ 44         QEdt  QEDWT(r)
+ 45         Pcx   CNEUT3*PICX(r)
+ 46         Pedt  PEDTF(r)
+ 47         Pi    PITOT(r)
+ 48         PDTf  PDTF(r)
+ 49         PeN   PENEU(r)
+ 50         Pe    PETOT(r)
+ 51         PeNB  PEBM(r)
+ 52         QIdt  QIDWT(r)
+ 53         Pion  CNEUT2*PIONZ(r)
+ 54         Pidt  PIDTF(r)
+ 55         Pei   PEICL(r)
+ 56         PDT1  PEDT1(r)+PIDT1(r)
+ 57         PiN   PINEU(r)
+ 58         Prad  PRAD(r)
+ 59         PiNB  PIBM(r)
+ 60         dzBe  ZEF1(r)
+ 61         dZHe  2.d0*NALF(r)/MAX(1.d-2,NE(r))
+ 62         Zeff  ZEF(r)
+ 63  10     lnNN  1.d0+LOG10(NN(r))
+ 64         n_Be  NIZ1(r)
+ 65         n_He  NALF(r)
+ 66  1      nuis  NUIS(r)
+ 67         T_i   TI(r)
+ 68         dzAr  ZEF2(r)
+ 69         dzC   ZEF3(r)
+ 70         SNNn  CAR14X(r)
+ 71         tpf   TPF(r)
+ 72         n_Ar  NIZ2(r)
+ 73         n_C   NIZ3(r)
+ 74  1      nues  NUES(r)
+ 75         T_N   TN(r)
+ 76  -4     j     CU(r)
+ 77  -4     jBS   CUBS(r)+CAR4(r)
+ 78         wExB  ROTSH(r)
+ 79         Vtor  UPL(r)
+ 80  -4     jNB   CUBM(r)
+ 81  1      mu    MU(r)
+ 82         PBe   PBOL3(r)
+ 83  2.     shir  SHEAR(r)
+ 84  -4     joh   CUOHM(r)
+ 85         jBSa  CAR4(r)
+ 86         betj  BETAJ(r)
+ 87         V||   ULON(r)
+ 88  -4     jBSm  CUBS(r)
+ 89  5      q     1.d0/MU(r)
+ 90         PBe   CAR11(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  100    Pal   QDT(a)
+  2         Palf  QDTF(a)
+  3  20     Q     5.d0*CFUS1/QNBI
+  4  -6     tauE  CV5
+  5         PNBI  QNBI
+  6         H98y  CV5/CV1
+  7         <ne>  CV10
+  8  -6     ta98  CV1
+  9         Ptot  QTOT(a)
+ 10         PeDT  QEDTF(a)
+ 11         POH   QOH(a)
+ 12         PeNB  VINT(PEBM)(a)
+ 13         Pei   QEICL(a)
+ 14         PiDT  QIDTF(a)
+ 15         Prad  QRAD(a)
+ 16         PiNB  VINT(PIBM)(a)
+ 17         Pi    QITOT(a)
+ 18         PeN   QENEU(a)
+ 19         Qea   QE(a)
+ 20         Pion  CNEUT2*QINEU(a)
+ 21         Pe    QETOT(a)
+ 22         PCX   QICX(a)
+ 23         Qia   QI(a)
+ 24         PNB   QBTOT(a)
+ 25         Pin   CF15
+ 26         Pbrs  CRAD1*QBRAD(a)
+ 27         shth  QNBI-QBTOT(a)
+ 28         PrBe  VINT(PBOL1)(a)
+ 29  10     dQdt  CV9
+ 30         Psyn  CRAD2*QSYNC(a)
+ 31             
+ 32         PAr   VINT(PBOL2)(a)
+ 33         Te0   TE(0)
+ 34         H89   TAUE(a)/TITER(r)
+ 35         Ti0   TI(0)
+ 36         Wequ  WTOT(a)+7.5d-1*CV6+1.5d0*CV7
+ 37         <Te>  TEAV(a)
+ 38         Wthm  WTOT(a)
+ 39         <Ti>  TIAV(a)
+ 40         Wtot  WTOT(a)+CV7+CV6
+ 41         ne0   NE(0)
+ 42         Gflx  QN(a)
+ 43  1      dndt  CV11
+ 44         SeNN  VINT(CAR14X)(a)
+ 45         NNCL  NNCL
+ 46         Gsrs  QNTOT(a)
+ 47         taup  TAUP(a)
+ 48         SeNB  VINT(SNEBM)(a)
+ 49         Ipl   IPL
+ 50         V     VOLUME
+ 51         INB   IBM(a)
+ 52         S     SLAT(a)
+ 53         Ulc   UPL(a)
+ 54         li    LINT(a)
+ 55         IBS   IBS(a)+CF4
+ 56         Zef0  ZEF(0)
+ 57         betr  BETT(a)*ABC*BTOR/IPL
+ 58         ni0   NI(0)
+ 59         betp  BETAJ(a)
+ 60         nped  NE(a)
+ 61         NNCX  NNCX
+ 62         Tped  TE(AFX(9.2d-1))
+ 63         Psca  CF16
+ 64         Tedg  CF1

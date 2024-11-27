@@ -1,0 +1,71 @@
+ =====   Variables definition   =====
+ NEQUIL=1.5d2
+ MEQUIL=1.d2
+!TAUMIN=1.d-6;	TAUMAX=1.d-3;	DROUT=0;
+ CF2=1.d2
+!	DN=1;	HN=1.;	XN=1.;	CN=1;
+!	DE=1;	HE=1;	XE=1;	CE=1;
+!	DI=1;	HI=1.;	XI=1;	CI=1;
+!	DVE=CV2;DVN=CV1;DVI=CV3;DVF3=CV5;DVF0=CV4;
+!NEQUIL=0;
+!TI=100*FX;	TE=TI;	NE=1;	NDEUT=NE/2;	NTRIT=NE/2;
+!TI\TI;		SV\SVDT;	pe\PEDT;	pi\PIDT;
+!NE\NE;		pdt\PDT;	pe\PEDT;	pi\PIDT;
+!TE\TI;		pai\PAION1;	pef\PEDTF;	pif\PIDTF;
+!NI\NI;		pdtf\PDTF;	pe1\PEDT1;	pi1\PIDT1;
+ CAR2(r)=-GRAD(NE)(r)-5.d0
+ =====   Initial distributions   =====
+ NE(r)=1.d1*FPR(r)+2.d0
+ TE(r)=1.5d1*FPR(r)+2.d0
+ TI(r)=1.5d1*FPR(r)+2.d0
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         T_e   TE(r)
+  2         N     NN(r)
+  3         SN    SN(r)
+  4         DN    DN(r)
+  5         T_i   TI(r)
+  6         n_e   NE(r)
+  7         DN+   STEP(CAR2(r))*CAR2(r)
+  8         c8    0.d0
+  9         dT    TI(r)-TN(r)
+ 10         lnNN  LOG(NN(r))
+ 11         H     STEP(-GRAD(NE)(r)-5.d0)
+ 12         grNE  GRAD(NE)(r)
+ 13         T_N   TN(r)
+ 14         n_i   NI(r)
+ 15         c7    0.d0
+ 16         c9    0.d0
+ 17  -17    c10   CAR10(r)
+ 18         c20   CAR20(r)
+ 19         c29   CAR29(r)
+ 20         c31   CAR31(r)
+ 21  -21    c12   CAR12(r)
+ 22  -22    c14   CAR14(r)
+ 23  -23    c16   CAR16(r)
+ 24  -24    c18   CAR18(r)
+ 25  -17    c11   CAR11(r)
+ 26         c28   CAR28(r)
+ 27         c30   CAR30(r)
+ 28         c32   CAR32(r)
+ 29  -21    c13   CAR13(r)
+ 30  -22    c15   CAR15(r)
+ 31  -23    c17   CAR17(r)
+ 32  -24    c19   CAR19(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         ne0   NE1
+  2         alb   ALBPL
+  3         NA1   NA1
+  4         NAB   NAB
+  5         NB1   NB1

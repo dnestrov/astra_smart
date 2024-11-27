@@ -1,0 +1,108 @@
+ =====   Variables definition   =====
+! TEXTOR discharge 94921 - off-axis ECRH switch-off
+! derived from file "m90427a"
+! evaluation of j only; assigned values of Te, Ti, ne
+! to be run with exp file t94921*  (ohmic-ech-ohmic)
+! Note:
+! Call Astra wth correct starting time: DickAstra53 t94921b m94921b 3.6
+!***            Ip
+ IPL=3.5d-1
+!***            used constants and arrays
+ CF3=3.1d-1
+ CF4=9.5d-2
+ CF5=9.d-1
+ CF6=1.d0
+ CF7=1.05d0
+ CF11=8.d-1
+ CF12=2.d0
+!***            physics constants
+!***		control parameters
+ MESHEQ=2.d1
+ DELTAT=3.d-3
+!***		Density assigned
+!***		Electron temperature assigned
+!***		Power deposition
+!***             ion temperature calculated
+!TI:EQ; XI=HNCHI;
+!***		Current density equation
+!***		Initial conditions
+!***		Boundary conditions
+!!!!!!!!!!	Radial outputs  	!!!!!!!!!!!!!!!!!!!!!!!!
+ >>> Warning: Too long name in channel  3 <<<
+ >>> Warning: Too long name in channel  6 <<<
+ >>> Warning: Too long name in channel 10 <<<
+ >>> Warning: Too long name in channel 14 <<<
+!!!!!!!!!	Time outputs !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ZEF(r)=CF12+CF11*(RHO(r)/ROC)**2.d0
+ CAR3(r)=HEEFF(r)
+ PEX(r)=QECR*CAR1(r)
+ PRAD(r)=0.d0
+ CAR5(r)=QOH(r)
+ CAR2(r)=XIEFF(r)
+ =====   Initial distributions   =====
+ TE(r)=CF7*TEX(r)
+ TI(r)=CF5*TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=CC(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  NE  is assigned
+ NE(r)=NEX(r)
+ ---->  TE  is assigned
+ PE(r)=POH(r)-CF6*PEICL(r)+PEX(r)-PRAD(r)
+ TE(r)=CF7*TEX(r)
+ ---->  Subroutine  1: FGAUSS(CF3,CF4,CAR1)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  TI  is assigned
+ PI(r)=CF6*PEICL(r)
+ TI(r)=CF5*TIX(r)
+ TI(a_b)=1.d-1
+ ---->  Equation for CU 
+ CC(r)=CNHR(r)
+ CU(r)=CC(r)
+ HC(r)=HCHR(r)
+ DC(r)=DCHR(r)
+ XC(r)=XCHR(r)
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  1.5    Te    TE(r)
+  2  5.0    ne    NE(r)
+  3  2.     Vloo  UPL(r)
+  4  1      Poh   POH(r)
+  5  5      q     1.d0/MU(r)
+  6  5      HEEF  HEEFF(r)
+  7         PEI   PEICL(r)
+  8         J     CU(r)
+  9  1.5    Ti    TI(r)
+ 10  50.    PETO  PE(r)
+ 11  0.5    Qet   QETOT(r)
+ 12  1      PECH  PEX(r)
+ 13  5      ZEF   ZEF(r)
+ 14  5      XIEF  XIEFF(r)
+ 15         CC    CC(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  1.5    Te0   TE(0.d0)
+  2  6      qa    1.d0/MU(4.6d-1)
+  3  1.5    Tea   TE(4.5d-1)
+  4  0.5    q0    1.d0/MU(0.d0)-8.d-1
+  5  1.5    Ti0   TI(0.d0)
+  6  1.5    VL    UPL(4.5d-1)
+  7  5      ne0   NE(0.d0)
+  8  1.5    VLX   UEXTX
+  9  1      POH   CAR5(4.6d-1)
+ 10  5      XE3   CAR3(1.35d-1)
+ 11  1      PEC   QECR
+ 12  5      XE5   CAR3(2.3d-1)
+ 13  2      XI    CAR2(2.3d-1)
+ 14  5      XE7   CAR3(3.2d-1)

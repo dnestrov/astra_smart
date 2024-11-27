@@ -1,0 +1,126 @@
+ =====   Variables definition   =====
+!============================================================
+ MESHEQ=4.1d1
+!============================================================
+ NNCX=CNEUT1
+!NBI:;		CNB1=?;	! NBI heating routine; CNB1 - number of beams
+!SN=0.5*CF1*FPR;
+!============================================================
+!TE:A;		TI:A;
+!TE::2.5;		TI::2.5;
+!PE=POH+PEBM-PENEU-PEICL;	PI=PIBM+PINEU+PEICL;
+!PI=PINEU+0.5*CF1*FPR*CF3/625+PEICL;
+!============================================================
+!=========================Profiles ===================================
+!==================Waveforms ==========================================
+ CV2=4.44d5*(NNCL*SQRT(ENCL)+NNWM*SQRT(ENWM))*SLAT(a)/SQRT(AMJ)
+!============================================================
+ NDEUT(r)=NI(r)
+ =====   Initial distributions   =====
+ TE(r)=5.d-1*FPR(r)
+ TI(r)=5.d-1*FPR(r)
+ NE(r)=2.d-1*CF1*FPR(r)+5.d-2*CF1
+ CU(r)=FPR(r)+1.d1
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         P_e   PETOT(r)
+  2         P_N   PINEU(r)-PENEU(r)
+  3         S_e   SNTOT(r)
+  4         j     CU(r)
+  5         T_e   TE(r)
+  6         PeNB  PEBM(r)
+  7         n_e   NE(r)
+  8         mu    MU(r)
+  9         P_i   PITOT(r)
+ 10         P_OH  POH(r)
+ 11         Flux  QN(r)
+ 12         U_pl  UPL(r)
+ 13         T_i   TI(r)
+ 14         PiNB  PIBM(r)
+ 15         n_i   NI(r)
+ 16         q     1.d0/MU(r)
+ 17  -3     QeSr  QETOT(r)
+ 18  -3     TG_e  1.6d-3*GN2E*TE(r)*QN(r)
+ 19         G_Sr  QNTOT(r)
+ 20         P_e   PETOT(r)
+ 21  -3     QiSr  QITOT(r)
+ 22  -3     TG_i  1.6d-3*GN2I*TI(r)*NI(r)/NE(r)*QN(r)
+ 23         T_e   TE(r)
+ 24         S_e   SNTOT(r)
+ 25  -3     Q_e   QE(r)
+ 26  -3     q_e   QE(r)
+ 27         G_Fl  QN(r)
+ 28         P_i   PITOT(r)
+ 29  -3     Q_i   QI(r)
+ 30  -3     q_i   QI(r)
+ 31         T_i   TI(r)
+ 32         n_e   NE(r)
+ 33  -1     gY    FP(r)
+ 34  -5     j     CU(r)
+ 35         Pe    PETOT(r)
+ 36         V_NC  WORK(J,103)
+ 37  -4     T_e   TE(r)
+ 38         q     1.d0/MU(r)
+ 39         U_pl  UPL(r)
+ 40         k_i   XI(r)
+ 41         Vlt   UPL(r)
+ 42         j_BS  CUBS(r)
+ 43         Pi    PITOT(r)
+ 44         D_e   DN(r)
+ 45  -4     T_i   TI(r)
+ 46  -5     j_NB  CUBM(r)
+ 47         Zeff  ZEF(r)
+ 48         k_e   HE(r)
+ 49         P_e   PETOT(r)
+ 50         ccHr  CNHR(r)
+ 51         q_e   -HE(r)*GRAD(TE)(r)
+ 52         q_i   -XI(r)*GRAD(TI)(r)
+ 53         nbmA  NIBM(r)
+ 54         ccSp  CCSP(r)
+ 55               0.d0
+ 56               0.d0
+ 57         P_i   PITOT(r)
+ 58         ccNC  WORK(J,503)
+ 59         SeA   SNEBM(r)
+ 60         taup  TAUP(r)
+ 61         rotA  SCUBM(r)
+ 62         ccHH  WORK(J,503)/CNHR(r)
+ 63         PiDT  PIDTF(r)
+ 64         tauE  TAUE(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  -4     Te0   TE(0)
+  2  -3     <Te>  TEAV(a)
+  3  -2     Teb   TE(a)
+  4         ne0   NE(0)
+  5  -4     Ti0   TI(0)
+  6  -3     <Ti>  TIAV(a)
+  7  -2     Tib   TI(a)
+  8         <ne>  NEAV(a)
+  9         Ipl   IPL
+ 10         q0    1.d0/MU(0)
+ 11         taup  TAUP(a)
+ 12         tau1  VOLUME*NEAV(a)/(QN(a)+1.d-6)
+ 13  1      betj  BETAJ(a)
+ 14         li    LINT(a)
+ 15         beTr  BETR(a)
+ 16         tauE  TAUE(a)
+ 17         Ptot  QETOT(a)+QITOT(a)
+ 18         Ti0   TI(0)
+ 19         Pe    QETOT(a)
+ 20         Te0   TE(0)
+ 21         Gesr  QNTOT(a)
+ 22         Gefl  QN(a)
+ 23         GNin  CV2
+ 24         GNou  ALBPL*CV2
+ 25         albd  ALBPL

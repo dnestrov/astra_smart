@@ -1,0 +1,64 @@
+ =====   Variables definition   =====
+ TINIT=1.3d-1
+ NEQUIL=4.1d1
+!BTOR=1.0d0;
+ BTOR=1.d0
+ IPL=5.d-1
+ CF1=3.d0
+ CF2=1.d-2
+!!NE=(CF1-CF2)*CAR32**1.5d0+CF2;
+ CF3=4.3d-1
+ CF4=1.5d-2
+!!========Current Density===========
+!!CU:AS;
+!!CC="work(j,303)";
+!!CC="work(j,303)"+CCMHD;
+!ZEF=1.5d0;
+!!!!!!!!!!!!!!!!!!!!!!!!
+ CF12=FRMIN(CAR29)(r)
+ CF13=FRMAX(CAR29)(r)
+!====================   Radial output  ==================================
+!====================  Time output  ====================================
+ CAR32(r)=1.d0-(AMETR(r)/AMETR(a))**2.d0
+ ZEF(r)=ZZEF(r)
+ CAR29(r)=1.d0/MU(r)
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=5.d-1*TE(r)
+ CU(r)=FPA(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -1     J     CU(r)
+  2         Te    TE(r)
+  3         U     UPL(r)
+  4  1.2    Ip    IPOL(r)
+  5  1      Ip    IPOL(r)
+  6  -2     Ne    NE(r)
+  7         PE    PE(r)
+  8  1.2    Bma   BMAXT(r)
+  9  -1     Johm  CUOHM(r)
+ 10         TeX   TEX(r)
+ 11         Q     1.d0/MU(r)
+ 12         Bn    BDB0(r)
+ 13         betj  BETAJ(r)
+ 14  -2     NeX   NEX(r)
+ 15               0.d0
+ 16  1.2    Bmi   BMINT(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  -1     Itot  IPL
+  2         q(0)  CF12
+  3         q(1)  CF13
+  4  -1     Iohm  IOHM(a)
+  5         V(a)  UPL(a)

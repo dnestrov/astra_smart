@@ -1,0 +1,90 @@
+ =====   Variables definition   =====
+!MESHEQ=41;				! 3-moment equilibrium solver
+ MESHEQ=4.2d1
+ CV6=ZRD2X/NEXAV(a)
+ AIM1=1.2d1
+!	MIXINT(0.,.05):;	! Kadomtsev's reconnection off
+! Above (0.,.05) sets a reconnection period to be 50 ms
+!Total current density;	Ohmic current density;	Tor. voltage;	Ohmic heating;
+!Rot.transform;		T_e;			ne;		nu_i_star;
+!BS current density;	Hirshman conductivity;	Long.voltage;	nu_e_star;
+!Safety factor;		T_i;			Trapped fraction (C.M.Roach)
+!	ZRD1	 Z_eff
+!	ZRD2	 <ne>	[10^19m^-3]
+ ZEF(r)=2.5d0
+ AMAIN(r)=2.d0
+ ZMAIN(r)=1.d0
+ ZIM1(r)=6.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ =====   Initial distributions   =====
+ TE(r)=(2.4d-1*FPR(r)**2.d0+1.d-2)*(1.d0+4.d0*FRAMP(1.d-2,5.d-1))
+ TI(r)=5.d-1*TE(r)
+ NE(r)=CV6*NEX(r)
+ CU(r)=1.d0+FPR(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  NE  is assigned
+ NE(r)=CV6*NEX(r)
+ NE(a_b)=CV6*NEX(a)
+ ---->  TE  is assigned
+ TE(r)=(2.4d-1*FPR(r)**2.d0+1.d-2)*(1.d0+4.d0*FRAMP(1.d-2,5.d-1))
+ TE(a_b)=1.d-2+3.d-2*FRAMP(1.d-2,4.5d-1
+ ---->  TI  is assigned
+ TI(r)=5.d-1*TE(r)
+ ---->  Equation for CU 
+ CC(r)=CNHR(r)
+ HC(r)=HCKIM(r)
+ DC(r)=DCKIM(r)
+ XC(r)=XCKIM(r)
+ CU(r)=1.d0+FPR(r)
+ ---->  Subroutine  1: MYKEY
+        is called at 99.   <TIME<.2     with dt=1           Key call:G     
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         j     CU(r)
+  2         jOH   CUOHM(r)
+  3         Upl   UPL(r)
+  4         beta  BETAJ(r)
+  5  1      mu    MU(r)
+  6  -1     Te    TE(r)
+  7         ne    NE(r)
+  8         nui*  CUT(1.d2,NUIS(r))
+  9         jBS   CUBS(r)
+ 10         cHir  CNHR(r)
+ 11         ULON  ULON(r)
+ 12         nue*  CUT(1.d2,NUES(r))
+ 13         q     1.d0/MU(r)
+ 14  -1     Ti    TI(r)
+ 15         tpfc  FTLLM(r)
+ 16         nui#  NUIS(r)*SQEPS(r)**3.d0
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Ipl   IPL
+  2  -3     Te0   TE(0)
+  3  2      Upl   CUT(2.d0,UPL(a))
+  4         Ibs   IBS(a)
+  5         ne    NECH(0)
+  6  -1     <Te>  TEAV(a)
+  7  5      qmin  QMIN(a)
+  8         Iohm  IOHM(a)
+  9  3      Ipl   IPL
+ 10  1      xq3   AFVAL(MU,3.33d-1)(r)/ABC
+ 11  1      xq1   AFVAL(MU,1.d0)(r)/ABC
+ 12  1      Xmin  XQMIN(a)
+ 13  3      Zeff  ZEF(0)
+ 14  1      xq2   AFVAL(MU,5.d-1)(r)/ABC
+ 15  1      q3/2  AFVAL(MU,6.67d-1)(r)/ABC
+ 16  1      li    LINT(a)*RTOR/(RTOR+SHIFT)
+ 17         beta  BETAJ(a)

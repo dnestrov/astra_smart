@@ -1,0 +1,149 @@
+ =====   Variables definition   =====
+ MESHEQ=4.1d1
+ AIM1=1.2d1
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ >>> Warning: unrecognized variable CBMS1
+ >>> Warning: unrecognized variable CBMS2
+ >>> Warning: unrecognized variable CBMS3
+ >>> Warning: unrecognized variable CBMS4
+ QBEAM=CBMS1+CBMS2+CBMS3+CBMS4
+!CBM3=1;	!DBM1=1.;	!number of neutral beams with diff. energies
+ ABEAM=2.d0
+!NBIDEF:.1;				!NBI package
+ CBMH1=-1.d2*UPDWN
+ CV5=8.E-4*VINT(PBLON)(a)
+ CV6=1.6E-3*VINT(PBPER)(a)
+ CV4=WTOT(a)+7.5d-1*CV6+1.5d0*CV5
+!CBMS1=1.708;				! power of NI-beam 1
+!CBMS2=0.000;				! power of NI-beam 2
+!CBMS3=1.728;				! power of NI-beam 3
+!CBMS4=0.000;				! power of NI-beam 4
+!ABEAM=1;	ZEF=1.6;	AMJ=1;		EBEAM=55;
+!DBM1=.51;	DBM2=.19;	DBM3=.3;	CBM3=3;
+ ZEF(r)=CF2
+ AMAIN(r)=2.d0
+ ZMAIN(r)=1.d0
+ ZIM1(r)=6.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ CAR12(r)=TITER(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TE(r)
+ NE(r)=NEX(r)
+ CU(r)=FPR(r)**2.d0
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  Subroutine  1: NEUT
+        is called at -99999<TIME< 99999 with dt=.1    
+ ---->  Subroutine  2: GNXSRC
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  NE  is assigned
+ NE(r)=NEX(r)
+ NE(a_b)=NEX(a)
+ ---->  TE  is assigned
+ TE(r)=TEX(r)
+ TE(a_b)=TEX(a)
+ ---->  TI  is assigned
+ TI(r)=TE(r)
+ TI(a_b)=TE(a)
+ ---->  Equation for CU 
+ CC(r)=CNHR(r)
+ CU(r)=FPR(r)**2.d0
+ HC(r)=HCKIM(r)
+ DC(r)=DCKIM(r)
+ XC(r)=XCKIM(r)
+ CD(r)=CUBM(r)
+ ---->  Subroutine  3: NBIAU
+        is called at 1.    <TIME< 99999 with dt=.5          Key call:N     
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -1     Tex   TEX(r)
+  2         Upl   UPL(r)
+  3         biE0  SNIBM1(r)
+  4         PeNB  PEBM(r)
+  5  -2     ne    NE(r)
+  6         betj  BETAJ(r)
+  7         jcbm  CUBM(r)
+  8  -4     pper  PBPER(r)
+  9  -1     Tix   TIX(r)
+ 10         q     1.d0/MU(r)
+ 11         biE2  SNIBM2(r)
+ 12         PiNB  PIBM(r)
+ 13  -2     ni    NI(r)
+ 14         bett  BETT(r)
+ 15         biE3  SNIBM3(r)
+ 16  -4     plng  PBLON(r)
+ 17  -5     jtot  CU(r)
+ 18         ULON  ULON(r)
+ 19         jcbm  CUBM(r)
+ 20  2      Zeff  ZEF(r)
+ 21         jbs   CUBS(r)
+ 22  1      mu    MU(r)
+ 23  -5     jOH   CU(r)-CD(r)-CUBS(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         <Te>  TEAV(a)
+  2         Wkin  WTOT(a)
+  3         Te0   TE(0)
+  4         Wequ  WTOT(a)+7.5d-1*CV6+1.5d0*CV5
+  5         H-89  (TAUE(a)+(CV5+CV6)/(1.E-6+QTOT(a)))/(CAR12(a)+1.E-6)
+  6         Wpar  CV5
+  7         Wtot  WTOT(a)+CV5+CV6
+  8         Wper  CV6
+  9         Wfir  (CV5+CV6)/WTOT(a)
+ 10         <ne>  NEAV(a)
+ 11         Pe%   1.d2*VINT(PEBM)(a)/(QBEAM+.1E-6)
+ 12         Pi%   1.d2*VINT(PIBM)(a)/(QBEAM+.1E-6)
+ 13         Stot  VINT(SNNBM)(a)+VINT(SNEBM)(a)
+ >>> Warning: unrecognized variable EBEAM
+ >>> Warning: unrecognized variable DBM1
+ >>> Warning: unrecognized variable DBM2
+ >>> Warning: unrecognized variable DBM3
+ 14         Sbea  QBEAM/EBEAM*6.25d2*(DBM1+2.d0*DBM2+3.d0*DBM3)
+ 15         mu0   MU(0)
+ 16         bett  BETT(a)
+ 17         qb    1.d0/MU(a)
+ 18         Upl   UPL(a)
+ 19         li    LINT(a)
+ 20         Ibm   IBM(a)
+ 21         Iohm  IOHM(a)
+ 22         Ibts  IBS(a)
+ 23         verh  IBS(a)/ITOT(a)
+ 24         tauE  TAUE(a)
+ 25         tauP  VINT(NE)(a)/QN(a)
+ 26         iter  TITER(r)
+ 27         peak  NE(0)/NEAV(a)
+ >>> Warning: unrecognized variable CBMS1
+ 28         Q1    CBMS1
+ >>> Warning: unrecognized variable CBMS2
+ 29         Q2    CBMS2
+ >>> Warning: unrecognized variable CBMS3
+ 30         Q3    CBMS3
+ >>> Warning: unrecognized variable CBMS4
+ 31         Q4    CBMS4
+ 32         Zeff  ZEF(0)
+ >>> Warning: unrecognized variable EBEAM
+ 33         Ebm   EBEAM
+ 34         Qb    QBEAM
+ 35         betj  BETAJ(a)
+ 36         NA1   NA1
+ 37         ABC   ABC
+ 38         NB1   NB1
+ 39         ROC   ROC
+ 40         NAB   NAB
+ 41         AB    AB
+ 42         ab    AMETR(a)
+ 43         ROB   HRO*(NB1-5.d-1)
+ 44         Pnbi  VINT(PEX)(a)+VINT(PIX)(a)

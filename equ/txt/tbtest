@@ -1,0 +1,67 @@
+ =====   Variables definition   =====
+ NEQUIL=4.1d1
+ DTOUT=2.5d-3
+ DPOUT=1.d1
+!TE*:;		TI*:;		PE=POH;
+!TEB=TEXB;	TIB=TEXB;
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ CU(r)=FPR(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         T_e   TE(r)
+  2         dTN   TI(r)-TN(r)
+  3         D^an  WORK(J,23)
+  4         NNx   NN(r)
+  5         n_e   NE(r)
+  6         T_i   TI(r)
+  7         chii  WORK(J,21)
+  8         chie  WORK(J,22)
+  9         T_i   TI(r)
+ 10         TNn   CAR4(r)
+ 11         D^an  WORK(J,3)
+ 12         NNn   CAR3(r)
+ 13         n_i   NI(r)
+ 14         T_N   TN(r)
+ 15         chii  WORK(J,1)
+ 16         chii  WORK(J,2)
+ 17         lnNN  LOG(NN(r))
+ 18         dTx   CAR2(r)-TI(r)
+ 19         lnNN  LOG(NN(r))
+ 20         dT4   TN(r)-CAR4(r)
+ 21         NN    NN(r)
+ 22         TN    TN(r)
+ 23         NN    NN(r)
+ 24         TN    TN(r)
+ 25               0.d0
+ 26         dTi   TN(r)-TI(r)
+ 27               0.d0
+ 28         dN    NN(r)-CAR4(r)
+ 29         NNex  CAR1(r)
+ 30         Tnex  CAR2(r)
+ 31         NNen  CAR3(r)
+ 32         Tnen  CAR4(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Te0   TE(0)
+  2         ne0   NE(0)
+  3         Ti0   TI(0)
+  4         Alb   ALBPL
+  5         Tn0   TN(0)
+  6         nN0   NN(0)
+  7         NNCX  NNCX
+  8             
+  9         PEC   VINT(PEECR)(a)
+ 10         IEC   IINT(CUECR)(a)

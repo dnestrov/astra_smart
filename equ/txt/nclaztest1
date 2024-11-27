@@ -1,0 +1,236 @@
+ =====   Variables definition   =====
+!--------------------------------------------------------------------------
+! Equ file "nclaz-test-1" is used to be a model for NCLASS driver testing
+! Originated from "nclass-proba2"
+!--------------------------------------------------------------------------
+!==================== Grad-Shafranov equation =============================
+!NEQUIL=41;				! 3-moment equilibrium solver
+!====================  Ion densities ========================================
+!ZIM1=ZIBE;	AIM1=9;				! n_Be	Z_Be	A_Be
+!ZIM2=ZIAR;	AIM2=40;			! n_Ar	Z_Ar	A_Ar
+ AIM1=9
+ AIM2=40
+!====================  Impurity radiation ==================================
+!   Contribution to Z_eff:
+!====================  Particle transport ===================================
+!--------------------  Electron transport -----------------------------------
+!DN=HNGSE;
+!NEB=0.6;			! Boundary condition (default 0.6x10^19)
+!SN=0.;				! Particle source
+!SNN=0.;				! -+-
+!DN=0.;	CN=0.;		! Explicit numeric scheme
+!SN=grad(CAR26)/VR;		!
+!SN=SNEBM;	SNN=SNNEU;	! Particle source from wall and fast neutrals
+!----------------------------------------------------------------------------
+!--------------------  Beryllium transport ----------------------------------
+!F1B=0;				!    with the boundary
+!DF1=0.;	VF1=0.;		! Explicit numeric scheme
+!SF1=grad(CAR28)/VR;		!
+!----------------------------------------------------------------------------
+!--------------------  Argon transport --------------------------------------
+!F2B=0.;			!    with the boundary
+!DF2=0.;	VF2=0.;		! Explicit numeric scheme
+!SF2=grad(CAR29)/VR;		!
+!----------------------------------------------------------------------------
+!--------------------  Deuteron transport -----------------------------------
+ CF3=WORK(J,163)
+!F3B=NEB;			! Boundary condition (default 0.6x10^19)
+!SF3=0.;	SFF3=0.;	! Particle source for deuterons
+!DF3=0.;	VF3=0.;		! Explicit numeric scheme
+!SF3=grad(CAR27)/VR;		!
+!----------------------------------------------------------------------------
+!====================  Heat transport equations ===========================
+!====================  Poloidal field equation ==============================
+!CU=1.;				! Set initial profile for \mu=1/q=MUX
+!CU=CUX;			!     or, optionally, for j=CU
+!----------------------------------------------------------------------------
+!====================  Radial electric field (not used) =====================
+!----------------------------------------------------------------------------
+!====================  Auxiliary quantities =================================
+!Quasineutrality check
+! Ambipolarity check
+!----------------------------------------------------------------------------
+!----------------------------------------------------------------------------
+!=====================   Time  output  ====================================
+!===================== Profile output =====================================
+!(1)----> Comparison with Galeev-Sagdeev and Kim formulas
+!(2)----> Particle diffusion coefficients and convective velocities
+!(3)----> Particle net fluxes
+!(3.1)----> AMBIPOLARITY and QUASINEUTRALITY check
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZIM1(r)=4
+ ZIM2(r)=18
+ ZEF1(r)=ZIBE(r)*(ZIBE(r)-1.)*NIZ1(r)/NE(r)
+ ZEF2(r)=ZIAR(r)*(ZIAR(r)-1.)*NIZ2(r)/NE(r)
+ ZEF(r)=ZZEF(r)
+ CAR26(r)=WORK(J,101)
+ NIZ1(r)=F1(r)
+ CAR28(r)=WORK(J,241)
+ NIZ2(r)=F2(r)
+ CAR29(r)=WORK(J,261)
+ NDEUT(r)=F3(r)
+ CAR10(r)=NE(r)-F3(r)-ZIM1(r)*F1(r)-ZIM2(r)*F2(r)
+ CAR27(r)=WORK(J,161)
+ VTOR(r)=VTORX(r)
+ VPOL(r)=VPSWW(r)
+ ER(r)=CV4*BTOR*(VDIA(r)-VPOL(r)+VTOR(r)*MU(r)*FRS(r)/RTOR)
+ CAR1(r)=WORK(J,102)
+ CAR2(r)=WORK(J,103)
+ CAR3(r)=WORK(J,162)
+ CAR4(r)=WORK(J,163)
+ CAR5(r)=WORK(J,242)
+ CAR6(r)=WORK(J,243)
+ CAR7(r)=WORK(J,262)
+ CAR8(r)=WORK(J,263)
+ CAR11(r)=WORK(J,101)
+ CAR12(r)=WORK(J,161)
+ CAR13(r)=WORK(J,241)
+ CAR14(r)=WORK(J,261)
+ CAR15(r)=VINT(CAR11)(r)/VOLUME
+ CAR16(r)=VINT(CAR12)(r)/VOLUME
+ CAR17(r)=VINT(CAR13)(r)/VOLUME
+ CAR18(r)=VINT(CAR14)(r)/VOLUME
+ CAR19(r)=NE(r)-(NDEUT(r)+ZIM1(r)*NIZ1(r)+ZIM2(r)*NIZ2(r)+ZIM3(r)*NIZ3(r))
+ CAR20(r)=-CAR11(r)+CAR12(r)+ZIM1(r)*CAR13(r)+ZIM2(r)*CAR14(r)
+ CAR21(r)=HNGSE(r)
+ CAR22(r)=-VP(r)*VRHH(r)
+ CAR23(r)=WORK(J,301)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=0.75*NEX(r)
+F0(r)=1
+ F1(r)=NE(r)*CIMP1
+ F2(r)=NE(r)*CIMP2
+ F3(r)=NE(r)-ZIM1(r)*F1(r)-ZIM2(r)*F2(r)
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed MU distribution
+ =====   Equations & subroutines  =====
+  >>> Warning: Boundary condition for NE is not set.
+              It is set to NEX(t0)
+ ---->  Equation for NE 
+ DN(r)=WORK(J,102)
+ CN(r)=WORK(J,103)
+ NE(r)=0.75*NEX(r)
+  >>> Warning: Boundary condition for F1 is not set.
+               It is set to F1X(t0)
+ ---->  Equation for F1 
+ F1(r)=NE(r)*CIMP1
+ DF1(r)=WORK(J,242)
+ VF1(r)=WORK(J,243)*CV1
+  >>> Warning: Boundary condition for F2 is not set.
+               It is set to F2X(t0)
+ ---->  Equation for F2 
+ F2(r)=NE(r)*CIMP2
+ DF2(r)=WORK(J,262)
+ VF2(r)=WORK(J,263)*CV2
+  >>> Warning: Boundary condition for F3 is not set.
+               It is set to F3X(t0)
+ ---->  Equation for F3 
+ DF3(r)=WORK(J,162)
+ F3(r)=NE(r)-ZIM1(r)*F1(r)-ZIM2(r)*F2(r)
+ ---->  TE  is assigned
+ ---->  TI  is assigned
+ ---->  Equation for CU 
+ HC(r)=HCKIM(r)
+ DC(r)=DCKIM(r)
+ XC(r)=XCKIM(r)
+ CC(r)=CNHR(r)
+ MU(r)=MUX(r)
+ ---->  Subroutine  1: NCLAZ
+        is called at -99999<TIME< 99999 with dt=Def.  
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -11    n_e   NE(r)
+  2         G_e   CAR26(r)
+  3         SSS   CAR10(r)
+  4         S_j   NE(r)-NDEUT(r)-ZIM1(r)*NIZ1(r)-ZIM2(r)*NIZ2(r)
+  5  -13    T_e   TE(r)
+  6         G_Be  CAR28(r)
+  7  -16    n_Be  NIZ1(r)
+  8  -18    CC_A  CC(r)
+  9  -11    n_d   NDEUT(r)
+ 10         G_d   CAR27(r)
+ 11  -15    n_d   NDEUT(r)
+ 12         S_G   CAR20(r)
+ 13  -13    T_i   TI(r)
+ 14         G_Ar  CAR29(r)
+ 15  -16    n_Ar  NIZ2(r)
+ 16  -18    CC_N  WORK(J,303)
+ 17  -11    n_e   NE(r)
+ 18  0.01   -Vn   -CN(r)
+ 19  -15    n_e   NE(r)
+ 20  -17    JbsA  CUBS(r)
+ 21  -13    T_e   TE(r)
+ 22  0.01   Dn    DN(r)
+ 23  -16    n_Be  NIZ1(r)
+ 24  -18    CC_A  CC(r)
+ 25  -11    n_d   NDEUT(r)
+ 26  0.01   -VnW  -CAR22(r)
+ 27  -15    n_D   NDEUT(r)
+ 28  -17    JbsN  WORK(J,301)
+ 29  -13    T_i   TI(r)
+ 30  0.01   DnGS  CAR21(r)
+ 31  -16    n_Ar  NIZ2(r)
+ 32  -18    CC_N  WORK(J,303)
+ 33  0.01   -V_e  -CAR2(r)
+ 34  0.01   -V_D  -CAR4(r)
+ 35  0.01   -VBe  -CAR6(r)
+ 36  0.01   -VAr  -CAR8(r)
+ 37  0.01   D_e   CAR1(r)
+ 38  0.01   D_D   CAR3(r)
+ 39  0.01   D_Be  CAR5(r)
+ 40  0.01   D_Ar  CAR7(r)
+ 41  0.01   -VnW  -CAR22(r)
+ 42  0.01   -VnW  -CAR22(r)
+ 43  0.01   -VnW  -CAR22(r)
+ 44  0.01   -VnW  -CAR22(r)
+ 45  0.01   DeGS  CAR21(r)
+ 46  0.01   DeGS  CAR21(r)
+ 47  0.01   DeGS  CAR21(r)
+ 48  0.01   DeGS  CAR21(r)
+ 49         g_e   CAR11(r)
+ 50         g_D   CAR12(r)
+ 51         g_Be  CAR13(r)
+ 52         g_Ar  CAR14(r)
+ 53         qq    CAR21(r)
+ 54               0.
+ 55               0.
+ 56               0.
+ 57         G_e   CAR15(r)
+ 58         G_D   CAR16(r)
+ 59         G_Be  CAR17(r)
+ 60         G_Ar  CAR18(r)
+ 61               0.
+ 62               0.
+ 63               0.
+ 64               0.
+ 65         QUAN  CAR19(r)
+ 66         Ambp  CAR8(r)
+ 67               0.
+ 68               0.
+ 69         Zeff  ZEF(r)
+ 70               0.
+ 71               0.
+ 72               0.
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Ne0   NE(0)
+  2         Nd    NDEUT(0)
+  3         Nt    NTRIT(0)
+  4         Zef0  ZEF(0)
+  5         nAr0  NIZ2(0)
+  6         <nA>  VINT(NIZ2)(a)/VOLUM(a)
+  7         nBe0  NIZ1(0)
+  8         <nB>  VINT(NIZ1)(a)/VOLUM(a)
+  9         ZIM1  ZIM1(0)
+ 10         ZIM2  ZIM2(0)
+ 11         <ne>  VINT(NE)(a)/VOLUM(a)
+ 12         fER   CV4
+ 13         <nD>  VINT(NDEUT)(a)/VOLUM(a)

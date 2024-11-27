@@ -1,0 +1,112 @@
+ =====   Variables definition   =====
+ NEQUIL=8.5d1
+ CNB1=8.d0
+ NNCL=0.d0
+ NNWM=8.5d-5
+ ENWM=2.5d-1
+!NEUT:;		NNCL=0.d0;	NNWM=1.05d-4;	ENWM=0.25;
+!---------  Integrated power sources ---------------- Screen number (2) ----
+ >>> Warning: Too long name in channel 17 <<<
+ >>> Warning: Too long name in channel 21 <<<
+ CAR3(r)=(FP(r)-FP))/(FP(a)-FP))
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ CU(r)=1.2d0*FPR(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         T_e   TE(r)
+  2         che   HE(r)
+  3               0.d0
+  4         Upl   UPL(r)
+  5         T_i   TI(r)
+  6         SeNB  SNEBM(r)
+  7         PeNB  PEBM(r)
+  8         iota  MU(r)
+  9               0.d0
+ 10         chi   XI(r)
+ 11         NN    NN(r)
+ 12         j     CU(r)
+ 13         n_e   NE(r)
+ 14         Stot  SNTOT(r)
+ 15         PiNB  PIBM(r)
+ 16         q     1.d0/MU(r)
+ 17         Qe_S  QETOT(r)
+ 18         QeNB  VINT(PEBM)(r)
+ 19         QOH   QOH(r)
+ 20         QeiG  QEIGN(r)
+ 21         Qi_S  QITOT(r)
+ 22         QNBI  VINT(PBEAM)(r)
+ 23         Qrad  QRAD(r)
+ 24         Qe_G  QEGN(r)
+ 25         Qe_F  QE(r)
+ 26         QiNB  VINT(PIBM)(r)
+ 27         Qei   QEICL(r)
+ 28         Qi_N  QINEU(r)
+ 29         Qi_F  QI(r)
+ 30         QNBI  VINT(PEBM)(r)+VINT(PIBM)(r)
+ 31         Qicx  QICX(r)
+ 32         Qi_G  QIGN(r)
+ 33         ne    NE(r)
+ 34  -6     QnSr  QNTOT(r)
+ 35         Zeff  ZEF(r)
+ 36         NN    NN(r)
+ 37         T_e   TE(r)
+ 38         Stot  SNTOT(r)
+ 39         D     DN(r)
+ 40         T_N   TN(r)
+ 41               0.d0
+ 42  -6     QnFl  QN(r)
+ 43         S-Fl  QNTOT(r)-QN(r)
+ 44               0.d0
+ 45         T_i   TI(r)
+ 46         SeNB  SNEBM(r)
+ 47         V_p   -CN(r)
+ 48         T_i   TI(r)
+ 49         psiN  CAR3(r)
+ 50         r_pl  SQRT(CAR3(r))
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         dTe0  TEX--TE3
+  2  5      Tex0  TEX-
+  3         dTi0  TIX--TI3
+  4  5      Te0   TEC
+  5         dne0  NEX--NE3
+  6  5      Tix0  TIX-
+  7             
+  8  5      Ti0   TIC
+  9         ne0   NEC
+ 10  2      <Tex  TEXAV(a)
+ 11         nex0  NEXV
+ 12  2      <Te>  TEAV(a)
+ 13         <nex  NEXAV(a)
+ 14  2      <Tix  TIXAV(a)
+ 15         <ne>  NEAV(a)
+ 16  2      <Ti>  TIAV(a)
+ 17         PNB1  ZRD11
+ 18         PNB2  ZRD2
+ 19         PNB3  ZRD3
+ 20         PNB4  ZRD4
+ 21         PNB5  ZRD35
+ 22         PNB6  ZRD6
+ 23         PNB7  ZRD7
+ 24         PNB8  ZRD8
+ 25         AB    AB
+ 26         NAB   NAB
+ 27         ABC   ABC
+ 28         NA1   NA1
+ 29         mu0   MU8
+ 30         NB1   NB1
+ 31         mu    MU(a)
+ 32         S     SLAT(a)

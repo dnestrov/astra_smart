@@ -1,0 +1,69 @@
+ =====   Variables definition   =====
+!====================  Grad-Shafranov equation ==============================
+ NEQUIL=4.1d1
+!====================  Ion densities ========================================
+!====================  Impurity radiation ==================================
+!   Contribution to Z_eff:
+!ZEF1=ZIBE*(ZIBE-1.)*NIZ1/NE;	! Delta(Z_eff) due to Be
+!ZEF2=ZIAR*(ZIAR-1.)*NIZ2/NE;	! Delta(Z_eff) due to Ar
+!ZEF3=ZICAR*(ZICAR-1.)*NIZ3/NE;	! Delta(Z_eff) due to C
+!ZEF=ZZEF;			! Here: ZEF=1+2*NALF+ZEF1+ZEF2+ZEF3
+!PBOL1=PRBER*NIZ1*NE;		! PBOL1 - entire radiation due to Be
+!PBOL2=PRARG*NIZ2*NE;		! PBOL2 - entire radiation due to Ar
+!PBOL3=PRCAR*NIZ3*NE;		! PBOL3 - entire radiation due to C
+! Assume that Z_eff is due to Carbon
+ AIM1=1.2d1
+!==================== Auxiliary heating =====================================
+!----------------------------------------------------------------------------
+!==================== Gas puff neutrals =====================================
+ NNCX=CNEUT1
+!------------------------------------//--------------------------------------
+!===================== Profile output =======================================
+!---------  Overview --------------------------------- Screen number (1) ----
+ >>> Warning: Too long name in channel 17 <<<
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZEF(r)=ZEFX(r)
+ ZIM1(r)=6.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)-NIBM(r)
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ CU(r)=CNHR(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -1     n_e   NE(r)
+  2         T_e   TE(r)
+  3         Z_ef  ZEF(r)
+  4         j     CU(r)
+  5         PNB   PBEAM(r)
+  6         PeNB  PEBM(r)
+  7               0.d0
+  8         S_NB  SNEBM(r)
+  9  -1     n_D   NDEUT(r)
+ 10         T_i   TI(r)
+ 11         n_Ca  NIZ1(r)
+ 12         U     UPL(r)
+ 13  5      q     1.d0/MU(r)
+ 14         PiNB  PIBM(r)
+ 15               0.d0
+ 16         sigm  CC(r)
+ 17         q(0)  MU(0)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         PeNB  VINT(PEBM)(a)
+  2         PiNB  VINT(PIBM)(a)
+  3         PNB   QBTOT(a)

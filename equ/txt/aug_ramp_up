@@ -1,0 +1,123 @@
+ =====   Variables definition   =====
+ NEQUIL=6.464d1
+!HC=HCHR;	DC=DCHR;	XC=XCHR;	
+ CMHD1=RTOR/(RTOR+SHIF))
+ >>> Warning: Too long name in channel 58 <<<
+ NI(r)=NE(r)
+ ZEF(r)=MAX(1.d0,ZRD19)
+ CAR5(r)=VR(r)/(RTOR*RHO(r)*GP2**2.d0)*IPOL(r)*G33(r)
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TEX(r)
+ CU(r)=CC(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         P_e   PETOT(r)
+  2  5      XIiv  CAR8(r)
+  3         j     CU(r)
+  4         jtor  CUTOR(r)
+  5  2      T_e   TE(r)
+  6  5      HEiv  CAR9(r)
+  7         n_e   NE(r)
+  8  1      mu    MU(r)
+  9         P_i   PITOT(r)
+ 10  5      XIjh  CAR3(r)
+ 11               0.d0
+ 12         cc    CC(r)
+ 13  2      T_i   TI(r)
+ 14  5      HEjh  CAR4(r)
+ 15         UP    UPL(r)
+ 16  10     q     1.d0/MU(r)
+ 17         R     CAR2(r)
+ 18         Pt    PTOT(r)
+ 19         che   HE(r)
+ 20         shiv  SHIV(r)
+ 21               0.d0
+ 22               0.d0
+ 23         nues  NUES(r)
+ 24               0.d0
+ 25         Ritg  CAR1(r)
+ 26         Pet   PETOT(r)
+ 27         chi   XI(r)
+ 28         tria  TRIA(r)
+ 29               0.d0
+ 30         Pit   PITOT(r)
+ 31         nuis  NUIS(r)
+ 32               0.d0
+ 33         ipol  IPOL(r)-1.d0
+ 34         slat  SLAT(r)/FRS(r)
+ 35         eqpf  EQPF(r)
+ 36         shif  SHIF(r)
+ 37         bmax  BMAXT(r)
+ 38  1      b02b  B0DB2(r)*CMHD1**2.d0
+ 39  1      bb02  BDB02(r)/CMHD1**2.d0
+ 40         rho   RHO(r)
+ 41         drda  DRODA(r)
+ 42         grad  GRADRO(r)
+ 43         eqff  EQFF(r)
+ 44         V_n   VOLUM(r)/FRS(r)**2.d0
+ 45         bmin  BMINT(r)
+ 46  1      B/B0  BDB0(r)/CMHD1
+ 47  1      Fp    (FP(r)-FP))/(FP(a)-FP))
+ 48  -20    a     AMETR(r)
+ 49         g22n  G22(r)/FRS(r)
+ 50         VR_n  VR(r)/RHO(r)
+ 51         elon  ELON(r)
+ 52         g22r  G22(r)/RHO(r)
+ 53         Cbs   CUBS(r)
+ 54         li3   ELI3(r)
+ 55         CD    CD(r)
+ 56         car5  CAR5(r)-1.d0
+ 57         g11n  G11(r)/FRS(r)
+ 58         VRSn  VRS(r)/FRS(r)
+ 59         g33   G33(r)
+ 60         g11r  G11(r)/RHO(r)
+ 61  1      r/a   RHO(r)/AMETR(r)/SQRT(ELON(r))
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Ipl   IPL
+  2         q(0)  1.d0/MUR
+  3         a     ABC
+  4         q(a)  1.d0/MU(a)
+  5         NA1   NA1
+  6         el    ELONG
+  7         ROC   ROC
+  8         tr    TRIAN
+  9         shif  SHIFT
+ 10             
+ 11         b%  
+ 12         Rma   RTOR+SHIFS
+ 13         nste  CV2
+ 14         li3   LINT(a)
+ 15             
+ 16         R0    RTOR+SHIFT
+ 17         Ipl   IINT(CU)(r)
+ 18         Upl0  UPL(
+ 19         Zeff  ZRD19X
+ 20         Uplb  UPL(a)
+ 21         Ibs   IINT(CUBS)(r)
+ 22         fpb   FP(a)
+ 23  1      h/ha  HRO/HROA
+ 24         fpc   FP/
+ 25         Vol   VOLUM(a)
+ 26         R/Ra  CMHD1
+ 27         NB1   NB1
+ 28         PB1   ZRD1X
+ 29         PB2   ZRD2X
+ 30         PB3   ZRD3X
+ 31         PB4   ZRD4X
+ 32         PB5   ZRD5X
+ 33         PB6   ZRD6X
+ 34         PB7   ZRD7X
+ 35         PB8   ZRD8X

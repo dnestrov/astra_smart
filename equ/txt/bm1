@@ -1,0 +1,108 @@
+ =====   Variables definition   =====
+ NEQUIL=4.1d1
+!IPL=1+4*FRAMP(0.,5.);	! Plasma current ramp-up
+!------------------------ Set plasma composition --------------------------
+! ZEF=ZEFX;
+ AIM1=1.2d1
+!------------------------ Neoclassical Transport --------------------------
+!------------------------ Cold neutrals -----------------------------------
+! NEUT:;		ENCL=0.002;	ENWM=0.02;	NNWM=0.01*NNCL;
+!------------------------ Set <n_e>=2.4 -----------------------------------
+! SETNAV(2.4d0,CF9):0.001;
+! NE:;		
+!========	Transport coefficients Bohm/GyroBohm model
+! 1/CV5=<L_Te>_0.8a-a; 1.41=sqrt(2) in HAGB: ro*_ASTRA=sqrt(2Te/M)/omega_Ci
+!HE=HABM+HAGB;			XI=2*HABM+HAGB;
+ CV4=(TE(8.d-1*ABC)-TE(a))/TE(a)
+ CV5=MAX(1.d-1,CV4)
+!
+!HABM*CV5+HAGB/1.41+"work(j,305)";	!CE="work(j,306)"
+! XI=		!2*HABM*CV5+HAGB/1.41+"work(j,365)";	!CI="work(j,366)"
+!====================  Heat transport equations ===========================
+! TE:EQ;	
+! TI:EQ;	
+ >>> Subroutine MIXINT will be called after all transport equations
+ ZEF(r)=1.d0
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZIM1(r)=6.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=FPR(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  Subroutine  1: NEOCL3
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Equation for CU 
+ CC(r)=WORK(J,503)
+ MU(r)=1.d0/CAR15X(r)
+ CU(r)=FPR(r)
+ ---->  Subroutine  2: MIXINT(1.d1,1.d-1)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  NE  is assigned
+ NE(r)=NEX(r)
+ NE(a_b)=NEX(a)
+ SNN(r)=SNNEU(r)
+ DN(r)=1.d0+4.d0*(RHO(r)/ROC)**2.d0
+ ---->  TE  is assigned
+ PET(r)=-PEI(r)
+ PE(r)=POH(r)-PET(r)*TI(r)+PEX(r)
+ TE(r)=TEX(r)
+ TE(a_b)=TEX(a)
+ HE(r)=DN(r)
+ ---->  TI  is assigned
+ PIT(r)=-PEI(r)
+ PI(r)=-PET(r)*TE(r)+PIX(r)
+ TI(r)=TIX(r)
+ TI(a_b)=TIX(a)
+ XI(r)=DN(r)
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         T_ex  TEX(r)
+  2         j     CU(r)
+  3         Gfl   QN(r)
+  4         n_e   NE(r)
+  5         T_ix  TIX(r)
+  6         U     UPL(r)
+  7         mu    MU(r)
+  8         D     HE(r)
+  9         T_e   TE(r)
+ 10         cc    CC(r)
+ 11         Gsr   QNTOT(r)
+ 12         n_i   NI(r)
+ 13         T_i   TI(r)
+ 14         Zeff  ZEF(r)
+ 15         q     1.d0/MU(r)
+ 16         betj  BETAJ(r)
+ 17         PNBe  PEX(r)
+ 18         PNBi  PIX(r)
+ 19         zim1  ZIM1(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         U(a)  UPL(a)
+  2         Gfl   QN(a)
+  3         <nx>  NEXAV(a)
+  4         NNwm  NNWM
+  5         U(0)  UPL(0)
+  6         Gsr   QNTOT(a)
+  7         <ne>  NEAV(a)
+  8         NNcl  NNCL
+  9         q(0)  1.d0/MU(0)
+ 10         Ipl   IPL
+ 11         q(a)  1.d0/MU(a)
+ 12         li    LINT(a)

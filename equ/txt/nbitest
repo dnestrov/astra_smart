@@ -1,0 +1,221 @@
+ =====   Variables definition   =====
+!Employed constants:
+!CV1-3,5-8,10-16;
+!CV4 used for boundary condition in transport equations
+!CV4 = fraction in rho_tor of the minor radius at the edge on which the equation is not solved
+!CV12-CV16 = factor for off-diagonal transport
+!CF1-8 for nbiext.f
+!CF9-16;
+!CHE1-3;
+!CCD1-4;
+!CIMP1-4;
+!CFUS1-4;
+!CAR1-8;
+!Active subroutines: wntst,merit,mixint,averst,smearr,nbiext,
+!linemodel,mykey,wncrit,chirlti,wncritel,chirlte;
+ CV16=7.d0
+!MESHEQ=41;
+ TAUMIN=1.d-5
+ TAUMAX=5.d-5
+ CV4=2.d-1
+ CV7=1.d0
+ CV8=1.d0
+ CV9=1.d0
+ CHE1=1.d0
+ CHE2=1.d0
+ CHE3=1.d0
+ CHI1=1.d0
+ CHI2=1.d0
+ CHI3=1.d0
+ CHI4=1.d0
+ CHE4=1.d0
+ CV13=7.d0
+ CV15=0.d0
+ CF2=1.d0
+ CF3=1.d0
+ CF4=1.d0
+ CF12=1.d0
+ CF13=1.d0
+ CNEUT1=1.d0
+ CNEUT2=1.d-5
+ CNEUT3=0.d0
+!================   ZEF from measurements
+ AIM1=1.2d1
+!=================  Rotation
+! ZRD23X=1 using angular velocity, =0 using vtor;
+!====================  Transport model	================================
+! CV15 = KOPT = 0 => no collision and impurity effects
+! WN_MY(MAX(CV1,0.001),CV13, CV15, CF3):;  !CV1 smoothing factor,CF1=YNUM;
+! AVERST_MY(CF9,CAR13,CAR14,CAR15,CAR16,CF16):; 	! ST-averaged Te,Ti,ne profiles;
+! HE=HNGSE + CHE2*"WORK(j,37)";        ! chi_EE
+! DE=CHE3*"WORK(j,38)";     ! chi_EN due to grad ne
+! XE=0.0
+! XI=HNCHC + CHI1*"WORK(j,31)";   ! chi_II
+! HI=CHI2*"WORK(j,32)";     ! chi_IE due to grad Te
+! DI=CHI3*"WORK(j,33)";     ! chi_IN due to grad ne
+! XN=0.0
+! DN=CHI4*"WORK(j,43)" +0.21*HNGSE;! D_NN (added D_neo ~ 1/4.7 of chi_e_Neo)
+! HN=CHE4*"WORK(j,42)";           ! D_NE   due to grad Te
+!		     Convective fluxes
+! CAR21=-2.*"WORK(j,56)"/ABC; CAR22=-2.*"WORK(j,57)"/ABC;
+! CAR23=-2.*"WORK(j,58)"/ABC;
+! CI = CV7*CAR21; CE = CV8*CAR22;
+!               Add Ware pinch (VP = Epar/Bpol)  -> give the Ware Pinch with SA formula
+! CN = CV9*CAR23-CHE1*VP*VRHH;
+! CAR24 = CN/DN;
+! CAR25 = -2.0/(RTOR+SHIF)*(1.0+2.0/3.0*HN/DN);
+!==================== NBI-input is calculated ==========================
+!NBI:0.05:0.001;
+! CORRECTION: CUT IN THE CENTRE AND MATCH THE TOTAL POWER
+! CORRNBI(PEBM,PIBM,SNEBM,CUBM,NIBM,VR,HRO,NA1,CF2):10:0.001;
+ CV5=8.d-4*VINT(PBLON)(a)
+ CV6=1.6d-3*VINT(PBPER)(a)
+!==================== NBI-input is taken from ITER DB ==================
+!PEBM=CAR8X;		PIBM=CAR7X;		!CUBM=CUX;	!NIBM=CAR11X;
+!==================== Densities =========================================
+!sources
+ NNCL=CNEUT2
+ NNWM=CNEUT3
+! CF11=VINT(NEXB)/VOLUME;  = NEXAVB
+! SETNAV(NEXAVB, 0.1):;
+!FLATNEU(CAR12,NE,VR,HRO,NA1,CF2):;
+!Equation
+! NE:EQ[2, 1.-CV4];   NE=NEX;   NEB=NEX(AFX(1.-CV4));
+!==================== Temperatures ======================================
+!FGAUSS(ZRD15X,ZRD19X/ABC,CAR6):::0.001:;
+!PEECR=ZRD16X*CAR6;
+! Equations for temperatures
+!PE=POH+PEBM-PEICL-PRADX; !+PEECR  ! Problems in PEECR ZRD15X and ZRD19X not defined
+!PI=PIBM+PEICL;
+!TE:EQ[2,1.-CV4];	TEB=TEX(AFX(1.-CV4));	
+! TE:AS;
+!TI:EQ[2,1.-CV4];	TIB=TIX(AFX(1.-CV4));	
+! TI:AS;
+!CAR3=QITOT/SLAT;
+!CAR4=QETOT/SLAT;
+!CAR5=QETOT/QITOT*(CAR8/CAR7)**.6;
+!======= CHECK QN
+!CAR30 = -DN*grad(NE)/NE;
+!CAR31 = -HN*grad(TE)/TE;
+!CAR32 = (QN)/(G11*NE)
+!CAR29 = (-SLAT*GNX)/(G11*NE)
+! ===   BS - CC - HE - XI	
+! HC=HCHA; 	DC=DCHA;        XC=XCHA;
+!  HC=HCSA; 	DC=DCSA;        XC=XCSA;	CC=CNSA;
+!	Sawteeth
+!CF10=10
+!MIXINT(CF10,ZRD22X)::::;	
+! E.g. CF10=10 - Kadomtsev model, ZRD22X= prescribed period
+! CF9=min(0.25,ZRD22X);
+!
+!=============  Time step control
+! TSCTRL(QI, QE, QN, 1.):;
+! OUTPUT_MY(CAR13,CAR14,CAR15,CAR16,CV16,1):0.1:0.1:3.1:O;
+! MYKEY_MY:1:3.00::;
+ >>> Warning: Too long name in channel  4 <<<
+! PNBE_CV10; PNBI_CV11; PNB_CV10+CV11; SNBn_CV12;
+ ZEF(r)=CF4*ZEFX(r)
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZIM1(r)=6.d0
+ ZEF1(r)=ZIM1(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)
+ NIZ1(r)=CNEUT1*NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ VPOL(r)=VPSWW(r)
+ VTOR(r)=VTORX(r)
+ ER(r)=BTOR*((ZRD23X*CAR3X(r)+(1.d0-ZRD23X)*VTOR(r)/RTOR)*FRS(r)*MU(r)+VDIA(r)-VPOL(r))
+ CAR12(r)=SNNEU(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)-NIBM(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed MU distribution
+ =====   Equations & subroutines  =====
+ ---->  Subroutine  1: NBI
+        is called at 0.001 <TIME< 99999 with dt=0.01  
+ ---->  Subroutine  2: NEUT
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  NE  is assigned
+ SNN(r)=CF12*CAR12(r)
+ SN(r)=CF13*SNEBM(r)
+ ---->  Subroutine  3: SMOOTH2(CV2,TEX,TE)
+        is called at -99999<TIME<0.01   with dt=Def.  
+ ---->  Subroutine  4: SMOOTH2(CV3,TIX,TI)
+        is called at -99999<TIME<0.01   with dt=Def.  
+ ---->  Subroutine  5: SMOOTH2(CV2,TEX,TEX)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  6: SMOOTH2(CV3,TIX,TIX)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  TE  is assigned
+ TE(r)=TEX(r)
+ ---->  TI  is assigned
+ TI(r)=TIX(r)
+ ---->  Equation for CU 
+ HC(r)=HCKIM(r)
+ DC(r)=DCKIM(r)
+ XC(r)=XCKIM(r)
+ CC(r)=CNHR(r)
+ CD(r)=CUBM(r)+CUECR(r)
+ MU(r)=1.d0/CAR6X(r)
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -4     Te    TE(r)
+  2  -15    j     CU(r)
+  3  -14    pNBI  PIBM(r)
+  4         SNEB  SNEBM(r)
+  5  -15    j     CU(r)
+  6  -15    joh   CUOHM(r)
+  7  -12    CC    CC(r)
+  8         ne    NE(r)
+  9  -4     Ti    TI(r)
+ 10         q     1.d0/MU(r)
+ 11  -11    pNBe  PEBM(r)
+ 12         jBM   CUBM(r)
+ 13  -15    jbs   CUBS(r)
+ 14  -15    jCD   CD(r)
+ 15         Upl   UPL(r)
+ 16         NIBM  NIBM(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         UPLB  UPL(a)
+  2  10     q0    1.d0/MU(0)
+  3         neav  NEAV(a)
+  4         tauE  TAUE(a)
+  5         ROC   ROC
+  6         ROB   ROB
+  7         navX  NEXAV(a)
+  8         Pix8  NI(8.d-1*ROC)*TIX(8.d-1*ROC)
+  9         Pi8   NI(8.d-1*ROC)*CAR8(8.d-1*ROC)
+ 10         Pix4  NI(4.d-1*ROC)*TIX(4.d-1*ROC)
+ 11         Pi4   NI(4.d-1*ROC)*CAR8(4.d-1*ROC)
+ 12         Pex8  NEX(8.d-1*ROC)*TEX(8.d-1*ROC)
+ 13         Pe8   NE(8.d-1*ROC)*CAR7(8.d-1*ROC)
+ 14         Pex4  NEX(4.d-1*ROC)*TEX(4.d-1*ROC)
+ 15         Pe4   NE(4.d-1*ROC)*CAR7(4.d-1*ROC)
+ 16         Tix8  TIX(8.d-1*ROC)
+ 17         Ti8   CAR8(8.d-1*ROC)
+ 18         Tix4  TIX(4.d-1*ROC)
+ 19         Ti4   CAR8(4.d-1*ROC)
+ 20         Tex8  TEX(8.d-1*ROC)
+ 21         Te8   CAR7(8.d-1*ROC)
+ 22         Tex4  TEX(4.d-1*ROC)
+ 23         Te4   CAR7(4.d-1*ROC)
+ 24         Wex   WEX(a)
+ 25         Wix   WIX(a)
+ 26         Wx    WTOTX(a)
+ 27         Wkin  WTOT(a)
+ 28         Wtot  WTOT(a)+CV5+CV6
+ 29         NA1   NA1
+ 30         hro   HRO
+ 31         hroa  HROA

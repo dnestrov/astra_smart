@@ -1,0 +1,73 @@
+ =====   Variables definition   =====
+ NEQUIL=6.8d1
+ TAUMIN=1.d-3
+ TAUMAX=TAUMIN
+ DROUT=0.d0
+ DPOUT=1.d2
+ DTOUT=0.d0
+ TSCALE=-2.d0
+!DTOUT=10*TAUMIN;TSCALE=-25;
+!----------------------------------------------------------------
+!----------------------------------------------------------------
+ CAR1(r)=1.d0
+ CAR2(r)=PRESE(r)
+ CAR3(r)=PRESI(r)
+ =====   Initial distributions   =====
+ NE(r)=SQRT(FPR(r))
+ TE(r)=2.d0*SQRT(FPR(r))
+ TI(r)=SQRT(FPR(r))
+ CU(r)=FPR(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         n_e   NE(r)
+  2  -6     p_e   PRESE(r)
+  3  -4     A     CAR4(r)
+  4  -4     j     CU(r)
+  5         T_e   TE(r)
+  6  -6     ptot  PREST(r)
+  7  -4     p'    EQPF(r)
+  8         1/q   MU(r)
+  9         n_i   NI(r)
+ 10  -6     p_i   PRESI(r)
+ 11  -4     B     CAR5(r)
+ 12               0.d0
+ 13         T_i   TI(r)
+ 14               0.d0
+ 15  -4     FF'   EQFF(r)
+ 16         q     1.d0/MU(r)
+ 17         B/B0  BDB02(r)
+ 18         B/B0  BDB0(r)
+ 19         tria  TRIA(r)
+ 20         G11   G11(r)
+ 21         Bmx   BMAXT(r)
+ 22         V'    VR(r)
+ 23         a     AMETR(r)
+ 24         G33   G33(r)
+ 25         B0/B  B0DB2(r)
+ 26         S     SLAT(r)
+ 27         Shif  SHIF(r)
+ 28         G22   G22(r)
+ 29         Bmn   BMINT(r)
+ 30         V     VOLUM(r)
+ 31         elon  ELON(r)
+ 32         J     IPOL(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Ipl   IPL
+  2  -3     Te0   TE(0)
+  3         ne0   NE(0)
+  4  -3     <Te>  TEAV(a)
+  5         Vol   VOLUME
+  6  -3     Ti0   TI(0)
+  7         <ne>  NEAV(a)
+  8  -3     <Ti>  TIAV(a)

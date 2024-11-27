@@ -1,0 +1,274 @@
+ =====   Variables definition   =====
+! CF1-7; CV1-17;
+! CAR1-5 are used in NBIMIX; CAR8-17, 19-20;
+!IPL=.8+.4*(FRAMP(15.,20.)+FRAMP(35.,40.)+FRAMP(55.,60.));
+!CV4=.3+.6*FRAMP(10.,12.)+.1*FRAMP(20.,22.)+.1*FRAMP(30.,32.);
+!CF1=0.261*(4+2*FRAMP(10.,12.)+FRAMP(20.,22.)+FRAMP(30.,32.));
+ MESHEQ=41
+ AIM1=12.
+ CV2=1-EXP(-2.7*NE(CV1*ROC)*TE(CV1*ROC))
+! Gaussian profile of additional heating ~exp{-[(a-cv1)/(a_b*cf5)]^2}
+! CUECR is scaled using Peeters's calculation
+! CUICR is scaled using Noterdaeme's data
+!PE=POH-PET*TI-PRADX+PEECR+PEICR+PEBM-PBEIE-PENEU; ! Trace/BPT trap in model
+!CAR12=CAR9/(1.+EXP(10*(CV4*MU-SHEAR)));CAR13=CHE1*2*HABM*CAR10+CHE2*HAGB;
+ CV16=CV15*ROC+.01
+ CV11=CAR19(CV16)
+ CV9=CV10*(1.+.0*FRAMP(.0,.3))
+! NBI heating:  CF9 - tang. power;	CV9 - perp. power
+ CV5=0.8E-3*VINT(PBLON)(a)
+ CV6=1.6E-3*VINT(PBPER)(a)
+ CBND1=TAUE(a)+(CV5+CV6)/(1.E-6+QTOT(a))
+!NEOCL(CAR21,CAR16,CAR22,CAR23):.5;
+!BSHOUL(2.,CAR21,CAR22):.5;		! Houlberg's  bootstrap
+  >>> Subroutine MIXINT will be called after all transport equations
+!nui#\NUIS*SQEPS**3;		nui*\cut(100.,NUIS);	hneo\HNCHI\-7;
+!biE0\SNIBM1;	betj\BETAJ;	PeNB\PEBM\-6;	hneo\HNCHI*FOWC;
+!taus\(FP-FPC)/UPL;ULON\ULON;	PeBp\CAR2\-6;	shrs\CAR33;
+!biE2\SNIBM2;	bebm\BETBM;	PiNB\PIBM\-6;	fowc\FOWC;
+!biE3\SNIBM3;	Upl\UPL;	PiBp\CAR3\-6;	tpfc\FTLLM;
+!Pjou\PJOUL;	PEC\PEECR;	Q11\WE/(TAUEE+.1E-6);	jIC\CUICR
+!Qen\2.5*GNX*TE*NE;Qen\QN;	jEC\CUECR;	q\1./MU;jNB\CUBM;
+!IBS_IBSB;	
+!<Te>_TEAVB;
+!Temx_frmax(TE);		! T_e_max
+!amux_AMETR(rfmax(MU))/ABC;	!Location of the MU_max(a)
+!NA1_NA1;	ABC_ABC;	NAB_NAB;	AB_AB;
+!NB1_NB1;	ROC_ROC;	el_ELONG;	tri_TRIAN;
+!tmd_TIMDER(WTOTB);	etaE_0.1*RTOR*NEAVB*IECRB/QECR;		peak_NEC/NEAVB;
+!		Commentaries
+! 05.1998
+! 1) HATL is replaced with HABM
+! 2) Conductivity smoothing changed from
+!	CAR19=CNHR;		CV16=CAR19(CV15*ROC);
+!	CAR17=CV16*(1-RSTEP(CV15*ROC));  CAR17=CNHR*RSTEP(CV15*ROC)+CAR17;
+!	CAR18=CNHR-abs((CAR16-CUBS)/EPAR);
+!    to
+!	CAR19=CNHR;		CV16=CV15*ROC+.01;	CV11=CAR19(CV16);
+!	CAR17=(0.5*(CAR19C-CV11)*(1-(RHO/CV16)**2)+CV11);
+!	CAR17=CAR19*RSTEP(CV16)+CAR17*(1-RSTEP(CV16));
+! 3) Removed
+!	CV15=.15*FJUMP(.2)!+.05*FJUMP(1.2);
+ ZEF(r)=ZEFX(r)
+ AMAIN(r)=2.
+ ZMAIN(r)=1
+ ZIM1(r)=6.
+ NIZ1(r)=NE(r)*(ZEF(r)-1.)/(ZIM1(r)-1.)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ PEECR(r)=QECR*CV2*GAUSS(CV1,CF5)(r)
+ CUECR(r)=0.11*PEECR(r)*TE(r)/NE(r)
+ PEICR(r)=QICR*CAR8(r)
+ CUICR(r)=0.42*PEICR(r)*TE(CF6*ROC)/NE(r)
+ CAR24(r)=PEBM(r)-PENEU(r)-PBEIE(r)
+ CAR23(r)=PINEU(r)-PENEU(r)-PIREC(r)-PBICX(r)-PBEIE(r)
+ CAR9(r)=1
+ CAR10(r)=CAR9(r)/(1.+EXP(20*(CV3-SHEAR(r))))
+ CAR11(r)=CHE1*HABM(r)*CAR10(r)+CHE2*HAGB(r)
+ CAR12(r)=CAR9(r)/(1.+EXP(20*(CV4-SHEAR(r))))
+ CAR13(r)=CHE1*2*HABM(r)*CAR12(r)+CHE2*HAGB(r)
+ CAR19(r)=CNHR(r)
+ CAR17(r)=(0.5*(CAR19(0)-CV11)*(1-(RHO(r)/CV16)**2)+CV11)
+ CAR17(r)=CAR19(r)*RSTEP(CV16)(r)+CAR17(r)*(1-RSTEP(CV16)(r))
+ CAR20(r)=CUBS(CV15*ROC)*(1-RSTEP(CV15*ROC)(r))
+ CAR20(r)=CUBS(r)*RSTEP(CV15*ROC)(r)+CAR20(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=CF1*NEX(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed MU distribution
+ =====   Equations & subroutines  =====
+ ---->  Subroutine  1: NEUT
+        is called at -99999<TIME< 99999 with dt=.1    
+ ---->  Subroutine  2: GNEX
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  NE  is assigned
+ SNN(r)=SNNEU(r)
+ SN(r)=SNEBM(r)
+ NE(r)=CF1*NEX(r)
+ NE(a_b)=CF1*NEX(a)
+ ---->  Subroutine  3: FGAUSS(CF6,CF8,CAR8)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Equation for TE  with particle flux included
+ GN2E=2.5
+ TE(r)=TEX(r)
+ TE(a_b)=.5
+ PET(r)=-PEI(r)
+ PE(r)=POH(r)-PET(r)*TI(r)-PRADX(r)+PEECR(r)+PEICR(r)+PEBM(r)-PENEU(r)
+ HE(r)=HNGSE(r)+CAR14(r)
+ ---->  Equation for TI  with particle flux included
+ GN2I=2.5
+ TI(r)=TIX(r)
+ TI(a_b)=.5
+ PIT(r)=PET(r)
+ PI(r)=PINEU(r)-PIREC(r)-PET(r)*TE(r)+PIICR(r)+PIBM(r)
+ XI(r)=HNCHI(r)*FOWC(r)+HNPSI(r)+CAR15(r)+CHE4
+ ---->  Subroutine  4: SMEARR(CV14,CAR11,CAR14)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  5: SMEARR(CV14,CAR13,CAR15)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Equation for CU 
+ CC(r)=CAR17(r)
+ MU(r)=MUX(r)
+ HC(r)=CV12*HCKIM(r)
+ DC(r)=CV12*DCKIM(r)
+ XC(r)=CV12*XCKIM(r)
+ CD(r)=CUECR(r)+CUICR(r)+CUBM(r)-CUBS(r)+CAR16(r)
+ ---->  Subroutine  6: SMEARR(CV13,CAR20,CAR16)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  7: NBIMIX
+        is called at -99999<TIME< 99999 with dt=.5          Key call:N     
+ ---->  Subroutine  8: MIXINT(CV7,CF7)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ Iterative correction algorithm is added
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -5     Te    TE(r)
+  2         Upl   UPL(r)
+  3  -7     He    HE(r)
+  4         Qtot  QTOT(r)
+  5         ne    NE(r)
+  6  1      mu    MU(r)
+  7         btot  BETAJ(r)+BETBM(r)
+  8         Fe    CAR10(r)
+  9  -5     Ti    TI(r)
+ 10         jOH   CUOHM(r)
+ 11  -7     Hi    XI(r)
+ 12         shea  SHEAR(r)
+ 13  5      q     1./MU(r)
+ 14         j     CU(r)
+ 15         beth  BETAJ(r)
+ 16         Fi    CAR12(r)
+ 17  2      jtot  CU(r)
+ 18  -11    jNBt  CUBM(r)-CAR1(r)
+ 19  -13    CHir  CNHR(r)
+ 20         Upl   UPL(r)
+ 21  2      jcd   CD(r)
+ 22  -12    jBSK  CUBS(r)
+ 23         qCD   QCD(r)
+ 24         betj  BETAJ(r)
+ 25  2      jOH   CUOHM(r)
+ 26  -11    jNBp  CAR1(r)
+ 27  -13    Cmod  CAR22(r)
+ 28  1      tpf   TPF(r)
+ 29  2      jICR  CUICR(r)
+ 30  -12    jBSH  CAR21(r)
+ 31  5      q     1./MU(r)
+ 32         betb  BETBM(r)
+ 33  -8     hBs   CHE1*HABMS(r)
+ 34  -2     Qesr  QETOT(r)
+ 35  -3     Qisr  QITOT(r)
+ 36  -4     ca5   CAR5(r)
+ 37  -9     hgBs  CHE2*HAGBS(r)
+ 38         Te    TE(r)
+ 39         He    HE(r)
+ 40  -4     ca4   CAR4(r)
+ 41  -8     hB    CHE1*HABM(r)
+ 42  -2     Qefl  QE(r)
+ 43  -3     Qifl  QI(r)
+ 44  -4     plon  PBLON(r)
+ 45  -9     hgB   CHE2*HAGB(r)
+ 46         Ti    TI(r)
+ 47         Hi    XI(r)
+ 48  -4     pper  PBPER(r)
+ 49         biE0  SNIBM1(r)
+ 50         QNeu  VINT(CAR23)(r)
+ 51  -6     PeNB  PEBM(r)
+ 52         QNe   .004*TE(r)*GN(r)
+ 53         SN    SNTOT(r)
+ 54         QSN   VINT(SNTOT)(r)
+ 55         QeNB  VINT(PEBM)(r)
+ 56         NN    NN(r)
+ 57         biE2  SNIBM2(r)
+ 58         nex   NEX(r)
+ 59  -6     PiNB  PIBM(r)
+ 60         QNi   .004*TI(r)*NI(r)*GN(r)/NE(r)
+ 61         FP    FP(r)
+ 62         QGN   QN(r)
+ 63         QiNB  VINT(PIBM)(r)
+ 64         TN    TN(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  -7     Ti0   TI(0)
+  2  25     Pinp  QTOT(a)
+  3  -7     Te0   TE(0)
+  4  5      q0    1/MU(0)
+  5         betj  BETAJ(a)+BETBM(a)
+  6  1      Xmin  XQMIN(a)
+  7         bet%  BETT(a)
+  8  5      qmin  QMIN(a)
+  9  1      Ipl   IPL
+ 10         tauE  TAUE(a)
+ 11         iter  TITER(r)
+ 12         taEt  CBND1
+ 13  5      <ne>  NEAV(a)
+ 14  1      li    LINT(a)
+ 15         Upl   UPL(a)
+ 16         qa    1/MU(a)
+ 17         INB+  IBM(a)
+ 18  1      Ipl   IPL
+ 19         IBS   IINT(CAR16)(a)
+ 20         ICD   ICD(a)
+ 21         INBp  IINT(CAR1)(a)
+ 22         IEC   IECR(a)
+ 23         Iohm  IOHM(a)
+ 24         IIC   IICR(a)
+ 25  1      IBS%  IBS(a)/IPL
+ 26         betN  BETT(a)*ABC*BTOR/IPL
+ 27  1      IOH%  IOHM(a)/IPL
+ 28         bt0%  BETT(.1*ROC)
+ 29         IBSH  IINT(CAR21)(a)
+ 30         H-89  CBND1/(TITER(r)+1.E-6)
+ 31         Sh0%  SHIF(0)/ABC
+ 32         nlin  NECH(0)
+ 33         Pet   QETOT(a)
+ 34         Ptot  QTOT(a)
+ 35         POH   QOH(a)
+ 36         Pit   QITOT(a)
+ 37         Pei   QEICL(a)
+ 38         PNBp  VINT(CAR2)(a)+VINT(CAR3)(a)
+ 39         PEC   QECR
+ 40         PNB+  QBTOT(a)
+ 41         PNB   QBEAM
+ >>> Warning: unrecognized variable CBMS1
+ 42         Q1    CBMS1
+ >>> Warning: unrecognized variable EBEAM
+ 43         Ebm   EBEAM
+ >>> Warning: unrecognized variable CBMS2
+ 44         Q2    CBMS2
+ 45         PEC   QECR
+ >>> Warning: unrecognized variable CBMS3
+ 46         Q3    CBMS3
+ 47         PIC   QICR
+ >>> Warning: unrecognized variable CBMS4
+ 48         Q4    CBMS4
+ 49         Wkin  WTOT(a)
+ 50         Wpar  CV5
+ 51         Wper  CV6
+ 52         Wfir  (CV5+CV6)/WTOT(a)
+ 53         Pe%   100.*VINT(PEBM)(a)/(QBEAM+.1E-6)
+ 54         Wequ  WTOT(a)+0.75*CV6+1.5*CV5
+ 55         Pi%   100.*VINT(PIBM)(a)/(QBEAM+.1E-6)
+ 56         Wtot  WTOT(a)+CV5+CV6
+ 57         Stot  VINT(SNNBM)(a)+VINT(SNEBM)(a)
+ >>> Warning: unrecognized variable EBEAM
+ >>> Warning: unrecognized variable DBM1
+ >>> Warning: unrecognized variable DBM2
+ >>> Warning: unrecognized variable DBM3
+ 58         Sbea  QBEAM/EBEAM*625.*(DBM1+2.*DBM2+3.*DBM3)
+ 59         Zeff  ZEF(0)
+ 60         tauP  VINT(NE)(a)/(QN(a)+.1E-6)
+ 61         taus  (FP(a)-FP(0))/UPL(a)
+ 62         <n>G  2.7*IPL/ABC**2
+ 63         tasM  (FP(RFMAX(MU)(r))-FP(0))/UPL(RFMAX(MU)(r))
+ 64         NA1   NA1

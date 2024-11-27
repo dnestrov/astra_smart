@@ -1,0 +1,12 @@
+**.swp
+for
+*~
+.gitignore_*
+__pycache__
+tomdsastra.mod
+tomdsvac.mod
+tomdsastra2.mod
+tomdsvac2.mod
+f902db_access.mod
+tomdsspider.mod
+memo

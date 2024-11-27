@@ -1,0 +1,127 @@
+ =====   Variables definition   =====
+!-----------------------------------------------------------------------
+! V&B series. Test # I.2.5
+! Global field and energy conservation check.
+!-----------------------------------------------------------------------
+ TAUMIN=1.d0
+ TAUMAX=1.d1*TAUMIN
+ DROUT=0.d0
+ DTOUT=TAUMAX
+!DTOUT=1;	DPOUT=10;
+ NEQUIL=-2.d0
+!TE::1.5;	PET=-PEI;	PE=-PET*TI;
+!TI::1.5;	PIT=PET;	PI=-PET*TE;
+!QEB=0;				QIB=0;
+!HC=HCSA;	DC=DCSA;	XC=XCSA;
+ NI(r)=(1.d0+FPR(r))
+ CAR1(r)=WBPOL(r)
+ =====   Initial distributions   =====
+ NE(r)=(1.d0+FPR(r))
+ TE(r)=1.d0+FPR(r)
+ TI(r)=1.d0+FPR(r)
+ CU(r)=CC(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -2     Qe_s  QETOT(r)
+  2  -1     Q_J   QJOUL(r)
+  3         Upl   UPL(r)
+  4  -7     dWdt  TIMDER(CAR1(r))
+  5  -3     Qi_s  QITOT(r)
+  6         n_e   NE(r)
+  7  5      q     1.d0/MU(r)
+  8  -4     T_e   TE(r)
+  9  -2     Q_e   QE(r)
+ 10  -1     Q_P   ITOT(r)*UPL(r)
+ 11         j     CU(r)
+ 12  -7     P-J   ITOT(r)*UPL(r)-QJOUL(r)
+ 13  -3     Q_i   QI(r)
+ 14         n_i   NI(r)
+ 15         mu    MU(r)
+ 16  -4     T_i   TI(r)
+ 17  -5     Q_e   QE(r)
+ 18  -6     P_et  PETOT(r)
+ 19         Pei   PEICL(r)
+ 20         I     ITOT(r)
+ 21  -3     Q_i   QI(r)
+ 22  -6     P_e   PE(r)
+ 23         n_e   NE(r)
+ 24         p_e   NE(r)*TE(r)
+ 25  -5     q_e   QE(r)-1.6d-3*GN2E*TE(r)*QN(r)
+ 26  -6     P_it  PITOT(r)
+ 27               0.d0
+ 28         sigm  CC(r)
+ 29  -3     q_i   QI(r)-1.6d-3*GN2I*TI(r)*QN(r)
+ 30  -6     P_i   PI(r)
+ 31         n_i   NI(r)
+ 32         p_i   NI(r)*TI(r)
+ 33         g11   G11(r)
+ 34         g22   G22(r)
+ 35         jbs   CUBS(r)
+ 36         tria  TRIA(r)
+ 37         V     VR(r)
+ 38         g33   G33(r)
+ 39  1      mu    MU(r)
+ 40         shif  SHIF(r)
+ 41         a     AMETR(r)
+ 42         Upl   UPL(r)
+ 43         j     CU(r)
+ 44         beta  BETAJ(r)
+ 45         Vo    VRO(r)
+ 46         IPOL  IPOL(r)
+ 47  5      q     1.d0/MU(r)
+ 48         elon  ELON(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  -1     We    WE(a)
+  2         QEB   QE(a)
+  3  -1     Wi    WI(a)
+  4         QIB   QI(a)
+  5         Wtot  WTOT(a)
+  6         nst   NSTEPS
+  7         Net   VINT(NE)(a)
+  8         V     VOLUME
+  9         <ne>  NEAV(a)
+ 10  -3     Te0   TEV
+ 11  -3     <Te>  TEAV(a)
+ 12         TeB   TE(a)
+ 13         ne  NECH(0)
+ 14  -3     Ti0   TIH
+ 15  -3     <Ti>  TIAV(a)
+ 16         TiB   TI(a)
+ 17             
+ 18  .1     taux  WTOT(a)/(QJOUL(a))
+ 19  -1     Wblk  WTOT(a)
+ 20         taui  TAUEI(a)
+ 21  -1     We    WE(a)
+ 22  .1     tauE  TAUE(a)
+ 23  -1     Wi    WI(a)
+ 24  .1     IT89  TITER(r)
+ 25         Poh   QJOUL(a)
+ 26         li    LINT(a)
+ 27  1      betj  BETAJ(a)
+ 28         q(0)  1.d0/MUJ
+ 29         Prad  QRAD(a)
+ 30         Ibs   IBS(a)
+ 31         P     CV1
+ 32         Ptot  QTOT(a)
+ 33         gne   GN2E
+ 34         gni   GN2I
+ 35         TeB   TE(a)
+ 36         TiB   TI(a)
+ 37         QeB   QE(a)
+ 38         QiB   QI(a)
+ 39         qeB   QE(a)-1.6d-3*GN2E*TE(a)*QN(a)
+ 40         qiB   QI(a)-1.6d-3*GN2I*TI(a)*QN(a)
+ 41         V(a)  UPL(a)
+ 42         ne0   NEB
+ 43         neB   NE(a)

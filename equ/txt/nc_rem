@@ -1,0 +1,172 @@
+ =====   Variables definition   =====
+!No equation for NE, TE, TI are given.
+!CAR1,2 in mixint, CAR3,4,5; CAR7,8 in smooth.f, are employed;
+!CAR9-11 for Fourier;
+!CAR14,16 for ECH profiles;
+!CV1-5;
+!CF1-10;
+ MESHEQ=4.1d1
+ NNCL=1.d-5
+ NNWM=3.d-6
+!ZEF=ZEFX;
+ AIM1=1.2d1
+ CNB1=8.d0
+ CNB2=1.d0
+ CNB3=2.d0
+ CNB4=1.d0
+ CV5=0.8E-3*VINT(PBLON)(a)
+ CV6=1.6E-3*VINT(PBPER)(a)
+! ZRD23X=1 using angular velocity, =0 using vtor;
+ >>> Subroutine MIXINT will be called after all transport equations
+! E.g. CF10=10 - Kadomtsev model, ZRD22X= prescribed period
+ CF9=MIN(2.5d-1,ZRD22X)
+ ZEF(r)=1.8d0-1.d-2*FLIN(r)
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZIM1(r)=6.d0
+ ZEF1(r)=ZIM1(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ VPOL(r)=VPSWW(r)
+ VTOR(r)=VTORX(r)
+ ER(r)=BTOR*(VTOR(r)/RTOR*FRS(r)*MU(r)+VDIA(r)-VPOL(r))
+ CAR4(r)=(FP(r)-FP(0))/(FP(a)-FP(0))
+ =====   Initial distributions   =====
+ TE(r)=CV7*TEX(r)
+ TI(r)=CV8*TIX(r)
+ NE(r)=CV9*NEX(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed MU distribution
+ =====   Equations & subroutines  =====
+ ---->  Subroutine  1: NBI
+        is called at 0.50  <TIME< 99999 with dt=.01         Key call:Z     
+ ---->  NE  is assigned
+ NE(r)=CV9*NEX(r)
+ ---->  TE  is assigned
+ TE(r)=CV7*TEX(r)
+ PE(r)=POH(r)+PEBM(r)-PEICL(r)-PRADX(r)
+ ---->  Equation for TI 
+ TI(r)=CV8*TIX(r)
+ TI(a_b)=CV8*TIX(AFX(CV12))
+ XI(r)=CV3*HNCHC(r)
+ PI(r)=PIBM(r)+PEICL(r)
+ ---->  Equation for CU 
+ HC(r)=HCKIM(r)
+ DC(r)=DCKIM(r)
+ XC(r)=XCKIM(r)
+ CC(r)=CNHR(r)
+ CD(r)=CUBM(r)+CUECR(r)
+ MU(r)=1.d0/CAR6X(r)
+ ---->  Subroutine  2: MIXINT(10.,ZRD22X)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  3: SMOOTH2(CV1,TEX,TEX)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  4: SMOOTH2(CV2,TIX,TIX)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  5: SMOOTH2(CV2,VTORX,VTORX)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -8     Tex   TE(r)
+  2  -4     NIBM  NIBM(r)
+  3  -7     Qe.a  QETOT(r)/SLAT(r)
+  4         POH   POH(r)
+  5         nix   NI(r)
+  6  -2     PeNB  PEBM(r)
+  7  5      s     SHEAR(r)
+  8         XiNC  CV3*HNCHC(r)
+  9  -9     Tix   TI(r)
+ 10  -4     NDEU  NDEUT(r)
+ 11  -7     Qi.a  QITOT(r)/SLAT(r)
+ 12         Pei   PEICL(r)
+ 13         nex   NE(r)
+ 14  -2     PiNB  PIBM(r)
+ 15         q     1.d0/MU(r)
+ 16         Zeff  ZEF(r)
+ 17         ICia  VINT(CAR9X)(r)/SLAT(r)
+ 18         NBia  VINT(CAR7X)(r)/SLAT(r)
+ 19         Qoha  QOH(r)/SLAT(r)
+ 20         Qrad  VINT(PRADX)(r)
+ 21         ICi   VINT(CAR9X)(r)
+ 22         NBi   VINT(CAR7X)(r)
+ 23         Qoh   QOH(r)
+ 24         Qeto  QETOT(r)
+ 25         ICea  VINT(CAR10X)(r)/SLAT(r)
+ 26         NBea  VINT(CAR8X)(r)/SLAT(r)
+ 27         Qeia  QEICL(r)/SLAT(r)
+ 28         Qito  QITOT(r)
+ 29         ICe   VINT(CAR10X)(r)
+ 30         NBe   VINT(CAR8X)(r)
+ 31         Qei   QEICL(r)
+ 32         rhop  CAR4(r)**5.d-1
+ 33  -15    j     CU(r)
+ 34  -15    jnb   CUBM(r)
+ 35  -28    Upl   UPL(r)
+ 36         Qrad  VINT(PRADX)(r)
+ 37  -15    jbs   CUBS(r)
+ 38  -12    CC    CC(r)
+ 39  -15    joh   CUOHM(r)
+ 40         hexp  HEXP(r)
+ 41  -12    CCHr  CNHR(r)
+ 42  -13    Qe    QE(r)
+ 43  -13    Qi    QI(r)
+ 44         RLTi  RTOR/LTI(r)
+ 45         nuis  NUIS(r)
+ 46         pNBl  PBLON(r)
+ 47         pNBp  PBPER(r)
+ 48         xixp  XEXP(r)
+ 49         dFdV  SCUBM(r)
+ 50         Ftor  VINT(SCUBM)(r)
+ 51  -3     X_nc  HNCHC(r)
+ 52         Wtor  CAR3X(r)
+ 53         RLTe  RTOR/LTE(r)
+ 54         RLne  RTOR/LNE(r)
+ >>> Warning: unrecognized variable HNCHK
+ 55  -3     Xelo  HNCHK
+ 56  -3     X_as  HNASI(r)
+ 57         PoFl  CAR4(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         QE    QETOT(a)
+  2         QI    QITOT(a)
+  3         QOH   QOH(a)
+  4         QNBI  QBEAM
+  5         Te04  TEX(AFX(4.d-1))
+  6         Te08  TEX(AFX(8.d-1))
+  7         Ti04  TIX(AFX(4.d-1))
+  8         Ti08  TIX(AFX(8.d-1))
+  9         Ti48  TIX(AFX(4.d-1))/TIX(AFX(8.d-1))
+ 10         Ti38  TIX(AFX(3.d-1))/TIX(AFX(8.d-1))
+ 11         q0    1.d0/MU(0)
+ 12         qa    1.d0/MU(a)
+ 13         AB    AB
+ 14         kapp  ELONG
+ 15         ABC   ABC
+ 16         ROC   ROC
+ 17         delt  TRIAN
+ 18         cell  HROA/HRO
+ 19         vt4   VTOR(AFX(4.d-1))
+ 20         vt8   VTOR(AFX(8.d-1))
+ 21         AvNe  NEAV(a)
+ 22         n/GW  1.d-1*NEAV(a)*GP*ABC*ABC/IPL
+ 23         NA1   NA1
+ 24         CuBs  IINT(CUBS)(a)
+ 25         CuBm  IINT(CUBM)(a)
+ 26         CuTo  IINT(CU)(a)
+ 27         qmin  QMIN(a)
+ 28         PiBM  PIBM(0)
+ 29         Wkin  WTOT(a)
+ 30         Wtot  WTOT(a)+CV5+CV6
+ 31         tauE  TAUE(a)
+ 32         fNB   VINT(NIBM)(a)/VINT(NE)(a)
+ 33         fNB3  NIBM(AFX(3.d-1))/NE(AFX(3.d-1))

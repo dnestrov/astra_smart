@@ -1,0 +1,151 @@
+ =====   Variables definition   =====
+!------------------------ Model ----------------------------------------------
+ MESHEQ=42
+!------------------------ NBI heating & cold neutrals ------------------------
+ AIM1=12.
+ CNB1=8.
+ CV5=0.8E-3*VINT(PBLON)(a)
+ CV6=1.6E-3*VINT(PBPER)(a)
+!------------------------ Density, Te, Ti ------------------------------------
+!	Electron & Ion eqs.
+!------------------------ Poloidal field -------------------------------------
+!------------------------ Radial output --------------------------------------
+!------------------------  ----------------------------------------------
+ >>> Warning: Too long name in channel 50 <<<
+ ZEF(r)=2.5
+ AMAIN(r)=2.
+ ZMAIN(r)=1
+ ZIM1(r)=6.
+ NIZ1(r)=NE(r)*(ZEF(r)-1.)/(ZIM1(r)-1.)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=CUX(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  No equation for TE 
+ ---->  No equation for TI 
+ ---->  Subroutine  1: nbi
+        is called at -99999<TIME< 99999 with dt=0.01  
+ ---->  Subroutine  2: NEUT
+        is called at -99999<TIME< 99999 with dt=.1    
+ ---->  NE  is assigned
+ NE(a_b)=NEX(a)
+ ---->  Subroutine  3: SMEARR(CV8,NEX,NE)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  4: SMEARR(CV8,TEX,TE)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  5: SMEARR(CV8,TIX,TI)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Equation for CU 
+ CC(r)=CNSA(r)
+ CU(r)=CUX(r)
+ CD(r)=CUBM(r)
+ HC(r)=CV12*HCSA(r)
+ DC(r)=CV12*DCSA(r)
+ XC(r)=CV12*XCSA(r)
+ ---->  Subroutine  6: nclaz(CAR20,CAR21)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  7: MSE(10.,CAR24)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -11    j     CU(r)
+  2  -11    j     CU(r)
+  3         Upl   UPL(r)
+  4  -5     Te    TE(r)
+  5         betj  BETAJ(r)
+  6  -11    jBSS  CUBS(r)
+  7         jBSS  CUBS(r)
+  8         pres  PRESE(r)+PRESI(r)
+  9  -11    jBSS  CUBS(r)
+ 10  -11    jOH   CUOHM(r)
+ 11         shea  SHEAR(r)
+ 12  -5     Ti    TI(r)
+ 13  -11    jNB   CUBM(r)
+ 14  -11    jBSH  CAR20(r)
+ 15         q     1./MU(r)
+ 16  -11    jNI   CAR1(r)+CUBM(r)+CUBS(r)
+ 17  -5     Te    TE(r)
+ 18  -4     plon  1.6E-3*PBLON(r)
+ 19         PNBe  PEBM(r)
+ 20         ne    NE(r)
+ 21               0.
+ 22         ne    NE(r)
+ 23         PNBi  PIBM(r)
+ 24         ni    NI(r)
+ 25  -5     Ti    TI(r)
+ 26  -4     pper  1.6E-3*PBPER(r)
+ 27  -4     p     PREST(r)
+ 28         +     CAR9(r)
+ 29  -11    jBSA  CUBS(r)
+ 30         jBSA  CUBS(r)
+ 31  -1     betj  BETAJ(r)
+ 32         CC    CC(r)
+ 33         NUe   NUES(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  1      Ipl   IPL
+  2  5      <ne>  NEAV(a)
+  3  1      li    LINT(a)
+  4         Upl   UPL(a)
+  5         betj  BETAJ(a)+BETBM(a)
+  6  1      Xmin  XQMIN(a)
+  7         bet%  BETT(a)
+  8  5      qmin  QMIN(a)
+  9  1      Ipl   IPL
+ 10         INB+  IBM(a)
+ 11         IBSS  IBS(a)
+ 12         INBp  IINT(CAR1)(a)
+ 13         Iohm  IOHM(a)
+ 14         IBSH  IINT(CAR20)(a)
+ 15             
+ 16  5      q0    1/MU(0)
+ 17         PNB   QBEAM
+ 18         nlin  NECH(0)
+ 19             
+ 20         qa    1/MU(a)
+ 21             
+ 22         Zeff  ZEF(0)
+ 23         Sh0%  SHIF(0)/ABC
+ 24  1      IBM%  IBM(a)/IPL
+ 25         betN  BETT(a)*ABC*BTOR/IPL
+ 26  1      IOH%  IOHM(a)/IPL
+ 27         ICD   ICD(a)
+ 28  1      IBS%  IBS(a)/IPL
+ 29         <n>G  2.7*IPL/ABC**2
+ 30             
+ 31             
+ 32         Wkin  WTOT(a)
+ 33         Wpar  CV5
+ 34         Wper  CV6
+ 35         Wfir  (CV5+CV6)/WTOT(a)
+ 36         Wequ  WTOT(a)+0.75*CV6+1.5*CV5
+ 37         Wtot  WTOT(a)+CV5+CV6
+ 38         roc   ROC
+ 39         bpBM  BETBM(a)
+ 40         bpJ   BETAJ(a)
+ 41         MSE1  CAR24(1)
+ 42         MSE2  CAR24(2)
+ 43         MSE3  CAR24(3)
+ 44         MSE4  CAR24(4)
+ 45         MSE5  CAR24(5)
+ 46         MSE6  CAR24(6)
+ 47         MSE7  CAR24(7)
+ 48         MSE8  CAR24(8)
+ 49         MSE9  CAR24(9)
+ 50         MSE1  CAR24(10)
+ 51         Time  TIME

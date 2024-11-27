@@ -1,0 +1,162 @@
+ =====   Variables definition   =====
+ SHIFT=8.d-1*AB*(1.d0-FRAMP(1.d-1,4.d-1))
+ ABC=1.d-1+4.d-1*FRAMP(1.d-1,4.d-1)
+ IPL=1.d-1+9.d-1*FRAMP(1.d-1,4.d-1)
+ ELONG=1.d0+6.d-1*FRAMP(3.d-1,4.d-1)
+!BTOR=4.-3.*FRAMP(0.1,.2)
+!TE:EQ;		TE=.1+FPR;		HE=HNGSE+CHE3*HATL;
+!UEXT=5.5;	IPL=.6;		LEXT=3.;
+ >>> Subroutine MIXINT will be called after all transport equations
+ PEX(r)=QECR*FJUMP(5.5d0)*GAUSS(CF3,CF4)(r)
+ =====   Initial distributions   =====
+ TE(r)=1.d-1+FPR(r)
+ TI(r)=TE(r)
+ NE(r)=CF1*SQRT(1.d0+FPR(r))
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with U_tor = Const
+ =====   Equations & subroutines  =====
+ ---->  Subroutine  1: NEUT
+        is called at -99999<TIME< 99999 with dt=.1          Key call:N     
+ ---->  NE  is assigned
+ NE(r)=CF1*SQRT(1.d0+FPR(r))
+  >>> Warning: Boundary condition for TE is not set.
+              TEX(t) will be used at the shifted boundary
+ ---->  Equation for TE 
+ TE(r)=1.d-1+FPR(r)
+ HE(r)=HNGSE(r)+CHE3*HATL(r)
+ PET(r)=-PEI(r)
+ PE(r)=PJOUL(r)-PET(r)*TI(r)+PEX(r)
+  >>> Warning: Boundary condition for TI is not set.
+              It is set to TIX(t0)
+ ---->  Equation for TI 
+ TI(r)=TE(r)
+ XI(r)=CHE4*HNGSI(r)+XMHD1(r)
+ PIT(r)=PET(r)
+ PI(r)=-PET(r)*TE(r)+PINEU(r)
+ ---->  Equation for CU 
+ CC(r)=CNHR(r)
+ HC(r)=HCHR(r)
+ DC(r)=DCHR(r)
+ XC(r)=XCHR(r)
+ ---->  Subroutine  2: Mixint(0.,.05)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ Iterative correction algorithm is added
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         shif  SHIF(r)
+  2         elon  ELON(r)
+  3         tria  TRIA(r)
+  4               0.d0
+  5         FP    FP(r)
+  6         V     VOLUM(r)
+  7         grI   GRAD(IPOL)(r)
+  8         dVn   VR(r)/(GP2*GP2*RHO(r)*RTOR)
+  9         G11   G11(r)
+ 10         G22   G22(r)
+ 11         G33   G33(r)
+ 12         q     1.d0/MU(r)
+ 13         psi   FP(r)-FP(0)
+ 14  1      IPOL  IPOL(r)
+ 15         dVdr  VR(r)
+ 16         if_1  IPOL(r)*G33(r)*VR(r)/(GP2*GP2*RTOR*RHO(r))
+ 17         j     CU(r)
+ 18         Vt    UPL(r)
+ 19         Chot  CHOTF(r)
+ 20         beta  BETAJ(r)
+ 21  1      mu    MU(r)
+ 22         V||   ULON(r)
+ 23         jbs   CUBS(r)
+ 24         CC    CC(r)
+ 25               0.d0
+ 26               0.d0
+ 27               0.d0
+ 28               0.d0
+ 29               0.d0
+ 30               0.d0
+ 31               0.d0
+ 32               0.d0
+ 33         Te    TE(r)
+ 34  -2     Qesr  QETOT(r)
+ 35         Vt    UPL(r)
+ 36  -5     Pec   PEX(r)
+ 37         Tex   TEX(r)
+ 38  -3     Qisr  QITOT(r)
+ 39         He    HE(r)
+ 40  -5     Pjou  PJOUL(r)
+ 41         Ti    TI(r)
+ 42  -2     Qefl  QE(r)
+ 43               0.d0
+ 44               0.d0
+ 45         Tix   TIX(r)
+ 46  -3     Qifl  QI(r)
+ 47         Hi    XI(r)
+ 48  -5     POhm  POH(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         betj  BETAJ(a)
+  2         shf0  SHIF(0)
+  3         ell0  ELON(0)
+  4         tri0  TRIA(0)
+  5         li    LINT(a)
+  6         shfa  SHIFT
+  7         ella  ELONG
+  8         tria  TRIAN
+  9         ROC   ROC
+ 10         ABC   ABC
+ 11         NA1   NA1
+ 12         dN    NB1-NA1
+ 13         ROB   ROB
+ 14         AB    AB
+ 15         NB1   NB1
+ 16         Hrel  HROA/HRO
+ 17         q(0)  1.d0/MU(0)
+ 18         Ulp   UPL(a)
+ 19         FPC   FP(0)
+ 20         UPDN  UPDWN
+ 21         q(a)  1.d0/MU(a)
+ 22         Uext  ULON(a)
+ 23         FPB   FP(a)
+ 24             
+ 25         Vlme  VOLUME
+ 26         Ipl   IPL
+ 27         ne  NECH(0)
+ 28         I*Up  IPL*UPL(a)
+ 29         Vlmb  VOLUM(a)
+ 30         Ibs   IBS(a)
+ 31         <ne>  NEAV(a)
+ 32         I*U   IPL*ULON(a)/IPOL(a)/G33(a)
+ 33         <Te>  TEAV(a)
+ 34         V(a)  ULON(a)
+ 35  .1     taux  WTOT(a)/(QJOUL(a))
+ 36  -2     Wblk  WTOT(a)
+ 37         taui  TAUEI(a)
+ 38  -2     We    WE(a)
+ 39  .1     tauE  TAUE(a)
+ 40  -2     Wi    WI(a)
+ 41         Te0   TE(0)
+ 42         Pnbi  QBEAM
+ 43         Texb  TEX(a)
+ 44         Pic   QICR
+ 45         Ti0   TI(0)
+ 46         Plh   QLH
+ 47         Tixb  TIX(a)
+ 48         Pec   QECR
+ 49         Prad  QRAD(a)
+ 50         Pech  QEX(a)
+ 51         albe  ALBPL
+ 52         Pevl  VINT(CAR6)(a)
+ 53  .1     IT89  TITER(r)
+ 54         Poh   QJOUL(a)
+ 55         Qj    QJOUL(a)
+ 56         Qoh   QOH(a)
+ 57         neb   NEX(a)
+ 58         ZRD   ZRD1

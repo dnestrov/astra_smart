@@ -1,0 +1,23 @@
+ =====   Variables definition   =====
+ =====   Initial distributions   =====
+ NE(r)=FPR(r)
+TE    (r)=TE    X(r)
+TI    (r)=TI    X(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         1     CXFI(r)
+  2         T_e   TE(r)
+  3         Te-i  CVFI(r)*NE(r)
+  4         T_i   TI(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression

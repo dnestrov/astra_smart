@@ -1,0 +1,268 @@
+ =====   Variables definition   =====
+ MESHEQ=41
+ NNCL=1.E-5
+ NNWM=3.E-5
+!==================== Densities =========================================
+ AIM1=12.
+!==================== NBI-input is calculated ==========================
+!CBMS1=ZRD1+ZRD6;    CBMS2=ZRD2+ZRD5;    CBMS3=ZRD3+ZRD8;    CBMS4=ZRD4+ZRD7;
+ CBMS1=FTAV(ZRD1+ZRD6,.002)
+ CBMS2=FTAV(ZRD2+ZRD5,.002)
+ CBMS3=FTAV(ZRD3+ZRD8,.002)
+ CBMS4=FTAV(ZRD4+ZRD7,.002)
+ CBMH1=-100.*UPDWN
+ HBEAM=1.0784
+ RBMAX=1.3
+ RBMIN=.1634
+! ABEAM & EBEAM (beam mass & energy) must be given in exp file
+ CNB1=2
+ CBM3=3
+ CBM4=1
+ DBM1=.5
+ DBM2=.3
+ DBM3=.2
+ >>> Warning: unrecognized variable CBMS1
+ >>> Warning: unrecognized variable CBMS2
+ >>> Warning: unrecognized variable CBMS3
+ >>> Warning: unrecognized variable CBMS4
+ QBEAM=CBMS1+CBMS2+CBMS3+CBMS4
+ CV5=0.8E-3*VINT(PBLON)(a)
+ CV6=1.6E-3*VINT(PBPER)(a)
+!==================== NBI-input is taken from ITER DB ==================
+!PEBM=CAR10X;		PIBM=CAR9X;		CUBM=CUX;	!NIBM=CAR11X;
+!==================== Rotation
+!====================  Transport model	================================
+!HE="max(CV3,CAR1(j))+WORK(j,37)";		XI=CHE2*CAR2+"WORK(j,31)";
+ CV16=1-EXP(-2.7*NE(CV7*ROC)*TE(CV7*ROC))
+!CV15=.25*FJUMP(.33)*ROC+.01;	CAR19=CNHR;		CBND2=CAR19(CV15);
+!CAR4=(0.5*(CAR19C-CBND2)*(1-(RHO/CV15)**2)+CBND2);
+!CAR4=CAR19*RSTEP(CV15)+CAR4*(1-RSTEP(CV15));
+!CAR20=CUBS(CV15*ROC)*(1-RSTEP(CV15*ROC));   CAR20=CUBS*RSTEP(CV15*ROC)+CAR20;
+!SMEARR(CV13,CAR20,CAR3):;
+ CV15=.25*ROC
+ CBND2=CAR19(CV15)
+! ===   BS - CC - HE - XI	! If CV9=0 CUBS by Kim is used;
+!NEOCL(CAR3,CAR4,VTOR,VPOL)::10;! If CV9=1 BS & CC by Houlberg are used;
+!U||\ULON\-28;
+!nD\NDEUT\-3;	nfas\NIBM;	WJ\WBPOL;	WL\0.1*GP*RTOR*ITOT**2*LINT;	
+!Tix_TIX(0.2*ROC)_-3;	nlc_NECHC;	Tex_TEX(0.2*ROC)_-2; QECR_vint(PEECRB);
+!IBSH_IINT(CAR3B);
+ ZEF(r)=CV10+ZEFX(r)
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZIM1(r)=6.
+ ZEF1(r)=ZIM1(r)*(ZEF(r)-1.)/(ZIM1(r)-1.)
+ NIZ1(r)=NE(r)*(ZEF(r)-1.)/(ZIM1(r)-1.)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)-NIBM(r)
+ VTOR(r)=VTORX(r)
+ VPOL(r)=VPSWW(r)
+ ER(r)=BTOR*(CV2*FRS(r)*MU(r)*VTOR(r)/RTOR+CV4*(VDIA(r)-VPOL(r)))
+ CAR1(r)=HNGSE(r)
+ CAR2(r)=(CHE3+(1-CHE3)*FOWC(r))*HNCHI(r)+HNPSI(r)
+ PEECR(r)=ZRD16X*CV16*GAUSS(CV7,CF5)(r)
+ CUECR(r)=CF2*PEECR(r)*TE(r)/NE(r)
+ CAR19(r)=CNHR(r)
+ CAR4(r)=(0.5*(CAR19(0)-CBND2)*(1-(RHO(r)/CV15)**2)+CBND2)
+ CAR4(r)=CAR19(r)*RSTEP(CV15)(r)+CAR4(r)*(1-RSTEP(CV15)(r))
+ CAR20(r)=CUBS(CV15*ROC)+(CUBS(r)-CUBS(CV15*ROC))*RSTEP(CV15*ROC)(r)
+ CAR27(r)=BTOR*FRS(r)*MU(r)*VTOR(r)/RTOR
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=CC(r)*const
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed MU distribution
+ =====   Equations & subroutines  =====
+ ---->  NE  is assigned
+ NE(r)=NEX(r)
+ NE(a_b)=NEX(a)
+ ---->  Subroutine  1: NBI
+        is called at -99999<TIME< 99999 with dt=0.01  
+ ---->  Subroutine  2: WNTST(CV1,CF1)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  3: GLF23
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Equation for TE 
+ HE(r)=MAX(CV3,CAR1(J))+WORK(J,2)
+ PET(r)=-PEI(r)
+ PE(r)=POH(r)+PEBM(r)+PEECR(r)-PET(r)*TI(r)-PRADX(r)
+ TE(r)=TEX(r)
+ TE(a_b)=TEX(a)
+ ---->  Equation for TI 
+ XI(r)=CHE2*CAR2(r)+WORK(J,1)
+ PIT(r)=-PEI(r)
+ PI(r)=PIBM(r)-PIT(r)*TE(r)
+ TI(r)=TIX(r)
+ TI(a_b)=TIX(a)
+ ---->  Subroutine  4: SMEARR(CV13,CAR20,CAR3)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  CU  is assigned
+ HC(r)=HCKIM(r)
+ DC(r)=DCKIM(r)
+ XC(r)=XCKIM(r)
+ CC(r)=CV9*CAR4(r)+(1-CV9)*CNHR(r)
+ CD(r)=CUBM(r)+CUECR(r)+CV9*(CAR3(r)-CUBS(r))
+ MU(r)=1./CAR6X(r)
+ Iterative correction algorithm is added
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -4     Tex   TEX(r)
+  2  -1     Er+   ER(r)
+  3  5      kex   HEXP(r)
+  4  5      kix   XEXP(r)
+  5  -5     Tix   TIX(r)
+  6  -8     gwn   WORK(J,61)
+  7  -11    Pe    POH(r)+PEBM(r)+PEECR(r)-PRADX(r)
+  8  -11    Pi    PIBM(r)
+  9  -4     Te    TE(r)
+ 10  -1     ErVt  CAR27(r)
+ 11  5      ke    WORK(J,2)
+ 12  5      ki    WORK(J,1)
+ 13  -5     Ti    TI(r)
+ 14  -8     gglf  WORK(J,10)
+ 15  5      keWN  WORK(J,37)
+ 16  5      kiWN  WORK(J,31)
+ 17  -15    j     CU(r)
+ 18  -15    jec   CUECR(r)
+ 19         EQFF  EQFF(r)
+ 20  -28    Upl   UPL(r)
+ 21  -15    jbs   CUBS(r)+CV9*(CAR3(r)-CUBS(r))
+ 22  -12    CC    CC(r)
+ 23  1      mu    MU(r)
+ 24         dpri  -GRAD(SHIF)(r)
+ 25  -15    joh   CUOHM(r)
+ 26  -15    jnb   CUBM(r)
+ 27         EQPF  EQPF(r)
+ 28         alfa  ALMHD(r)
+ 29  -15    jbsK  CUBS(r)
+ 30  -12    CCHr  CNHR(r)
+ 31  5      q     1./MU(r)
+ 32         betj  BETAJ(r)
+ 33         HE    WORK(J,37)
+ 34         XI    WORK(J,31)
+ 35         DN    WORK(J,43)
+ 36  -13    Qe    QE(r)
+ 37         XE    WORK(J,36)
+ 38         HI    WORK(J,32)
+ 39         XN    WORK(J,41)
+ 40  -13    Qi    QI(r)
+ 41         CE    WORK(J,27)
+ 42         CI    WORK(J,26)
+ 43         CN    WORK(J,28)
+ 44  -13    qe    -.0016*G11(r)*HE(r)*NE(r)*GRAD(TE)(r)
+ 45         DE    WORK(J,38)
+ 46         DI    WORK(J,33)
+ 47         HN    WORK(J,42)
+ 48  -13    qi    -.0016*G11(r)*XI(r)*NI(r)*GRAD(TI)(r)
+ 49  -1     ErVd  BTOR*VDIA(r)
+ 50  -1     Er    ER(r)
+ 51  2.     shir  SHEAR(r)
+ 52         RLTi  RTOR/LTI(r)
+ 53         pNBp  PBPER(r)
+ 54         nuis  NUIS(r)
+ 55         mode  WORK(J,63)
+ 56         RLNE  RTOR/LNE(r)
+ 57  -1     ErVp  -VPOL(r)*BTOR
+ 58  -1     ErVt  CAR27(r)
+ 59         vpol  VPOL(r)
+ 60         RLTe  RTOR/LTE(r)
+ 61         pNBl  PBLON(r)
+ 62         Zeff  ZEF(r)
+ 63  -2     vtrx  VTOR(r)
+ 64         RLNi  RTOR/LNI(r)
+ 65  10     ncCH  HNCHI(r)
+ 66  10     GSba  HNGSB(r)
+ 67         He    HE(r)
+ 68         Hi    XI(r)
+ 69         grVt  GRAD(TRX)(r)
+ 70  10     ncPS  HNPSI(r)
+ 71         psiN  (FP(r)-FP(0))
+ 72         PN    PENEU(r)-PINEU(r)
+ 73         Prad  PRADX(r)
+ 74  10     ncGS  HNGSI(r)
+ 75  10     GSpl  HNGSP(r)
+ 76  10     Hex   HEXP(r)
+ 77  10     Hix   XEXP(r)
+ 78         HeGS  HNGSE(r)
+ 79         grvt  GRAD(TRX)(r)
+ 80         Er    ELX(r)
+ 81         afac  SLAT(r)/G11(r)
+ 82         Lte   LTE(r)
+ 83         Lti   LTI(r)
+ 84         Lne   LNE(r)
+ 85         Lni   LNI(r)
+ 86  -3     ne    NE(r)
+ 87         IOH   IOHM(r)
+ 88         IBS   IBS(r)
+ 89         Itot  ITOT(r)
+ 90  1      Sqz   SQZ(r)
+ 91         nues  NUES(r)
+ 92         grEr  GRAD(ER)(r)
+ 93         tpf   TPF(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         chex  FRMAX(WORK(1,2))
+  2         rcex  RFMAX(WORK(1,2))
+  3         chix  FRMAX(WORK(1,1))
+  4         rcix  RFMAX(WORK(1,1))
+  5  -3     Ti.2  TI(0.2*ROC)
+  6  5      Zef0  ZEF(0)
+  7  -2     Te.2  TE(0.2*ROC)
+  8         PNBI  QBEAM
+  9         ne0   NE(0)
+ 10         ni0   NI(0)
+ 11         nlx   ZRD10
+ 12         Wmhd  ZRD11
+ 13         <ne>  NEAV(a)
+ 14         betp  BETAJ(a)
+ 15         nz0   NIZ1(0)
+ 16         Wcal  WTOT(a)+0.75*CV6+1.5*CV5
+ 17         Ipl   IPL
+ 18  10     q0    1/MU(0)
+ 19         IBS   IBS(a)
+ 20         Q95   1./MU(0.95*ROC)
+ 21         INB   IBM(a)
+ 22  5      qmin  QMIN(a)
+ 23         IECR  IECR(a)
+ 24  1      Xmin  XQMIN(a)
+ 25         TiB   TIX(a)
+ 26         Ulx   ZRD12
+ 27         Vol   VOLUME
+ 28         Prdx  ZRD15
+ 29         TeB   TEX(a)
+ 30         Ulc   UPL(a)
+ 31         r11   ZRD13
+ 32         tauE  TAUE(a)
+ 33         Wkin  WTOT(a)
+ 34         kapp  ELONG
+ 35         updn  UPDWN
+ 36         tria  TRIAN
+ 37         Wtot  WTOT(a)+CV5+CV6
+ 38         ABC   ABC
+ 39         Shif  SHIF(0)-SHIFT
+ 40         relS  (SHIF(0)-SHIF(a))/ABC
+ 41         PNB   VINT(PEBM)(a)+VINT(PIBM)(a)
+ 42         POH   QOH(a)
+ 43         PNBi  VINT(PIBM)(a)
+ 44             
+ 45         PEC   VINT(PEECR)(a)
+ 46             
+ 47         PNBe  VINT(PEBM)(a)
+ 48             
+ 49         UPLB  UPL(a)
+ 50         dN    NB1-NA1
+ 51         jB    CU(a)
+ 52  .001   dt    TAU
+ 53  2      ha/h  HROA/HRO
+ 54         NA1   NA1

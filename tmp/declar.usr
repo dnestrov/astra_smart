@@ -1,0 +1,4 @@
+	double precision Any,list,of
+	integer		user
+	character	choice*6
+	common /USERDEF/ Any, list, of, user, choice

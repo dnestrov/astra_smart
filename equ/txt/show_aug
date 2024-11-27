@@ -1,0 +1,93 @@
+ =====   Variables definition   =====
+ MESHEQ=6.1d1
+!MU=.6*FPR+.33;
+ >>> Coefficient string error <<< =====================
+ AIM1=1.2d1
+!NBI::.2;				! calling NBI package
+ AMAIN(r)=2.d0
+ ZMAIN(r)=1.d0
+ ZIM1(r)=6.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ CU(r)=FPR(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         nex   NEX(r)
+  2         Pnbi  PIBM(r)
+  3               0.d0
+  4               0.d0
+  5         Tex   TEX(r)
+  6         Tix   TIX(r)
+  7  1      mu    MU(r)
+  8         Prad  PRAD(r)
+  9         vtor  TRX(r)
+ 10         Pnbe  PEBM(r)
+ 11               0.d0
+ 12               0.d0
+ 13         Tcec  CAR1X(r)
+ 14  2      Zeff  ZEF(r)
+ 15  5      q     1.d0/MU(r)
+ 16               0.d0
+ 17         psi   FP(r)
+ 18         j     CU(r)
+ 19         U_pl  UPL(r)
+ 20               0.d0
+ 21  5      Hex   HEEFF(r)
+ 22  1      mu    MU(r)
+ 23               0.d0
+ 24               0.d0
+ 25         psiN  (FP(r)-FP))
+ 26         l_i   LINT(r)
+ 27               0.d0
+ 28               0.d0
+ 29  5      Hix   XIEFF(r)
+ 30  5      q     1.d0/MU(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Tex0  TEX/
+  2         Ipl   IPL
+  3         Tix0  TIX/
+  4         PNB   QBEAM
+  5         <Te>  TEAV(a)
+  6         <ne>  NEAV(a)
+  7         <Ti>  TIAV(a)
+  8         PEC   QECR
+  9         PECR  QECR
+ 10         Pnb3  ZRD3
+ 11         PNBI  QBEAM
+ 12         Pnb6  ZRD6
+ 13         updn  UPDWN
+ 14         betp  BETAJ(a)
+ 15             
+ 16             
+ 17         Ipl   IPL
+ 18  5      q(a)  1.d0/MU(a)
+ 19         Tex0  TEX/
+ 20  5      U(0)  UPL/
+ 21         li    LINT(a)
+ 22  5      q(0)  1.d0/MU-
+ 23         <ne>  NEAV(a)
+ 24  5      U(a)  UPL(a)
+ 25         Ipl   IPL
+ 26         AB    AB
+ 27         Shif  SHIFT
+ 28         ABC   ABC
+ 29         NA1   NA1
+ 30         kapp  ELONG
+ 31         ROC   ROC
+ 32         tria  TRIAN

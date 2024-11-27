@@ -1,0 +1,73 @@
+ =====   Variables definition   =====
+ NEQUIL=4.1d1
+!neut&:;
+!xpr/neutest&:;
+!./neutex&<:;
+!/home/grp/ipc/neutex&<:;
+!~/ipc/neutex&<:;
+! ../work/templateLoooooNG&:4:1.1:;	
+! ../work/dummy&:4:1.1:;	
+! ../work/example&:;
+!xpr/neuten&:1:5:;
+!TE*:;		TI*:;		PE=POH;
+!TEB=TEXB;	TIB=TEXB;
+ CAR1(r)=1.d0
+ CAR3(r)=1.d0
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TE(r)*(1.d0-1.d-2*TIME)
+ CU(r)=FPR(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         lnNN  LOG(NN(r))
+  2         dTx   CAR2(r)-TI(r)
+  3         lnNN  LOG(NN(r))
+  4         dT4   TN(r)-CAR4(r)
+  5         NN    NN(r)
+  6         TN    TN(r)
+  7         NN    NN(r)
+  8         TN    TN(r)
+  9               0.d0
+ 10         dTi   TN(r)-TI(r)
+ 11               0.d0
+ 12         dN    NN(r)-CAR4(r)
+ 13         NNex  CAR1(r)
+ 14         Tnex  CAR2(r)
+ 15         NNen  CAR3(r)
+ 16         Tnen  CAR4(r)
+ 17         T_e   TE(r)
+ 18         dTN   TI(r)-TN(r)
+ 19         dTNx  TI(r)-CAR2(r)
+ 20         dTNn  TI(r)-CAR4(r)
+ 21         n_e   NE(r)
+ 22         T_i   TI(r)
+ 23         T_i   TI(r)
+ 24         T_i   TI(r)
+ 25         T_i   TI(r)
+ 26               0.d0
+ 27               0.d0
+ 28               0.d0
+ 29         n_i   NI(r)
+ 30         T_N   TN(r)
+ 31         T_Nx  CAR2(r)
+ 32         T_Nn  CAR4(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Te0   TE(0)
+  2         ne0   NE(0)
+  3         Ti0   TI(0)
+  4         Alb   ALBPL
+  5         Tn0   TN(0)
+  6         nN0   NN(0)
+  7         NNCX  NNCX

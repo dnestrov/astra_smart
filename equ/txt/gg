@@ -1,0 +1,69 @@
+ =====   Variables definition   =====
+!====================  Ion densities ========================================
+ TAUMIN=1.d-3
+ TAUMAX=1.d-3
+!NBI:1.0;	CNB1=2;
+!----------------------------------------------------------------------------
+!=====================  Particle transport ==================================
+!DN=1.d0;		!SN=1;
+!DVI=CV15;		DVE=CV15;
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZEF(r)=CF2
+ NI(r)=NE(r)
+ CAR10(r)=CBND1+1.5d1*FPR(r)**2.d0
+ CAR13(r)=(1.d0-XSTEP(6.d-1)(r))
+ =====   Initial distributions   =====
+ NE(r)=CF5+(1.5d1-CF5)*SQRT(FPR(r))
+ TE(r)=CAR10(r)
+ TI(r)=CAR10(r)
+ CU(r)=7.d-1*FPR(r)+(FX(r)*FPR(r))**2.d0+1.8d0*CAR14(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+  >>> Warning: Boundary condition for NE is not set.
+              It is set to NEX(t0)
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -3     T_e   TE(r)-CAR10(r)
+  2         n_e   NE(r)
+  3               0.d0
+  4         K_i   XI(r)
+  5               0.d0
+  6               0.d0
+  7               0.d0
+  8               0.d0
+  9  -3     T_i   TI(r)-CAR10(r)
+ 10         n_i   NI(r)
+ 11               0.d0
+ 12         K_e   HE(r)
+ 13               0.d0
+ 14               0.d0
+ 15               0.d0
+ 16         K+    HE(r)+XI(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Te0   TE(0)
+  2         ne0   NE(0)
+  3         Ti0   TI(0)
+  4         Wequ  WTOT(a)+7.5d-1*CV6+1.5d0*CV7
+  5         <Te>  TEAV(a)
+  6         <ne>  NEAV(a)
+  7         <Ti>  TIAV(a)
+  8         Wtot  WTOT(a)+CV7+CV6
+  9  5      pemx  FRMAX(PDE)(r)
+ 10             
+ 11  5      pimx  FRMAX(PDI)(r)
+ 12             
+ 13  5      pemn  FRMIN(PDE)(r)
+ 14             
+ 15  5      pimn  FRMIN(PDI)(r)
+ 16             
+ 17         Pfus  CFUS1*5.d0

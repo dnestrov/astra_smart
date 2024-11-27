@@ -1,0 +1,202 @@
+ =====   Variables definition   =====
+!====================  Grad-Shafranov equation ==============================
+ NEQUIL=4.2d1
+!====================  Ion densities ========================================
+!----------------------------------------------------------------------------
+! NEOCL3:;			! NCLASS call
+!----------------------------------------------------------------------------
+!----------------------------------------------------------------------------
+ CV12=1.d1*IPL/GP/ABC**2.d0
+ QNBI=4.d1
+! CF3 describes q_edge linear growth from 3.67@t=0 till 9@t=200
+ CF3=1.d0+FRAMP(0.d0,2.d2)
+ IPL=1.5d1/CF3
+! CF1 and CF2 are adjusted in order to keep B_N=Const
+ CF2=(1.3d0+1.d-1*FRAMP(0.d0,2.d2))/CF3/1.3d0
+!CF1=(1.3+.1*FRAMP(0.d0,2.d2))/CF3/1.3;	! Multiplier for temperature
+!----------------------------------------------------------------------------
+!----------------------------------------------------------------------------
+!CUX="WORK(j,501)";		! BS current from NCLASS (not used)
+!CC="WORK(j,503)";  		! Current conductivity from NCLASS
+!----------------------------------------------------------------------------
+!====================  Auxiliary quantities =================================
+ CV6=1.6d-3*VINT(PBPER)(a)
+ CV7=8.d-4*VINT(PBLON)(a)
+ CV10=NEAV(a)
+ CV11=TIMDER(CV10)
+ CV16=AFR(RFVAL(CAR16,9.5d-1)(r))
+ CF15=QJOUL(a)+QNBI
+ CF16=CF15-QRAD(a)+6.67d-1*QRADX(a)
+ CV3=MAX(1.d-8,CF16)
+ CV1=THQ99(r)/CV3**6.9d-1
+ CV2=MAX(1.d-6,TAUE(a))
+ CV5=(WI(a)+WE(a))/CV3
+ DTOUT=2.5d-1
+ TSCALE=2.d2
+!----------------------------------------------------------------------------
+!====================  Time output settings =================================
+!----------------------------------------------------------------------------
+!-------  Overview  ---------------------------------- Screen number (1) ----
+!----------------------------------------------------------------------------
+!-------  Power balance (1) -------------------------- Screen number (2) ----
+!-------  Power balance (2) -------------------------- Screen number (3) ----
+!-------  Power balance (3) -------------------------- Screen number (4) ----
+!--------  Kinetics  --------------------------------- Screen number (5) ----
+!--------  Particle balalnce ------------------------- Screen number (6) ----
+!---------  Current & Geometry ----------------------- Screen number (7) ----
+!---------  Miscellaneous  --------------------------- Screen number (8) ----
+!----------------------------------------------------------------------------
+!===================== Profile output =======================================
+!---------  Overview --------------------------------- Screen number (1) ----
+!---------  Current balance -------------------------- Screen number (6) ----
+!----------------
+!---------  Geometry --------------------------------- Screen number (2) ----
+!============= Thank you for using ASTRA transport code =====================
+!K_e\"work(j,2)"\-2;	K_i\"work(j,1)"\-2;
+!				D_i\"work(j,3)"\-6;	T_e\TE\-3;
+!K_e\"work(j,102)"/"work(j,2)"\1;	K_i\"work(j,101)"/"work(j,1)"\1;
+!		K_i\"work(j,103)"/"work(j,3)"\1;		n_e\NE;
+!K_en\"work(j,102)"\-2;	K_in\"work(j,101)"\-2;
+!				D_i\"work(j,103)"\-6;	T_i\TI\-3;
+!K_eA\CAR22;	K_iA\CAR21;	\;	n_i\NI;
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ CAR16(r)=(FP(r)-FP(0))/(FP(a)-FP(0))
+ =====   Initial distributions   =====
+ TE(r)=CF1*TEX(r)
+ TI(r)=CF1*TIX(r)
+ NE(r)=CF2*NEX(r)
+ CU(r)=5.d-1+FPR(r)**2.d0
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -3     T_e   TE(r)
+  2         n_e   NE(r)
+  3         j_OH  CUOHM(r)
+  4  5      q     1.d0/MU(r)
+  5  -4     sig   CC(r)
+  6               0.d0
+  7         j     CU(r)
+  8         j_BS  CUBS(r)
+  9  -3     T_i   TI(r)
+ 10         n_i   NI(r)
+ 11         r_s   1.d2*RLS(r)
+ 12         shea  SHEAR(r)
+ 13               0.d0
+ 14               0.d0
+ 15               0.d0
+ 16         j_NC  WORK(J,501)
+ 17  -14    joh   CUOHM(r)
+ 18         Upl   UPL(r)
+ 19         wExB  ROTSH(r)
+ 20         Zeff  ZEF(r)
+ 21         jnb   0.d0
+ 22  1      mu    MU(r)
+ 23         psi   FP(r)
+ 24  2.     shir  SHEAR(r)
+ 25  -14    j     CU(r)
+ 26         U||   ULON(r)
+ 27         betj  BETAJ(r)
+ 28         exp   3.6788d-1*(EXP(FX(r)**6.d0)-1.d0)
+ 29         jBS   0.d0
+ 30  5      q     1.d0/MU(r)
+ 31         betr  BETR(r)
+ 32         sigm  CC(r)
+ 33         G11   G11(r)
+ 34         dVdr  VR(r)
+ 35         G22   G22(r)
+ 36         Psi   FP(r)
+ 37         G33   G33(r)
+ 38         Slat  SLAT(r)
+ 39         Ipol  IPOL(r)
+ 40         Vol   VOLUM(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         betp  BETAJ(a)
+  2         Ipl   IPL
+  3         betr  BETR(a)
+  4         Ibs   IBS(a)
+  5         fBS   IBS(a)/IPL
+  6         Inc   IX(a)
+  7         q     1.d0/MU(a)
+  8             
+  9  -6     ta98  CV1
+ 10         We    WE(a)
+ 11         H98y  CV5/CV1
+ 12         Wi    WI(a)
+ 13         li    LINT(a)
+ 14         beta  BETA(a)
+ 15         Wequ  WTOT(a)+7.5d-1*CV6+1.5d0*CV7
+ 16         Te0   TE(0)
+ 17         q0    1.d0/MU(0)
+ 18         Ti0   TI(0)
+ 19         qa    1.d0/MU(a)
+ 20         <Te>  TEAV(a)
+ 21         U0    UPL(0)
+ 22         <Ti>  TIAV(a)
+ 23         Ua    UPL(a)
+ 24         Ptot  QTOT(a)
+ 25         POH   QOH(a)
+ 26         PeNB  QEX(a)
+ 27         Pei   QEICL(a)
+ 28         Iext  IX(a)
+ 29  -6     tauE  CV5
+ 30         PiNB  QIX(a)
+ 31         <dt>  TIMAVG(TAU,1.d-3)
+ 32         Pi    QITOT(a)
+ 33         We    WE(a)
+ 34         Qea   QE(a)
+ 35         Wi    WI(a)
+ 36         Pe    QETOT(a)
+ 37             
+ 38         Qia   QI(a)
+ 39         PNB   QNBI
+ 40         Pin   CF15
+ 41         Pbrs  CRAD1*QBRAD(a)
+ 42         shth  QNBI-QBTOT(a)
+ 43         PrBe  VINT(PBOL1)(a)
+ 44             
+ 45         Psyn  CRAD2*QSYNC(a)
+ 46         Psep  CSOL1
+ 47         PAr   VINT(PBOL2)(a)
+ 48         <Tex  TEXAV(a)
+ 49         H89   TAUE(a)/TITER(r)
+ 50         <Tix  TIXAV(a)
+ 51         Wequ  WTOT(a)+7.5d-1*CV6+1.5d0*CV7
+ 52         <Te>  TEAV(a)
+ 53         Zef0  ZEF(0)
+ 54         <Ti>  TIAV(a)
+ 55         Wtot  WTOT(a)+CV7+CV6
+ 56         ne0   NE(0)
+ 57         Gflx  QN(a)
+ 58  1      dndt  CV11
+ 59         SeNN  VINT(CAR14X)(a)
+ 60         NNCL  NNCL
+ 61         Gsrs  QNTOT(a)
+ 62         taup  TAUP(a)
+ 63         SeNB  VINT(SNEBM)(a)
+ 64         Ipl   IPL
+ 65         V     VOLUME
+ 66         q0    1.d0/MU(0)
+ 67         S     SLAT(a)
+ 68         Ulc   UPL(a)
+ 69         li    LINT(a)
+ 70         IBS   IBS(a)
+ 71         q95   1.d0/MU(CV16)
+ 72             
+ 73         ni0   NI(0)
+ 74         nped  NE(a)
+ 75         NNCX  NNCX
+ 76         Teed  TEX(a)
+ 77         Psca  CF16
+ 78         Tied  TIX(a)
+ 79         <ne>  CV10

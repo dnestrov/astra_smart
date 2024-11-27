@@ -1,0 +1,248 @@
+ =====   Variables definition   =====
+!ECBT:1.:100.:1000.:E<;
+ NEQUIL=4.1d1
+!NEUT:;
+! Normalized to 1 MW Gaussian function: CAR1=P0*exp{-[(r-cf3)/(a*cf4)]^2}
+!FGAUSS(CF3,CF4,CAR1):;
+!ABC=AB+.4*(2.*FRAMP(.3,.4)-FRAMP(.1,.2))
+!SHIFT=.8*AB*(1.-FRAMP(0.1,0.2));	IPL=.1+.9*FRAMP(0.1,.4);
+!ELONG=1.+.6*FRAMP(.3,.4);		!BTOR=4.-3.*FRAMP(0.1,.2)
+!A2G(int(NEQUIL)):99.:.5::G;
+!ICRAY(CV2):99.:99.1::I;
+!NBI:;
+!NE:E;		NE=NEX;		NEB=NEXB;	!NEB=.3*NEXB;
+!NHYDR=.05*NI;
+!DN=CF1*(1.+FR**2);	CN=CF11*FR;
+!F1:E;	CAR3=F1;	DF1=2;	VF1=3;	SF1=4;	SFF1=5;	QF1B=1;
+!F9:E;	F9=CAR2;	DF9=2;	VF9=3;	SF9=4;	SFF9=5;
+!F9:;
+!TE:E;		QEB=0;			!TEB=0.001;		!QETB=100.;
+!PEX=QECR*FJUMP(0.5)*GAUSS(CF3,CF4);	PRAD=CF6*(.02+.03*FPR);
+!UEXT=5.5;	IPL=.6;		LEXT=3.;
+!NEOCL(CAR3,CAR23,CAR5,CAR6):;
+ >>> Warning: Too long name in channel 14 <<<
+!PECR\PEECR;	Qesr\QETOT\-2;	Qen\2.5*GN*TE*NE;P||e\CV5*RSTEP(CF5*ROC)*PETSL;
+!Te\TE\\TEX;	Qisr\QITOT\-3;	He\HE;		PE\PETOT\-5;
+!ne\NEX\\NEX;	Qefl\QE\-2;	jECR\CUECR;	P||i\CV5*RSTEP(CF5*ROC)*PITSL
+!Ti\TI\\TIX;	Qifl\QI\-3;	Hi\XI;		POhm\POH\-5;
+!Pitl\PITOT\-5;	Pei\PEICL\-5;	PiN\-PINEU\-5;	PGN\PEGN+PIGN\-5;
+!QEB_QEB;	QETB_QETB;	ZRD1_ZRD1;	IPLX_IPLX;	IPL_IPL;
+!PeN\PENEU+PENLI\-5;	Hinc\CHE4*HNGSI\-2;	PEGN\PEGN;
+!PeiG\PEIGN\-5;		HAlc\CHE1*HAALC\-2;	PIGN\PIGN;
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=1.d0
+F0(r)=1
+ F1(r)=NEX(r)
+ F2(r)=CAR4(r)
+ F3(r)=CAR2(r)
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  No equation for NE 
+ SNN(r)=SNNEU(r)
+ QNNB=CV1
+ DN(r)=CF1*6.d-1*HE(r)
+ CN(r)=-CF2*2.d0*FR(r)*DN(r)/ABC
+ ---->  F1  is assigned
+ F1(r)=NEX(r)
+ F1(a_b)=NEX(a)
+ DF1(r)=DN(r)
+ VF1(r)=CN(r)
+ SFF1(r)=SNN(r)
+ QFF1B=CV1
+ ---->  Equation for F2 
+ F2(r)=CAR4(r)
+ DF2(r)=2.d0
+ SF2(r)=4.d0
+ SFF2(r)=5.d0
+ F2(a_b)=1.d1
+ QF2B=1.d0
+ ---->  Equation for F3 
+ F3(r)=CAR2(r)
+ VF3(r)=3.d0
+ SF3(r)=4.d0
+ SFF3(r)=5.d0
+ GF3(r)=5.d0
+ QF3B=1.d0
+ F3(r)=CAR2(r)
+ GF3(r)=3.d0
+ SF3(r)=4.d0
+ SFF3(r)=5.d0
+ GF3(r)=5.d0
+  >>> Warning: Initial condition for F0 is not set
+               F0=F0X(TSTART) will be used
+  >>> Warning: Boundary condition for F0 is not set.
+               It is set to F0X(t0)
+ ---->  Equation for F0 
+ ---->  Subroutine  1: GNXSRC
+        is called at 0.    <TIME<100.   with dt=0.          Key call:G     
+ ---->  Equation for TI 
+ TI(r)=TIX(r)
+ XI(r)=CHE4*HNGSI(r)
+ QIB=0.d0
+ PIT(r)=-PEI(r)-CV5*RSTEP(CF5*ROC)(r)*PITSL(r)
+ PI(r)=PEI(r)*TE(r)+PINEU(r)
+ ---->  Equation for CU 
+ CC(r)=CNHR(r)
+ CU(r)=1.d0
+ HC(r)=HCHR(r)
+ DC(r)=DCHR(r)
+ XC(r)=XCHR(r)
+ ---->  TE  is assigned
+ HE(r)=CHE1*HAALC(r)+HNGSE(r)+CHE3*HATL(r)
+ TE(r)=TEX(r)
+ PET(r)=-PEI(r)-CV5*RSTEP(CF5*ROC)(r)*PETSL(r)
+ PE(r)=POH(r)+PEI(r)*TI(r)-PRAD(r)-PENEU(r)-PENLI(r)+PEX(r)
+ Iterative correction algorithm is added
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         PECR  PEECR(r)
+  2         jECR  CUECR(r)
+  3               0.d0
+  4               0.d0
+  5         Te    TE(r)
+  6         shif  SHIF(r)
+  7               0.d0
+  8               0.d0
+  9         ne    NEX(r)
+ 10         q     1.d0/MU(r)
+ 11               0.d0
+ 12               0.d0
+ 13         Ti    TI(r)
+ 14         Elon  0.d0
+ 15               0.d0
+ 16               0.d0
+ 17  -7     jbp1  CAR5(r)
+ 18  -7     jbp2  CAR6(r)
+ 19  -7     jbp3  CAR7(r)
+ 20  -7     jbp4  CAR8(r)
+ 21         jbsH  CAR3(r)
+ 22  -6     CCH   CAR23(r)
+ 23         j     CU(r)
+ 24         Vt    UPL(r)
+ 25  -7     jbt1  CAR15(r)
+ 26  -7     jbt2  CAR16(r)
+ 27  -7     jbt3  CAR17(r)
+ 28  -7     jbt4  CAR18(r)
+ 29         jbs   CUBS(r)
+ 30  -6     CCHR  CC(r)
+ 31         shif  SHIF(r)
+ 32         V||   ULON(r)
+ 33         ne    NE(r)
+ 34         N     NN(r)
+ 35         Dif   DN(r)
+ 36  -1     S(S)  VINT(SNTOT)(r)
+ 37         CC    CNHR(r)
+ 38         Ti    TI(r)
+ 39         Srce  SNTOT(r)
+ 40  -1     GN    GN(r)*G11(r)
+ 41         F1    F1(r)
+ 42         Zeff  ZEF(r)
+ 43         Vpin  CN(r)
+ 44  -1     QN    QN(r)
+ 45         li    LINT(r)
+ 46         TN    TN(r)
+ 47         beta  BETAJ(r)
+ 48  -1     GNX   GNX(r)*G11(r)
+ 49         j     CU(r)
+ 50         Vt    UPL(r)
+ 51         Chot  CHOTF(r)
+ 52         G22   G22(r)
+ 53  1      mu    MU(r)
+ 54         FP    FP(r)
+ 55  1      IPOL  IPOL(r)
+ 56         shif  SHIF(r)
+ 57         jbs   CUBS(r)
+ 58         V||   ULON(r)
+ 59         CC    CC(r)
+ 60         G2R2  G11(r)
+ 61         q     1.d0/MU(r)
+ 62         psi   FP(r)-FP(0)
+ 63  1      <r2>  G33(r)
+ 64         elon  ELON(r)
+ 65         shif  SHIF(r)
+ 66         elon  ELON(r)
+ 67         tria  TRIA(r)
+ 68         dVdr  VR(r)
+ 69         iden  IPOL(r)*G33(r)*VR(r)/(GP2*GP2*RTOR*RHO(r))
+ 70         Cax2  CAR2X(r)
+ 71         V     VOLUM(r)
+ 72         grI   GRAD(IPOL)(r)
+ 73         |na|  CAR10(r)
+ 74         na^2  0.d0
+ 75         tri`  CAR12(r)
+ 76         dVn   VR(r)/(GP2*GP2*RHO(r)*RTOR)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         QECR  VINT(PEECR)(a)
+  2         IECR  IINT(CUECR)(a)
+  3         Te    TE(RFVAL(MU,1.d-1)(r))
+  4         li    LINT(a)
+  5         li1   LINT(ABC)
+  6         li2   LINT(9.9d-1*ABC)
+  7         <Te>  TEAV(a)
+  8         V(a)  ULON(a)
+  9  .1     taux  WTOT(a)/(QJOUL(a))
+ 10  -2     Wblk  WTOT(a)
+ 11         taui  TAUEI(a)
+ 12  -2     We    WE(a)
+ 13  .1     tauE  TAUE(a)
+ 14  -2     Wi    WI(a)
+ 15         Te0   TE(0)
+ 16         Pnbi  QBEAM
+ 17         Tex0  CAR3(0)
+ 18         PECR
+ 19         Ti0   TI(0)
+ 20         Plh   QLH
+ 21  -1     Tix0  TIX(0)
+ 22         Pec   QECR
+ 23         betj  BETAJ(a)
+ 24         shf0  SHIF(0)
+ 25         ell   ELONG
+ 26         tria  TRIAN
+ 27         ROC   ROC
+ 28         ABC   ABC
+ 29         AB    AB
+ 30         shif  SHIFT
+ 31  .1     IT89  TITER(r)
+ 32         Poh   QJOUL(a)
+ 33         li    LINT(a)
+ 34         Uext  ULON(a)
+ 35         q(0)  1.d0/MU(0)
+ 36         <ne>  NEAV(a)
+ 37         Ibs   IBS(a)
+ 38         UPDN  UPDWN
+ 39         Qj    QJOUL(a)
+ 40         Qoh   QOH(a)
+ 41         I*Up  IPL*UPL(a)
+ 42         I*U   IPL*ULON(a)/IPOL(a)/G33(a)
+ 43         Vlp   UPL(a)
+ 44         NB1   NB1
+ 45         Ipl   IPL
+ 46         FPB   FP(a)
+ 47         Prad  QRAD(a)
+ 48         Pech  QEX(a)
+ 49         albe  ALBPL
+ 50         Pevl  VINT(CAR6)(a)
+ 51         ne  NECH(0)
+ 52         NA1   NA1
+ 53         dN    NB1-NA1
+ 54         NAB   NAB
+ 55         HRO   HRO
+ 56         Hrel  HROA/HRO
+ 57         test  8.d-3
+ 58         Volb  VOLUM(a)
+ 59         Vole  VOLUME
+ 60         ZRD1  ZRD1
+ 61         ZRD2  ZRD2
+ 62         RD11  ZRD11
+ 63         neb   NEX(a)
+ 64         T(a)  TE(a)

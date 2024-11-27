@@ -1,0 +1,351 @@
+ =====   Variables definition   =====
+!Template for ASTRA for AUG Ramp U/D studies
+!Emil -2009-
+!Transport equations are solved in r/a but input profiles are given in rho_vol,
+!and in the interface are plotted versus rho_tor (rho of astra). All profiles created
+!in astra downstairs are now done in RHO (rho_tor)
+!GENERAL PARAMETERS BLOCK-------------------------------------------------
+!Define equilibrium grid
+!Time step definiton
+!Constants definition
+!CV15=ZRD7X;
+!CV16=ZRD9X;
+!CV5=0.1; CV6=0.1; FGAUSS(CV5,CV6,CAR20):;
+!CV7=0.3; CV8=0.1; FGAUSS(CV7,CV8,CAR19):;
+!CV9=0; CV10=0.1; FGAUSS(CV9,CV10,CAR5):;
+!CV2=0; FGAUSS(CV2,CV2,CAR10):;
+!CV14=FRMAX(MU);
+!CV4=1.-ZRD10X;
+!CV12=VINT(CAR11X,ROC); CV13=VINT(CAR12X,ROC); CV1=IINT(CAR13X,ROC); CV11=IINT(CAR14X,ROC);
+!CHI1=1; CHI2=1; CHI3=1.; CHI4=1.;
+!CHE1=0; CHE2=0; CHE3=0; CHE4=0;
+!ESP:;	NEQUIL=6110;
+ NEQUIL=1.301d4
+!---------------------------
+!Experimental Zeff loading
+!ZEF=CIMP1*ZRD5X; !Zeff from exp avg value ZRD5X
+!ZEF=(CIMP1*ZRD5X-1.1)*(RHO/ROC)**2.0+1.1; !Zeff from exp avg value ZRD5X times a profile
+!ZEF=ZEFX+(1.D0-CIMP1)*(0.35-RHO/ROC); !Zeff from exp profile
+!Zeff from exp avg value ZRD5X times a profile
+!ZEF=CIMP1*ZEFX; !+(1-CIMP1)*((ZRD10X-ZRD9X)*(RHO/ROC)**CF3+ZRD9X);
+!Zeff from exp avg value ZRD5X times a profile
+!ZIM1=12; AIM1=24; !1st Impurity W ---> Tungsten
+ AIM1=CSOL4
+!ZIM1=6; AIM1=12; !1st Impurity C ---> Carbon
+!DENSITY BLOCK------------------------------------------------------
+!Densities sources
+ NNCL=0.d0
+ NNWM=0.d0
+!NEUT::;
+!-------------------------------------------------------------------
+!!Power block---------------------
+!NBI heating
+!NBI::;
+!CRAD1=0.0;
+!
+!CBND3=CF2*VINT(PIBM,ROC);
+!CBND4=CF2*VINT(PEBM,ROC);
+!
+!TRANSPORT BLOCK-----------------------------------------------
+!Transport models
+!GLF162A::; !Gyro-Landau-Fluid model (latest version)
+!CAR25="work(j,1)";
+!CAR26="work(j,2)";CAR27="work(j,3)";
+!SMEARR(CF4,CAR25,CAR30):; CAR18=FTAV(CAR30,CF7);
+!SMEARR(CF4,CAR26,CAR31):; CAR19=FTAV(CAR31,CF7);
+!SMEARR(CF4,CAR27,CAR32):; CAR20=FTAV(CAR32,CF7);
+!HE=CSOL1*CAR18/MU**CSOL2+HNGSE; !Coppi-Tang+neoclassical
+!XI=CSOL1*CAR19/MU**CSOL2+HNASI;  !Coppi-Tang+neoclassical
+!DN=CSOL1*CAR20;
+!============== Transport model based on 0D scaling =========================
+!ZRD15=1.e-6+VINT(CAR4X,ROC);
+!CF14=VINT(CAR23,ROC);
+!CAR3z=CF2*PEBM;
+!CAR31=CF2*PIBM;
+!CAR32=POH;
+!CV3=VINT(CAR3z,ROC)+VINT(CAR31,ROC)+CF14+VINT(CAR32,ROC);  ! Total input power
+!CV1=THQ99/CV3**0.69;                        ! tau_E(99) scaling for ELMy H-mode
+!CV2=TAUEB;                      ! tau_E, calculated confinement time
+!CV5=(WIB+WEB)/CV3;                              ! tau_E_instant=W/P_input
+!HE=CSOL1*CAR1X;  !Input from exp file
+!XI=CSOL2*HE;
+!scaling law
+!--------------------------H98------------------------------------------------
+ CF8=9.8d-1
+!Wdot:
+ ZRD21=TIMDER(WTOT(a))
+ ZRD18=VINT(CAR9)(a)
+ ZRD28=MAX(1.d-4,ZRD18)
+!multiplication factor:
+ ZRD22=CF5*9.d-1*2.d0*1.78d5*ABC**2.d0
+ ZRD22=ZRD22*IPL**(-9.3d-1)*BTOR**(-1.5d-1)*NELA(NA1)**(-4.1d-1)
+ ZRD22=ZRD22*ZRD28**6.9d-1
+ ZRD22=ZRD22*RTOR**(-1.97d0)*(ABC/RTOR)**(-5.8d-1)
+ ZRD22=ZRD22*ELON(NA1)**(-7.8d-1)*2.d0**(-1.9d-1)
+!!tau98y:
+ ZRD15=5.62d-2*IPL**9.3d-1*BTOR**1.5d-1*NELA(NA1)**4.1d-1*ZRD28**(-6.9d-1)
+ ZRD15=ZRD15*RTOR**1.97d0*(ABC/RTOR)**5.8d-1*ELON(NA1)**7.8d-1*2.d0**1.9d-1
+!H98Y:
+ ZRD7=ZRD22*(WTOT(a)/ZRD28)/(ABC**2.d0*1.d4)
+ ZRD40=5.d-1
+!smoothfacprop:
+ CF6=1.d0
+ NNCX=1.d0
+ ZRD9=WTOT(a)/ZRD28
+!Calculation of HE:
+!HE=CAR22*ZRD27;
+!coptanGP(CAR7,CAR8,CAR9,CAR10):;
+!Bohm Gyrobohm mit Bergrenzung
+!CAR8=1.6*HABM+1.0*HAGB;
+!CAR9=min(CAR8,50.d0);
+!CAR10=max(CAR9,5.d-2);
+!HE=CAR10;
+!HE=HANAL; ! Neo-Alcator
+!HE=HAALC; ! Alcator
+!HE=HNGSE+0.25*(1.6*HABM+1.0*HAGB); !Bohm-Gyrobohm+neoclassical
+!Neoclassical contributions
+!XI=HNASI;
+!HE=HNGSE;
+!Transport coefficients other than HE
+!H-factors
+ TNA=TAUNA(r)
+ HNA=TAUEE(ROC)/TAUNA(r)
+!-------------------------------------------------------------
+!Bootstrap coefficients
+!CAR29=max(0,-DCSA*GRAD(NE)/NE-HCSA*GRAD(TE)/TE-XCSA*GRAD(TI)/TI);
+!HC=CIMP3*HCSA*CAR29/(CAR29+1.e-6);
+!DC=CIMP3*DCSA*CAR29/(CAR29+1.e-6);
+!XC=CIMP3*XCSA*CAR29/(CAR29+1.e-6);
+!Plasma rotation
+!TEMPERATURE BLOCK-------------------------
+!Initial condition for temperatures
+!Transport equations for temperatures
+!-----------------------------------------
+!CURRENT BLOCK-----------------------------
+ IPL=IPLX
+!UEXT=ZRDX1;
+ CF11=ABS((FRMIN(UPL)(r)-FRMAX(UPL)(r))/FRMIN(UPL)(r))
+!------------------------------------------
+!Time step control
+!Definition of various quantities to be saved
+!WOUTP:CV1:CV2:CV3:;
+!ASTSAW(1,1.d0,1.d0,CMHD1,1.d0)::::;
+!CSAW1  =  1.000E+00;
+!CSAW2  =  1.000E+00;
+!CSAW3  =  1.000E+00;
+!ASTSAW(1,CSAW1,CSAW2,CMHD1,CSAW3)::::;
+!MIXINT(0,100):0.0001:::;
+!Plotting radial profiles
+!Pag1
+!Pag2
+!Pag3
+!Pag4
+!Pag5
+!Pag6
+!Page 7
+!Plotting Time Traces
+ >>> Warning: Too long name in channel 30 <<<
+!-------------------------------------------------------------------------------
+ ZEF(r)=CIMP1*ZEFX(r)+(1.d0-CIMP1)*((ZRD10X-ZRD9X)*(RHO(r)/ROC)**CF3+ZRD9X)
+ ZIM1(r)=CSOL3
+ ZEF1(r)=ZIM1(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ NIBM(r)=0.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ PEECR(r)=0.d0
+ CAR23(r)=CF1*CAR2X(r)+PEECR(r)
+ CAR17(r)=(CRAD1*PROXY(r)*(1.d0-CAR5X(r))+CRAD2*PRWOL(r)*CAR5X(r))*NE(r)*NIZ1(r)
+ PRAD(r)=PBRAD(r)+CAR17(r)
+ CAR5(r)=1.d0
+ CAR9(r)=PE(r)+PI(r)
+ CAR22(r)=CF6*EXP(-4.d0*(1.d0-RHO(r)/ROC))
+ VPOL(r)=VPSWW(r)
+ VTOR(r)=VTORX(r)
+ ER(r)=BTOR*(VDIA(r)-VPOL(r))+BTOR*AMETR(r)*MU(r)*VTOR(r)/RTOR
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ CU(r)=FPR(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -2     Te    TE(r)
+  2  -4     Jpar  CU(r)
+  3  -19    Chie  HE(r)
+  4  -121   Pein  PE(r)+(CRAD1*CAR17(r)+PBRAD(r))
+  5  -21    q     1.d0/MU(r)
+  6         Ecrh  CAR23(r)
+  7  -5     ne    NE(r)
+  8  -6     Qe    QE(r)
+  9  -2     Ti    TI(r)
+ 10  -4     Jbs   CUBS(r)
+ 11  -19    Chii  XI(r)
+ 12  -121   Prad  -(CRAD1*CAR17(r)+PBRAD(r))
+ 13         shir  SHEAR(r)
+ 14  10     Zef   ZEF(r)
+ 15  -5     ni    NI(r)
+ 16  -6     Qi    QI(r)
+ 17  -321   gamm  WORK(J,10)
+ 18  -7     Utor  UPL(r)
+ 19         Vpnc  CN(r)
+ 20  -9     Chii  XI(r)
+ 21         Dn    DN(r)
+ 22         nu    NUES(r)
+ 23  -321   freq  WORK(J,12)
+ 24         Vpol  VPOL(r)
+ 25  -7     Upar  ULON(r)
+ 26         Er    ER(r)
+ 27               0.d0
+ 28         DnAn  CAR22(r)
+ 29         Qn    QN(r)
+ 30         psi   FP(r)
+ 31  -4     Johm  CUOHM(r)
+ 32         taue  TAUEE(r)
+ 33  -124   AnEq  WORK(J,7)
+ 34         de    -DE(r)
+ 35         we    WE(r)
+ 36         Pohm  POH(r)
+ 37         cc    CC(r)
+ 38               0.d0
+ 39         grdr  GRADRO(r)
+ 40         he_n  HNGSE(r)
+ 41  -124   Eq    PEICL(r)
+ 42  50     iLTi  1.d0/LTI(r)
+ 43         lint  LINT(r)
+ 44         ipol  IPOL(r)
+ 45               0.d0
+ 46  50     iLTe  1.d0/LTE(r)
+ 47         Bmax  BMAXT(r)
+ 48               0.d0
+ 49         EqEn  PEICL(r)
+ 50         nue   NUES(r)
+ 51         nuee  NUEE(r)
+ 52         ha    HARL(r)
+ 53         dTe   ABS(TE(r)-TEX(r))/TEX(r)*1.d2
+ 54         Bdb0  BDB0(r)
+ 55               0.d0
+ 56               0.d0
+ 57               0.d0
+ 58               0.d0
+ 59               0.d0
+ 60               0.d0
+ 61               0.d0
+ 62               0.d0
+ 63         TNa   TAUNA(r)
+ 64         Hna   TAUEE(r)/TAUNA(r)
+ 65               0.d0
+ 66         Pec1  CAR11(r)
+ 67         Xn    CV5/CV1
+ 68         T99   CV1
+ 69         Tau   CV5
+ 70         Pec2  CAR12(r)
+ 71         T98   TLQ97(r)
+ 72         H98   TAUEE(r)/TLQ97(r)
+ 73               0.d0
+ 74               0.d0
+ 75               0.d0
+ 76               0.d0
+ 77               0.d0
+ 78               0.d0
+ 79  -531   Qen   (QE(r)/NE(r)*TE(r))
+ 80               0.d0
+ 81               0.d0
+ 82  -431   Pnbe  CF2*PEBM(r)
+ 83               0.d0
+ 84               0.d0
+ 85               0.d0
+ 86  -432   Pnbi  CF2*PIBM(r)
+ 87  -531   Qin   (QI(r)/NI(r)*TI(r))
+ 88               0.d0
+ 89               0.d0
+ 90  -431   Peot  POH(r)+CAR23(r)-PEICL(r)
+ 91               0.d0
+ 92               0.d0
+ 93               0.d0
+ 94  -432   Piot  PEICL(r)
+ 95         Jcd   CD(r)
+ 96         Pbls  CF2*(1.d0-PEBM(r)-PIBM(r))
+ 97               0.d0
+ 98               0.d0
+ 99               0.d0
+100               0.d0
+101               0.d0
+102               0.d0
+103               0.d0
+104               0.d0
+105               0.d0
+106               0.d0
+107               0.d0
+108               0.d0
+109               0.d0
+110               0.d0
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Te0   TE(0.d0)
+  2         Teb   TE(a)
+  3         Ti0   TI(0.d0)
+  4         Tib   TI(ROC)
+  5         TeTi  TE(0.d0)/TI(0.d0)
+  6         Teib  TE(ROC)/TI(ROC)
+  7         neb   NE(ROC)
+  8         q0    1.d0/MU(0.d0)
+  9         QeB   QE(a)
+ 10         q1    1.d0/MU(ROC)
+ 11         qmin  1.d0/CV14
+ 12         Zef   ZEF(0.d0)
+ 13         Ipl   IPL
+ 14         Icd   ICD(ROC)
+ 15         Ibs   IBS(ROC)
+ 16         Iohm  IOHM(ROC)
+ 17         Itot  ICD(ROC)+IBS(ROC)+IOHM(ROC)
+ 18         Ecrh  VINT(CAR23)(ROC)
+ 19         SawT  1.d-2
+ 20         Pnbe  VINT(CAR11)(ROC)
+ 21         Pnbi  VINT(CAR12)(ROC)
+ 22         Pin   VINT(CAR23)(ROC)+VINT(CAR11)(ROC)+VINT(CAR12)(ROC)
+ 23         Ptot  CV3
+ 24         H99   CV5/CV1
+ 25         Pnbi  CBND3
+ 26         Pnbe  CBND4
+ 27         tauG  TAUEE(ROC)
+ 28         taue  CAR1(ROC)
+ 29         taui  CAR21(ROC)
+ 30         tauE  CV1
+ 31         NPe   VINT(NE)(ROC)
+ 32         We    WE(ROC)
+ 33         Wi    WI(ROC)
+ 34         Vlup  UPL(ROC)
+ 35         abc   AMETR(ROC)
+ 36         abct  CAR9X(ROC)
+ 37         stst  CF11
+ 38         g2    G22(ROC)
+ 39         XeN   CV5/CV1
+ 40         Pech  CF14
+ 41         Pebf  CBND4/CBND2
+ 42         Pibf  CBND3/CBND2
+ 43         Plbf  (CBND2-CBND3-CBND4)/CBND2
+ 44         tae1  CV5
+ 45         tae2  CV1
+ 46         ta12  CV5/CV1
+ 47         wei   (WE(a)+WI(a))
+ 48         cv31  CV3**3.1d-1
+ 49         we3   (WE(a)+WI(a))/(CV3**3.1d-1)
+ 50         cv3   CV3
+ 51         h98y  ZRD7
+ 52         pow   ZRD28
+ 53         fax   ZRD27
+ 54         lint  LINT(ROC)
+ 55         Neql  NEQUIL

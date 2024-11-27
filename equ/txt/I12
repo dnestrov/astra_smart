@@ -1,0 +1,72 @@
+ =====   Variables definition   =====
+!--------------------------------------------------------------------------
+! V&B series. Test # I.1.2
+! Energy conservation check.
+!--------------------------------------------------------------------------
+ TAUMIN=1.d-3
+ TAUMAX=TAUMIN
+ TSCALE=-5.d0
+ DROUT=0.d0
+ DTOUT=TAUMIN
+ DPOUT=1.d1*TAUMIN
+ NEQUIL=-2.d0
+!HC=HCSA;	DC=DCSA;	XC=XCSA;
+ =====   Initial distributions   =====
+ NE(r)=1.d0+(1.d0+SIN(TIME)*FPR(r))
+ TE(r)=1.d0+FPR(r)
+ TI(r)=1.d0+FPR(r)
+ CU(r)=CC(r)
+ F0(r)=1.d0+(1.d0+SIN(TIME)*FPR(r))
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+  >>> Warning: Boundary condition for TE is not set.
+              It is set to TEX(t0)
+  >>> Warning: Boundary condition for TI is not set.
+              It is set to TIX(t0)
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         p_e   TE(r)*NE(r)
+  2               0.d0
+  3         Upl   UPL(r)
+  4         jbs   CUBS(r)
+  5  -4     T_e   TE(r)
+  6         n_e   NE(r)
+  7  5      q     1.d0/MU(r)
+  8         p_i   NI(r)*TI(r)
+  9         p_i   TI(r)*NI(r)
+ 10               0.d0
+ 11         j     CU(r)
+ 12         sigm  CC(r)
+ 13  -4     T_i   TI(r)
+ 14         n_i   NI(r)
+ 15  1      mu    MU(r)
+ 16         p_e   NE(r)*TE(r)
+ 17         g11   G11(r)
+ 18         g22   G22(r)
+ 19         jbs   CUBS(r)
+ 20         tria  TRIA(r)
+ 21         V     VR(r)
+ 22         g33   G33(r)
+ 23  1      mu    MU(r)
+ 24         shif  SHIF(r)
+ 25         a     AMETR(r)
+ 26         Upl   UPL(r)
+ 27         j     CU(r)
+ 28         beta  BETAJ(r)
+ 29         Vo    VRO(r)
+ 30         IPOL  IPOL(r)
+ 31  5      q     1.d0/MU(r)
+ 32         elon  ELON(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Wtot  WTOT(a)
+  2  -1     We    WE(a)
+  3         nst   NSTEPS
+  4  -1     Wi    WI(a)

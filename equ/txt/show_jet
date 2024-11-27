@@ -1,0 +1,127 @@
+ =====   Variables definition   =====
+ >>> Coefficient string error <<< =====================
+ AIM1=1.2d1
+ QNBI=ZRD11+ZRD12+ZRD13+ZRD14+ZRD15+ZRD16+ZRD17+ZRD18+ZRD21+ZRD22+ZRD23+ZRD24+ZRD25+ZRD26+ZRD27+ZRD28
+ >>> Warning: Too long name in channel 38 <<<
+ >>> Warning: Too long name in channel 39 <<<
+ >>> Warning: Too long name in channel 40 <<<
+ >>> Warning: Too long name in channel 41 <<<
+ >>> Warning: Too long name in channel 42 <<<
+ >>> Warning: Too long name in channel 43 <<<
+ >>> Warning: Too long name in channel 44 <<<
+ >>> Warning: Too long name in channel 45 <<<
+ >>> Warning: Too long name in channel 46 <<<
+ >>> Warning: Too long name in channel 47 <<<
+ >>> Warning: Too long name in channel 48 <<<
+ >>> Warning: Too long name in channel 49 <<<
+ >>> Warning: Too long name in channel 50 <<<
+ >>> Warning: Too long name in channel 51 <<<
+ >>> Warning: Too long name in channel 52 <<<
+ >>> Warning: Too long name in channel 53 <<<
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZIM1(r)=6.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=FPR(r)
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  NE  is assigned
+ NE(r)=NEX(r)
+ ---->  TE  is assigned
+ TE(r)=TEX(r)
+ ---->  TI  is assigned
+ TI(r)=TIX(r)
+ ---->  CU  is assigned
+ CU(r)=FPR(r)
+ CC(r)=CCSP(r)
+ ---->  Subroutine  1: NBI
+        is called at -99999<TIME< 99999 with dt=.01   
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         nex   NEX(r)
+  2         qfit  CAR4X(r)
+  3         mu    MU(r)
+  4         j     CU(r)
+  5         Tex   TEX(r)
+  6         ca5   CAR5X(r)
+  7         Pnbe  PEBM(r)
+  8               0.d0
+  9         vtor  TRX(r)
+ 10               0.d0
+ 11               0.d0
+ 12               0.d0
+ 13         Tix   TIX(r)
+ 14  2      Zeff  ZEFX(r)
+ 15         Pnbi  PIBM(r)
+ 16               0.d0
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Ipl   IPL
+  2         PNBI  QNBI
+  3         BTOT  BTOR
+  4         Vplx  UEXT
+  5             
+  6         PICR  QICR
+  7             
+  8         Vpl   UPL(a)
+  9         RTOR  RTOR
+ 10         AB    AB
+ 11         Shif  SHIFT
+ 12         ABC   ABC
+ 13         updn  UPDWN
+ 14         kapp  ELONG
+ 15             
+ 16         tria  TRIAN
+ 17         lix   ZRD8
+ 18         Volx  ZRD19
+ 19         betp  BETAJ(a)
+ 20         aq2   ZRD10
+ 21         li    LINT(a)
+ 22         Vol   VOLUME
+ 23         Wpd   ZRD1
+ 24         aq3   ZRD9
+ 25         nex0  ZRD2
+ 26         Tex0  ZRD5
+ 27         <nx>  ZRD2
+ 28         <Tx>  ZRD6
+ 29         ne0   NE(0)
+ 30         Te0   TE(0)
+ 31         <ne>  NEAV(a)
+ 32         <Te>  TEAV(a)
+ 33         Tix0  TIX(0)
+ 34         Ti0   TI(0)
+ 35         NAB   NAB
+ 36         NA1   NA1
+ 37         NB1   NB1
+ 38         ZRD1  ZRD11
+ 39         ZRD1  ZRD12
+ 40         ZRD1  ZRD13
+ 41         ZRD1  ZRD14
+ 42         ZRD1  ZRD15
+ 43         ZRD1  ZRD16
+ 44         ZRD1  ZRD17
+ 45         ZRD1  ZRD18
+ 46         ZRD2  ZRD21
+ 47         ZRD2  ZRD22
+ 48         ZRD2  ZRD23
+ 49         ZRD2  ZRD24
+ 50         ZRD2  ZRD25
+ 51         ZRD2  ZRD26
+ 52         ZRD2  ZRD27
+ 53         ZRD2  ZRD28

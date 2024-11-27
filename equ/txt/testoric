@@ -1,0 +1,112 @@
+ =====   Variables definition   =====
+!TAUMIN=.001;	TAUMAX=TAUMIN;
+ ZEF(r)=2.d0
+ =====   Initial distributions   =====
+NE    (r)=NE    X(r)
+ TE(r)=3.5d1*FPR(r)+1.d0
+ TI(r)=3.5d1*FPR(r)+1.d0
+ CU(r)=CC(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -1     J     CU(r)
+  2  -3     Upl   UPL(r)
+  3         G22   G22(r)
+  4         eqpf  EQPF(r)
+  5         cc    CC(r)
+  6  -4     Ne    NE(r)
+  7  -7     Ti    TI(r)
+  8         q     1.d0/MU(r)
+  9  -1     jOH   CUOHM(r)
+ 10  -3     U_||  ULON(r)
+ 11  -3     dU    MU(a)*(FTN-FTO)/TAU
+ 12         eqff  EQFF(r)
+ 13  -1     Jbs   CUBS(r)
+ 14  -4     Ni    NI(r)
+ 15  -7     Te    TE(r)
+ 16  1      ft    FTLLM(r)
+ 17  -18    bmin  BMINT(r)
+ 18         MU    MU(r)
+ 19  1      bdb0  BDB0(r)
+ 20         grho  GRADRO(r)
+ 21         SLAT  SLAT(r)
+ 22               0.d0
+ 23  1      b02b  B0DB2(r)
+ 24  1      Fp    (FP(r)-FP))/(FP(a)-FP))
+ 25  1      bmax  BMAXT(r)
+ 26               0.d0
+ 27  1      bb02  BDB02(r)
+ 28  -20    drda  DRODA(r)
+ 29               0.d0
+ 30               0.d0
+ 31               0.d0
+ 32  1      Fp0   (FPO(r)-FP))/(FP(a)-FP))
+ 33  -18    bmin  BMINT(r)
+ 34         vr    VR(r)
+ 35  1      bdb0  BDB0(r)
+ 36  -20    grad  GRADRO(r)
+ 37         g33   G33(r)
+ 38         g22   G22(r)
+ 39  1      b02b  B0DB2(r)
+ 40  1      Fp    (FP(r)-FP))/(FP(a)-FP))
+ 41  1      bmax  BMAXT(r)
+ 42         vrs   VRS(r)
+ 43  1      bb02  BDB02(r)
+ 44  -20    drda  DRODA(r)
+ 45         g11   G11(r)
+ 46         slat  SLAT(r)
+ 47  1.     ipol  IPOL(r)
+ 48  1      Fp0   (FPO(r)-FP))/(FP(a)-FP))
+ 49  2      a     AMETR(r)
+ 50         rho   RHO(r)
+ 51  3      elon  ELON(r)
+ 52         shiv  SHIV(r)
+ 53         tria  TRIA(r)
+ 54  1      x     RHO(r)/ROC
+ 55         Pi    PI(r)
+ 56               0.d0
+ 57         shif  SHIF(r)
+ >>> Warning: Variable "HE" is used but not defined
+ 58         He    HE(r)
+ 59         Pe    PE(r)
+ >>> Warning: Variable "XI" is used but not defined
+ 60         Xi    XI(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Vol   VOLUM(a)
+  2         NB1   NB1
+  3         ROC   ROC
+  4         shif  SHIFB
+  5             
+  6         NA1   NA1
+  7         li3   LINT(a)
+  8         betj  BETAJ(a)
+  9         Ipl   ITOT(a)
+ 10         Icd   ICD(a)
+ 11         a     ABC
+ 12         k     ELONG
+ 13         t     TRIAN
+ 14         HRO   HRO
+ 15         R0    RTOR+SHIF(
+ 16         HROA  HROA
+ 17         <ne>  NEAV(a)
+ 18         fpb   FP(a)
+ 19         Upl   UPL(a)
+ 20         fpc   FPB
+ 21         Ibs   IBS(a)
+ 22         leq5  LEQ(5)
+ 23         Neql  NEQUIL
+ 24         Meql  MEQUIL
+ 25         ha/h  HROA/HRO
+ 26         hs/h  (ROC-NA*HRO)/HRO
+ 27         UplB  (FP(a)-FPO(a))/TAU
+ 28         Upld  MU(a)*(GP*BTOR*ROC*ROC-FTO)/TAU

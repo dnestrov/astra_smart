@@ -1,0 +1,85 @@
+ =====   Variables definition   =====
+ MESHEQ=4.1d1
+!==================== Electron and ion densities ==========================
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ NALF(r)=4.d-2*NE(r)
+ ZEF(r)=1.68d0
+ NDEUT(r)=4.4d-1*NE(r)
+ NTRIT(r)=NDEUT(r)
+ NIZ1(r)=2.d-2*NE(r)
+ ZIM1(r)=4.d0
+ NIZ2(r)=1.2d-3*NE(r)
+ ZIM2(r)=1.8d1
+ NI(r)=NDEUT(r)+NTRIT(r)+NALF(r)+NIZ1(r)+NIZ2(r)
+ CAR3(r)=PBRAD(r)
+ CAR4(r)=PEDT(r)+PIDT(r)
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=CC(r)*const
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with a prescribed MU distribution
+ =====   Equations & subroutines  =====
+ ---->  NE  is assigned
+ NE(r)=NEX(r)
+ ---->  TE  is assigned
+ TE(r)=TEX(r)
+ ---->  TI  is assigned
+ TI(r)=TIX(r)
+ ---->  CU  is assigned
+ MU(r)=3.3d-1*FPR(r)+3.3d-1
+ CC(r)=CCSP(r)
+ ---->  Subroutine  1: PZRAD(5,NIZ1,CAR1)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Subroutine  2: PZRAD(18,NIZ2,CAR2)
+        is called at -99999<TIME< 99999 with dt=Def.  
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         Tex   TEX(r)
+  2         nex   NEX(r)
+  3         vtor  TRX(r)
+  4         ZBe   ZIBE(r)
+  5         PBe   CAR1(r)
+  6         Zimp  ZZEF(r)
+  7  2      Zeff  ZEFX(r)
+  8         nBe   NIZ1(r)
+  9         Tix   TIX(r)
+ 10         prad  PRADX(r)
+ 11         mu    MU(r)
+ 12         zAr   ZIAR(r)
+ 13         PAr   CAR2(r)
+ 14         Palf  PDT(r)
+ 15         Pbre  PBRAD(r)
+ 16         nAr   NIZ2(r)
+ 17         psi   FP(r)
+ 18         psiN  (FP(r)-FP(0))/(FP(a)-FP(0))
+ 19         j     CU(r)
+ 20         mu    MU(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         ABC   ABC
+  2         Ipl   IPLX
+  3         ABC1  ZRD1X
+  4         Ipl1  ZRD3X
+  5         kapp  ELONG
+  6         Btor  BTOR
+  7         delt  TRIAN
+  8         shif  ZRD2X
+  9         Tix0  TIX(0)
+ 10         Tex0  TEX(0)
+ 11         cell  HROA/HRO
+ 12         PBe   VINT(CAR1)(a)
+ 13         PAr   VINT(CAR2)(a)
+ 14         Pbr   QBRAD(a)
+ 15         Palf  QDT(a)

@@ -1,0 +1,168 @@
+!Fixed boundary for SMART device shot
+!.exe/astra smart_test1 smart_fixed 0 0.4 smart_test1
+CDJM1=13000000d0;CDJM2=600d0;CDJM3=100 !
+NE:AS;		NE=CF5*FPR**CF6+CBND1;
+TE:AS;		TE=CF2*FPR**CF4+0.1*CBND2;
+TI:AS;		TI=CF3*FPR**CF4+0.1*CBND3; TIB=0.1*CBND3;
+
+TAUMAX=1d-3
+TAUMIN=TAUMAX 
+DTOUT=TAUMAX
+DROUT=TAUMAX
+
+keepdata20(ZRD24,2) > :0.01:0.005:999:G
+mdsuploadP(int(CDJM2),int(CDJM1)+int(CDJM3),'ASTRA') > :0.05:0.02:999:J
+zipcode(int(CDJM2),int(CDJM1)+int(CDJM3),RDNAME,EQNAME) > :999:0.05:999:A
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+CV5=CV9-0.001
+
+NEQUIL=65.63;NBND=64;
+
+
+getequilglob2(ZRD34,ZRD35,ZRD36,ZRD37,ZRD38,ZRD39,ZRD37,ZRD37,ZRD37,ZRD37,ZRD37,ZRD37,ZRD37,ZRD33,ZRD37)::0.01
+
+CAR26=(FP-FPC)/(FPB-FPC)
+ZRD40=IPL/(BTOR*ABC);!	normalized current
+ZRD46=1.257*IPL/PERIMB;!poloidal magnetic field at separatrix  Bpol=mu0*Ip/Lp 
+
+!==================== Densities ========================================
+
+ZRD9=TAUPB
+ZRD10=ZRD9/ZRD24
+
+ZEF=CIMP1;ZIM1=6;AIM1=12;   ! carbon impurity
+NIZ1=(ZEF-1)*NE/(ZIM1*(ZIM1-1)+1.d-6);! carbon density profile
+CAR20="NE(J)-ZIM1(J)*NIZ1(J)"; !main ions (hydrogen)	
+NDEUT=CAR20; NI=NDEUT
+
+CAR12=PJOUL*(1-FJUMP(CV5))+EPEQ*CUEQ/BDB0**2*FJUMP(CV5);
+PE=CAR12-PEICL;
+PI=PEICL
+HE=HEEFF
+XI=XIEFF
+DN=DNEFF
+neocl4:
+CAR6="work(j,145)"*NHYDR/NI+"work(j,165)"*NDEUT/NI
+
+CAR16=q95fp;ZRD30=CAR16C	
+ZRD12=RTOR/ABC
+ZRD26=0.01*NEAVB*0.1*ZRD30*RTOR*ZEFB*sqrt(ZRD12**3)/TIAVB**2
+ZRD27=0.0032*sqrt(AMJ*TIAVB)/ABC/BTOR ! Rho star
+
+ZRD24=WTOTB/QTOTB;!TAUEB
+!tauOH,taulPY,tauh,taunstx1,tauPB,tauGlob,plh
+calch6(ZRD16,ZRD17,ZRD18,ZRD21,ZRD22,ZRD26,ZRD23): ! Calculate tauE for different scalings
+
+!==================== Current model ====================================
+!Transition to Spider poloidal flux evolution at TIME=CV5 (CU:AS):
+CU:AS;	CC=CNHR;	CU=CC
+IPL=IPLX*(1-FJUMP(CV5))+IPLFBE*FJUMP(CV5);
+HC=CCD4*HCSA;   DC=CCD4*DCSA;    XC=CCD4*XCSA;
+
+CAR16=q95fp;ZRD5=CAR16C
+ZRD12=RTOR/ABC
+ZRD26=0.01*NEAVB*0.1*ZRD30*RTOR*ZEFB*sqrt(ZRD12**3)/TIAVB**2
+ZRD27=0.0032*sqrt(AMJ*TIAVB)/ABC/BTOR ! Rho star
+
+
+Te\TE\\TEX\-4;	He\HE\-6;       Upl\UPL;	Hi\XI\-6;	
+ne\NE\\NEX\-5;  j\CU\-7;	Pj\CAR12\-1;TRIA\TRIA;
+Ti\TI\\TIX\-4;	CC\CC; 		Zef\ZEF;        Hinc\CAR6\-6	
+ni\NI\-5;	jBS\CUBS\-7;	q\1./MU;Elon\ELON;
+
+RHO\RHO;SHIF\SHIF;	
+		
+Qe\QE\-2;	Qi\QI\-2;
+
+vDV1_"vcoil(1)";vDV2_"vcoil(2)";vPF2_"vcoil(3)";
+vPF1_"vcoil(4)";vSOL_"vcoil(5)"
+IPL_IPL;
+Te0_TEC;
+Ti0_TIC
+<ne>_NEAVB;-ne-_NELAC;
+
+getcoils(CAR50,CAR51):
+iDV1_"ccoil(1)*1e3"
+iDV2_"ccoil(2)*1e3"
+iPF2_"ccoil(3)*1e3"
+iPF1_"ccoil(4)*1e3"
+iSOL_"ccoil(5)*1e3";
+
+H98_ZRD24/max(ZRD18,1.e-10);
+Wth_WTOTB*1000.
+li3_ZRD34;
+
+k_ELONG;a_ABC;
+R_RTOR+SHIFT;
+R-a_RTOR+SHIFT-ABC;	  
+tria_TRIAN;-->_TRIANX			  ! Triangularity
+updw_100.*UPDWN;
+ZRD11=timder(FPB);
+Upl_UPLB_5;
+Upsi_ZRD11_8;V*s_FPB;EXT_PSIEXT;PLEX_PSPLEX
+IN_ZRD40;BetN_BETAB/IPL*ABC*BTOR;
+
+fGW_NELAC/(10.0d0*IPL/GP/ABC/ABC); ! Greenwald density fraction
+Bet0_"BETAR(RHO(2))";BetB_ZRD35*100_-12;
+Betp_ZRD36_-11;
+Tea_TEB;
+Tia_TIB;
+ne0_NEC_10.;nea_NEB;! for ne_ped by DN_ped (CMHD2)
+
+A_(RTOR+SHIFT)/ABC;		  ! Aspect ratio
+sh0_shifc-SHIFT;		  
+VOL_volume;		! Plasma volume inside ROC (m^3)	
+   
+TauE_ZRD24;
+TauP_ZRD9
+P/E_ZRD10;
+QEB_QEB; QIB_QIB;QNB_QNB;
+Pj_vint(CAR12B);
+Pei_QEICLB;			  ! Electron-ion exchange power
+Pe_QETOTB-QEICLB;		  ! Electron heating power
+Pi_QITOTB+QEICLB; 		  ! Ion heating power
+Pebm_vint(PEBMB)
+Pibm_vint(PIBMB)
+
+Pbr_QBRADB;Psyn_QSYNCB;Plh_ZRD23;Ptot_QTOTB
+<Zef_vint(ZEFB)/volume
+Taue_TAUEEB;	! Electron confinement time (ms)
+Taui_TAUEIB;	! Ion confinement time (ms)
+	 
+HPB_ZRD24/max(ZRD22,1.e-10);	 			
+HAD_ZRD24/max(ZRD21,1.e-10);
+HGlo_ZRD24/max(ZRD26,1.e-10);	  
+H-Lm_ZRD24/max(ZRD17,1.e-10);
+Hoh_ZRD24/max(ZRD16,1.e-10);	  
+
+q0_1/MUC;			  ! Central q, q0
+UPL_UPLB;			  ! Surface loop voltage
+
+IPL_IPL;			  ! Plasma current (MA)
+Ibs_iint(CUBSB);		  ! Bootstrap current (MA)
+
+Btor_BTOR;			  ! Toroidal field (T)
+Bpol_ZRD46;
+ro*_ZRD27;			  ! Normalised ion gyroradius
+q95_ZRD30;			  ! q95
+nu*3_ZRD26*1.e3;		  ! Normalised collisionality
+
+rip_ZRD38;zip_ZRD39
+
+nTta_NIC*TIC*ZRD24;
+Qe/i_QEB/(QIB+1.d-10);
+
+nsat_6.5*sqrt(AMJ)*BTOR/RTOR/ZRD5
+NA1_NA1;		! Plasma edge grid point number	ROC=RHO(NA1)
+NB1_NB1;		! Number of points in main transport grid
+NBND_NBND;
+ROC_ROC;		! Effective minor radius (m)	
+rob_rob;		
+hro_hro;		! Radial grid step in the variable rho (m)
+TAU_TAU
+Surf_SLATB;		! Toroidal surface area (m^2)
+Spol_AREATB
+Lim_ZRD30;rxp_ZRD27;zxp_ZRD28
+
+

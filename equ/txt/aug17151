@@ -1,0 +1,222 @@
+ =====   Variables definition   =====
+!  AUG shot #17151
+ NEQUIL=4.1d1
+!NEOCL2:;  ! Calls NCLASS
+ CF1=5.d-1
+ CV1=-7.d0
+ CF2=1.d1
+ CV2=3.2d-1
+ CF3=7.d-1
+ CV3=7.d-1
+ CCD3=7.5d-1
+ CCD4=2.2d-1
+ CCD1=7.8d-1
+ CCD2=2.5d-1
+ CF4=8.d-1
+! boundary for integrated modeling
+ CF16=4.754d-1
+! correction of equations to coincide to B2 code
+! diifusion and heat conductivity - CAR32
+! convection velocity - CAR31
+!!CAR31 = MAX(CAR31X/G11,0.9d0);
+!!CAR31 = MIN(CAR32,1.2d0);
+! sources
+!	TE evolution
+!   heat exchange term are written into the model explicitly,
+!   while numerical scheme is implicit
+!!HE=(CF1+CV1*(FPR*FRS)**2-CF4*CAR1)*CAR32;
+!GN2E=2.5;
+!	TI evolution
+!   heat exchange term are written into the model explicitly,
+!   while numerical scheme is implicit
+!NBI:0.1;		CNB1=8;
+ NNCL=6.d-4
+ NNWM=8.d-6
+ ENWM=1.5d-1
+ ENCL=2.d-2
+ >>> Warning: Too long name in channel 22 <<<
+ >>> Warning: Too long name in channel 30 <<<
+!!CAR1=(-0.17+1.05*NUIS**(0.5)+2.7*NUIS*NUIS*(AMETR/RTOR)**3)/(1+0.7*NUIS**(0.5));
+!!CAR2=-1.0d3*TI/(1.d0+DRODA*GRAD(SHIF))*DRODA*(GRAD(NE)/NE+CAR10*GRAD(TI)/TI);
+!CAR11=BMAXT/BMINT;
+ >>> Warning: Too long name in channel 37 <<<
+ >>> Warning: Too long name in channel 41 <<<
+ >>> Warning: Too long name in channel 43 <<<
+ >>> Warning: Too long name in channel 52 <<<
+ >>> Warning: Too long name in channel 64 <<<
+ >>> Warning: Too long name in channel 73 <<<
+ >>> Warning: Too long name in channel 85 <<<
+ >>> Warning: Too long name in channel 90 <<<
+ >>> Warning: Too long name in channel 91 <<<
+ >>> Warning: Too long name in channel 92 <<<
+ >>> Warning: Too long name in channel 95 <<<
+ >>> Warning: Too long name in channel 96 <<<
+ >>> Warning: Too long name in channel101 <<<
+ >>> Warning: Too long name in channel102 <<<
+ >>> Warning: Too long name in channel108 <<<
+ >>> Warning: Too long name in channel109 <<<
+ CF15=VINT(PEBM)(r)+VINT(PIBM)(r)
+ CF14=VINT(CAR20)(r)
+ CF13=VINT(CAR21)(r)
+ CF12=VINT(CAR22)(r)
+ >>> Warning: Too long name in channel 10 <<<
+ >>> Warning: Too long name in channel 11 <<<
+ >>> Warning: Too long name in channel 13 <<<
+ CAR32(r)=MAX(CAR32X(r)/((1.d0/DRODA(r)+GRAD(SHIF)(r))*G11(r)),9.d-1)
+ CAR32(r)=MIN(CAR32(r),1.2d0)
+ CAR31(r)=CAR31X(r)/G11(r)
+ CAR30(r)=CAR30X(r)*(1.d0/DRODA(r)+GRAD(SHIF)(r))/VR(r)
+ CAR30(r)=MAX(CAR30(r),9.d-1)
+ CAR30(r)=MIN(CAR30(r),1.35d0)
+ CAR3(r)=(FP(r)-FP))/(FP(a)-FP))
+ CAR9(r)=(1.d0+2.7d0*NUIS(r)*NUIS(r)*(AMETR(r)/RTOR)**3.d0)
+ CAR10(r)=CAR1(r)/CAR9(r)
+ CAR3(r)=DRODA(r)*GRAD(CAR2)(r)/(1.d0+DRODA(r)*GRAD(SHIF)(r))/BTOR+CAR2(r)/RTOR/BTOR
+ CAR20(r)=PBRAD(r)
+ CAR21(r)=PJOUL(r)
+ CAR22(r)=SNEBM(r)
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ CU(r)=1.2d0*FPR(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -4     Te    TE(r)
+  2  -8     Ti    TI(r)
+  3         ne    NE(r)
+  4  -5     j     CU(r)
+  5  -4     Ti    TI(r)
+  6  -3     Upl   UPL(r)
+  7         Zeff  ZEF(r)
+  8  -11    ne    NE(r)
+  9  -4     Tex   TEX(r)
+ 10  -8     TN    TN(r)
+ 11         nN    NN(r)*(NNCL+NNWM)
+ 12  -5     jz    CUTOR(r)
+ 13  -4     Tix   TIX(r)
+ 14  -3     Ulon  ULON(r)
+ 15         q     1.d0/MU(r)
+ 16  -11    nex   NEX(r)
+ 17         POH   PJOUL(r)
+ 18         ELON  ELON(r)
+ 19         GamN  QN(r)
+ 20  -6     qe    QE(r)
+ 21  -9     Pe    PE(r)+PET(r)*TE(r)
+ 22         PBRA  PBRAD(r)
+ 23  500.0  Se    SN(r)+(SNN(r)*NE(r)/CAR30(r))
+ 24  -7     sigm  CC(r)
+ 25         PEXC  PEI(r)*(TI(r)-TE(r))
+ 26         TRIA  TRIA(r)
+ 27         SHIV  SHIV(r)
+ 28  -6     qi    QI(r)
+ 29  -9     Pi    PI(r)+PIT(r)*TI(r)
+ 30         PENE  PENEU(r)
+ 31  500.0  C15X  CAR15X(r)
+ 32         SHIF  SHIF(r)
+ 33  -18    DN    (DN(r)/CAR32(r))
+ 34         HE    (HE(r)/CAR32(r))
+ 35  -10    XI    (XI(r)/CAR32(r))
+ 36         Erad  0.d0
+ 37         Dalp  NE(r)*NN(r)
+ 38         GSB   HNGSB(r)
+ 39         _ASC  HNASC(r)
+ 40         Shea  0.d0
+ 41         Vcon  -CN(r)/CAR31(r)
+ >>> Warning: unrecognized variable HEEX
+ 42         HEEX  HEEX
+ 43  -10    NCLA  WORK(J,165)
+ 44         ER    0.d0
+ 45         NUIS  NUIS(r)
+ 46         FP    FP(r)
+ 47  -10    AnSa  HNASI(r)
+ 48         QN    QN(r)
+ 49         CUBM  CUBM(r)
+ 50  -14    PEBM  PEBM(r)
+ 51         PIBM  PIBM(r)
+ 52         SNEB  SNEBM(r)
+ 53         NIBM  NIBM(r)
+ 54         CAR2  CAR2(r)
+ 55         SN    SN(r)
+ 56         uuu   0.d0
+ 57         CUNB  0.d0
+ 58         PENB  0.d0
+ 59         PINB  0.d0
+ 60         uuu   0.d0
+ 61         uuu   0.d0
+ 62         uuu   0.d0
+ 63         C15X  CAR15X(r)
+ 64         SNNB  SNNBM(r)
+ 65         rho   RHO(r)
+ 66         ELON  ELON(r)
+ 67         MU    MU(r)
+ 68         IPOL  IPOL(r)
+ 69         RMAJ  RTOR-AMETR(r)+SHIF(r)
+ 70         Te    TE(r)
+ 71         ne    NE(r)
+ 72         Vol   VOLUM(r)
+ 73         DROD  DRODA(r)
+ 74         TRIA  TRIA(r)
+ 75         SHIF  SHIF(r)
+ 76         j     CU(r)
+ 77         RMAJ  RTOR+AMETR(r)+SHIF(r)
+ 78         Ti    TI(r)
+ 79  2      BDB0  BDB0(r)
+ 80         VolR  VR(r)
+ 81         G11   G11(r)
+ 82         G22   G22(r)
+ 83         G33   G33(r)
+ 84         VRS   VRS(r)
+ 85         GRAD  GRADRO(r)
+ 86         ZEF   ZEF(r)
+ 87         FOFB  FOFB(r)
+ 88         ER    ER(r)
+ 89         ULON  ULON(r)
+ 90         NHYD  NHYDR(r)
+ 91         NDEU  NDEUT(r)
+ 92         NTRI  NTRIT(r)
+ 93         NHE3  NHE3(r)
+ 94         NALF  NALF(r)
+ 95         AMAI  AMAIN(r)
+ 96         ZMAI  ZMAIN(r)
+ 97         NIZ1  NIZ1(r)
+ 98         NIZ2  NIZ2(r)
+ 99         NIZ3  NIZ3(r)
+100         NI    NI(r)
+101         SQEP  SQEPS(r)
+102         BMAX  BMAXT(r)
+103         BMIN  BMINT(r)
+104         ZIM1  ZIM1(r)
+105         ZIM2  ZIM2(r)
+106         ZIM3  ZIM3(r)
+107         SLAT  SLAT(r)
+108  2      B0DB  B0DB2(r)
+109  2      BDB0  BDB02(r)
+110         diff  CAR32(r)
+111         conv  CAR31(r)
+112         src   CAR30(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         CF1   CF1
+  2         CV1   CV1
+  3         CF2   CF2
+  4         CV2   CV2
+  5         CF3   CF3
+  6         CV3   CV3
+  7         ZRD3  ZRD3
+  8         ZRD7  ZRD7
+  9         ZRD8  ZRD8
+ 10         Pbea  CF15
+ 11         PBRA  CF14
+ 12         POH   CF13
+ 13         SBEA  CF12

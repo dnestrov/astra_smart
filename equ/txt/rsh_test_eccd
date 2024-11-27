@@ -1,0 +1,186 @@
+ =====   Variables definition   =====
+!------------------------ Model ----------------------------------------------
+ MESHEQ=4.1d1
+!ZEF=ZEFX;
+!ZEF=ZRD17X;
+!------------------------ NBI heating & cold neutrals ------------------------
+ AIM1=1.2d1
+ CNB1=8.d0
+ CV5=8.d-4*VINT(PBLON)(a)
+ CV6=1.6d-3*VINT(PBPER)(a)
+ >>> Warning: unrecognized variable 1D-1
+!------------------------ Density, Te, Ti ------------------------------------
+!CAR9=EXP(-((RHO/ROC-CV4)/CF4)**2)
+!SMEARR(CV8,NEX,NE):;
+!	Electron & Ion eqs.
+!CAR1=1.4*TIX;
+!TE=TEX;
+!TI=0.6*TE;
+!TI:AS;		TI=CF3*CAR9+TIX;	TEB=TEXB;
+!TE:AS;		TE=CF2*CAR9+TEX;	TIB=TIXB;
+!------------------------ ECRH, ICRH & CD ------------------------------------
+! Gaussian profile of additional heating ~exp{-[(a-CF5)/(a_b*CF7)]^2}
+! CUECR is scaled using Peeters's calculation.
+! CUICR is scaled using Noterdaeme's data
+!FGAUSS(CF6,CF8,CAR8):;PEICR=QICR*CAR8; CUICR=0.42*PEICR*TE(CF6*ROC)/NE;
+!FGAUSS(CF6,CF8,CAR8):;
+!PEECR=0. ; CUECR=0.;
+!CUECR=-0.004*CUBM(0)*CAR8;
+!------------------------ Poloidal field -------------------------------------
+!MU=MUX;
+!CU=CAR21;
+!CD=CUBM;
+!CC=CAR21;
+!NEOCL(CAR20,CAR21,CAR22,CAR23):;
+! CAR20:BS, CAR21: CC, CAR22: tor ion vel, CAR23: pol ion vel
+!subroutine NEOCL (by Houlberg) not yet "official" (Preverzev, 04.04.00)
+!MIXJ(CF7,CV7):;	
+!------------------------ Radial output --------------------------------------
+ >>> Warning: Too long name in channel 39 <<<
+ >>> Warning: Too long name in channel 41 <<<
+!------------------------  ----------------------------------------------
+ >>> Warning: Too long name in channel 55 <<<
+ ZEF(r)=2.d0
+ AMAIN(r)=2.d0
+ ZMAIN(r)=1.d0
+ ZIM1(r)=6.d0
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ PEECR(r)=QECR*CAR7(r)+CV2*CAR6(r)
+ CUECR(r)=5.d-1*PEECR(r)*TE(r)/NE(r)
+ PEICR(r)=0.d0
+ CUICR(r)=0.d0
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+TE    (r)=TE    X(r)
+TI    (r)=TI    X(r)
+ CU(r)=CNHR(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+  >>> Warning: Initial condition for TE is not defined
+               TE=TEX(TSTART) will be used
+  >>> Warning: Initial condition for TI is not defined
+               TI=TIX(TSTART) will be used
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -5     Te    TE(r)
+  2  -11    j     CU(r)
+  3         Upl   UPL(r)
+  4  -5     Te    TE(r)
+  5         ne    NE(r)
+  6  -11    jBSK  CUBS(r)
+  7         mu    MU(r)
+  8  -11    j     CU(r)
+  9  -5     TM    0.d0
+ 10  -11    jOH   CUOHM(r)
+ 11         shea  SHEAR(r)
+ 12  -5     Ti    TI(r)
+ 13         ni    NI(r)
+ 14         zef   ZEF(r)
+ 15  4      q     1.d0/MU(r)
+ 16  -11    jNI   CUBM(r)+CUBS(r)+CUECR(r)
+ 17  -5     Te    TE(r)
+ 18  -4     plon  1.6d-3*PBLON(r)
+ 19         PNBe  PEBM(r)
+ 20         ne    NE(r)
+ 21         jECR  CUECR(r)
+ 22  -11    jBSH  CAR20(r)
+ 23         PNBi  PIBM(r)
+ 24         ni    NI(r)
+ 25  -5     Ti    TI(r)
+ 26  -4     pper  1.6d-3*PBPER(r)
+ 27  -4     p     PREST(r)
+ 28         +     CAR9(r)
+ 29  -11    j     CU(r)
+ 30         jBSK  CUBS(r)
+ >>> Warning: unrecognized variable BETBB
+ 31         btot  BETAJ(r)+BETBM(r)+BETBB
+ >>> Warning: unrecognized variable BETBB
+ 32  -1     betb  BETBM(r)+BETBB
+ 33  -12    NIBM  NIBM(r)
+ 34         Zef   ZEF(r)
+ 35  -13    CC    CNHR(r)
+ 36               0.d0
+ 37  -12    NIZ   NIZ1(r)
+ 38  1      li    LINT(r)
+ 39         PEEC  PEECR(r)
+ 40               0.d0
+ 41  -12    NDEU  NDEUT(r)
+ 42               0.d0
+ 43               0.d0
+ 44               0.d0
+ 45  -12    NE    NE(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  1      Ipl   IPL
+  2  5      <ne>  NEAV(a)
+  3  1      li    LINT(a)
+  4         Upl   UPL(a)
+  5         betj  BETAJ(a)+BETBM(a)
+  6  1      Xmin  XQMIN(a)
+ >>> Warning: unrecognized variable BETTB
+  7         bet%  BETTB
+  8  5      qmin  QMIN(a)
+  9  1      Ipl   IPL
+ 10         INB+  IBM(a)
+ 11         IBSK  IBS(a)
+ 12         INBp  IINT(CAR1)(a)
+ 13         Iohm  IOHM(a)
+ 14         IECR  IINT(CUECR)(r)
+ 15         IBSH  IINT(CAR20)(a)
+ 16         IICR  IICR(a)
+ 17  5      q0    1.d0/MU2
+ 18         PNB   QBEAM
+ 19         nlin  NECH(0)
+ 20         PECR  QECR
+ 21         qa    1.d0/MU(a)
+ 22         PICR  QICR
+ 23         Zeff  ZEF/
+ 24         Sh0%  SHIF//ABC
+ 25  1      IBM%  IBM(a)/IPL
+ >>> Warning: unrecognized variable BETTB
+ 26         betN  BETTB*ABC*BTOR/IPL
+ 27  1      IOH%  IOHM(a)/IPL
+ 28         ICD   ICD(a)
+ 29  1      IBS%  IINT(CAR20)(a)/IPL
+ 30         <n>G  2.7d0*IPL/ABC**2.d0
+ 31  1      IRF%  (IECR(a)+IICR(a))/IPL
+ 32  1      xr15  RFVAL(MU,6.7d-1)(r)/ROC
+ 33         Wkin  WTOT(a)
+ 34         Wpar  CV5
+ 35         Wper  CV6
+ 36         Wfir  (CV5+CV6)/WTOT(a)
+ 37         Wequ  WTOT(a)+7.5d-1*CV6+1.5d0*CV5
+ 38         Wtot  WTOT(a)+CV5+CV6
+ 39         roc   ROC
+ >>> Warning: unrecognized variable BETBBB
+ 40         bpBB  BETBBB
+ 41         bpBM  BETBM(a)
+ 42         bpJ   BETAJ(a)
+ >>> Warning: unrecognized variable BETBBB
+ 43         betp  BETAJ(a)+BETBM(a)+BETBBB
+ >>> Warning: unrecognized variable BETBBB
+ 44         bpB2  5.d-1*BETBBB
+ >>> Warning: unrecognized variable BETBBB
+ 45         bpm   BETAJ(a)+BETBM(a)+5.d-1*BETBBB
+ 46         MSE1  CAR24(1)
+ 47         MSE2  CAR24(2)
+ 48         MSE3  CAR24(3)
+ 49         MSE4  CAR24(4)
+ 50         MSE5  CAR24(5)
+ 51         MSE6  CAR24(6)
+ 52         MSE7  CAR24(7)
+ 53         MSE8  CAR24(8)
+ 54         MSE9  CAR24(9)
+ 55         MSE1  CAR24(10)
+ 56  1      xr1   RFVAL(MU,1.d0)(r)/ROC
+ 57  1      li3   LINT(a)*RTOR/(RTOR+SHIFT)

@@ -1,0 +1,355 @@
+ =====   Variables definition   =====
+!Employed constants
+!CF: 2-16
+!CV: 2, 3, 5-8, 10-16
+!CRF: 1,2
+!CAR: 1,2,31,32
+!
+!CF2-8 for NE fitting
+!CF9-16 for NTM
+!!CF9-14 for density peaking factors
+!CV2,3 for NTM
+!!CV2,3,9 for density peaking factors
+!CV5,6 for par/perp energy of fast ions
+!CV7,8 for TORAY
+!CV10 for NC transport in DN
+!CV11-14 for NE, TE, TI and MU, respectively
+!CV15,16 for TAU98
+!CRF1,2 for NTM island width, location
+!
+!CAR1 for Bremsstrahlung radiation
+!CAR2 for Cyclotron radiation
+!
+!Subroutines: WNTST2(GLF161NA2), NBI, MIXEXT8 (CURRAY, LSC, TORAY)
+ MESHEQ=4.1d1
+!grp!NEQUIL=42;
+!==================== Densities =========================================
+!ZEF=ZEFX;
+ AIM1=1.2d1
+!NDEUT=NI-NIZ1-NIBM;			! density of deuterium plasma ions
+!NDEUT=(NI-NIZ1-NIBM)*0.95;		! density of deuterium plasma ions (95%)
+!NHYDR=(NI-NIZ1-NIBM)*0.05;		! density of hydrogen plasma ions (5%)
+!NEUT::::;
+!NNCL=1.e-5;	NNWM=3.e-5;	! density of incoming cold/warm neutrals
+!==================== NBI-input is calculated ==========================
+ CNB1=3.d0
+ CNB2=1.d0
+ CNB3=2.d0
+ CNB4=1.d0
+ CV5=8.d-4*VINT(PBLON)(a)
+ CV6=1.6d-3*VINT(PBPER)(a)
+!==================== Heating & CD =====================================
+!FICR = 53.0;
+!CURRAY:0.5:::;
+!LSC:0.1:1.0::;
+ FECR=1.7d2
+!CV7 = 63.0;
+!CV8 = 183.;
+!TORAY(2.785D0,-0.14D0,CV7,CV8,0.0D0):0.01:4.3::;
+!TORAY(2.785D0,-0.14D0,CV7,CV8,0.0D0):0.04:4.3::;
+!TORAY(2.785D0,-0.3D0,CV7,CV8,0.0D0):1.0:::;
+!==================== Rotation
+!VTOR=0.0*1.E4*TI;
+!CIMP2=.001;
+!CIMP4=0.03;
+!NALF=F1;			! Set n_He as a solution to eqn:
+!F1:;				! Solve transport eqn for f1
+!F1B=CIMP4;			!    with the boundary (CIMP4=0.03)
+!!F1=CIMP4;			!    and initial condtions
+!F1=CIMP2*NEX;			! Initial condtions
+!DF1=XI/5;			! Fit diffusion to have Tau*/TauE=5 ???
+!!DF1=DN;			! The same diffusion coefficient as for elns
+!VF1=0.;				! No pinch velocity
+!!VF1=CN;			! The same pinch velocity
+!SF1=NDEUT*NTRIT*SVDT;		! He source from D-T reaction
+!====================  Transport model	================================!
+! glf-models
+!GLF161NA2::::;	!alpha_e=1 in glf161na2.f
+!XI=HNASM+"work(j,1)";
+!HE=HNGSE+"work(j,2)";
+!CAR19="work(j,3)"; SMEARR(0.001,CAR19,CAR18):; CAR17=FTAV(CAR18,1.0);
+!DN=CV10*HNGSE+CAR17;
+!DN=CV10*HNGSE+"work(j,3)";
+!!DN=0.21*HNGSE+"work(j,3)";
+!!DN="work(j,3)";
+!CN=-VP*VRHH;
+!XI=(HNASM+"work(j,1)")*(1.-(STEP(j-(CRF2-CRF1/2))-STEP(j-(CRF2+CRF1/2))))+40.*(STEP(j-(CRF2-CRF1/2))-STEP(j-(CRF2+CRF1/2)));
+!HE=(HNGSE+"work(j,2)")*(1.-(STEP(j-(CRF2-CRF1/2))-STEP(j-(CRF2+CRF1/2))))+40.*(STEP(j-(CRF2-CRF1/2))-STEP(j-(CRF2+CRF1/2)));
+!DN=(CV10*HNGSE+"work(j,3)")*(1.-(STEP(j-(CRF2-CRF1/2))-STEP(j-(CRF2+CRF1/2))))+40.*(STEP(j-(CRF2-CRF1/2))-STEP(j-(CRF2+CRF1/2)));
+!CN=-VP*VRHH*(1.-(STEP(j-(CRF2-CRF1/2))-STEP(j-(CRF2+CRF1/2))))+40.*(STEP(j-(CRF2-CRF1/2))-STEP(j-(CRF2+CRF1/2)));
+!XI=(HNASM+"work(j,1)")+(HNASM+"work(j,1)")*CAR31+CAR32;
+!HE=(HNGSE+"work(j,2)")+(HNGSE+"work(j,2)")*CAR31+CAR32;
+!DN=(CV10*HNGSE+CAR17)+(CV10*HNGSE+CAR17)*CAR31+CAR32;
+!CN=-VP*VRHH-VP*VRHH*CAR31+CAR32;
+!PRAD=0.1*(QOHB+QICRB+QLHB)/VOLUMB;
+!PE=POH+PEBM-PEICL+PEICR+PEECR+PELH-1.68*PRADX;
+!-----------------------------------------------------------------------!
+! wileland model
+!grp!WNTST2(CV1, CF15, CV4, 0.0)::::;
+ >>> Warning: unrecognized variable HNASM
+ >>> Warning: unrecognized variable HNASM
+!PRAD=PRADX;
+!NE=CV11*NEX;
+!NE=CV11*NEX;
+!TE=CV12*TEX;
+!TI=CV13*TIX;
+!NE=(1-FJUMP(2.0))*CV11*NEX+FJUMP(2.0)*(CF2*(CF3*((1-((RHO/ROC)**CF4))**CF5)+CF6*((1-((RHO/ROC)**CF7))**CF8))+2.0);
+!NE=10*SQRT(FPR)+3;
+!NE:EQ[2,0.9];	NE=CV11*NEX;	NEB=CV11*NEX(AFX(0.9));	
+!====================  NTM  model  ================================!
+!CF9=3.;		! m number
+!CF10=2.;	! n number
+!CF11=2.;	! m number
+!CF12=1.;	! n number
+!CF13=0.018.;	! Initial width (m) of the first mode (3/2)
+!CF14=0.018;	! Initial width (m) of the second mode (2/1)
+!CF15=2.1;	! a2 in the first mode
+!CF16=4.6;	! a2 in the second mode
+!CV2=1.;	! modulation (duty cycle)
+!CV3=0.;		! print option
+!MIXEXT2(CF9,CF10,CF11,CF12,CF13,CF14,CF15,CF16,CV2,CV3,CRF1,CRF2)::4.1::;
+!MIXEXT3(CF9,CF10,CF11,CF12,CF13,CF14,CF15,CF16,CV2,CV3)::4.1::;
+!grp!MIXEXT8(CF11,CF12,CF14,CF16,CV2,CV3)::4.1::;
+! ===   BS - CC	! Sauter's model is used;
+!MU=0.35*FPR+.25;
+!MSE(5.,CAR24)::::;
+ CV15=QOH(a)+QBEAM+QICR+QLH+QECR-QRAD(a)+2.d0/3.d0*VINT(PBOL1)(a)
+!Power loss (suggested that 2/3 of imp. line radiation radiated in the SOL)
+ CV16=5.62d-2*IPL**9.3d-1*RTOR**1.39d0*BTOR**1.5d-1*(2.d0)**1.9d-1*ABC**5.8d-1*2.d0**7.8d-1*NECH(0)**4.1d-1
+!TAU98=CV16*CV15**(-0.69), M=2.0, kappa=2.0 at the X-point
+!Density peaking factors (C. Angioni et al, NF 47 (2007) 1326)
+!Particle and heat fluxes at r/a=0.5, others at rho_t(norm.)=0.5 or 0.2
+!cf) rho_t should be rho_p, however rho_p ~ rho_t in flattop phases
+!cf) BETTB should be BETI+BETE (divided by 100; not in %)
+!cf) LOG=LN
+!cf) G11 omitted in (SNEBM/G11)/(QTOT/G11)
+!CF9=1.347-0.117*LOG(0.2*NEAVB*RTOR/TEAVB**2.0);
+!CF10=1.331*2*TE(AFX(0.5))*SNEBM(0.5*ABC)/QTOT(0.5*ABC)*3.23*(TE(AFX(0.2))/TEAVB-0.37);
+!CF11=-4.030*0.01*BETTB;
+!CF12=1.347+0.014-(0.117+0.005)*LOG(0.2*NEAVB*RTOR/TEAVB**2.0);
+!CF13=(1.331+0.117)*2*TE(AFX(0.5))*SNEBM(0.5*ABC)/QTOT(0.5*ABC)*3.23*(TE(AFX(0.2))/TEAVB-0.37);
+!CF14=-(4.030+0.810)*0.01*BETTB;
+!CV2=1.347-0.014-(0.117-0.005)*LOG(0.2*NEAVB*RTOR/TEAVB**2.0);
+!CV3=(1.331-0.117)*2*TE(AFX(0.5))*SNEBM(0.5*ABC)/QTOT(0.5*ABC)*3.23*(TE(AFX(0.2))/TEAVB-0.37);
+!CV9=-(4.030-0.810)*0.01*BETTB;
+ >>> Warning: Too long name in channel 53 <<<
+ >>> Warning: Too long name in channel 55 <<<
+ >>> Warning: Too long name in channel 63 <<<
+ >>> Warning: Too long name in channel 65 <<<
+ >>> Warning: Too long name in channel 66 <<<
+ >>> Warning: Too long name in channel 67 <<<
+ >>> Warning: Too long name in channel 69 <<<
+ >>> Warning: Too long name in channel 70 <<<
+ >>> Warning: Too long name in channel 75 <<<
+ >>> Warning: Too long name in channel 77 <<<
+ >>> Warning: Too long name in channel 30 <<<
+ >>> Warning: Too long name in channel 40 <<<
+!LOC_RFVAL(MU,0.5);	! Result is rather strange.
+!nPk0_CF9+CF10+CF11;	nPk+_CF12+CF13+CF14;	nPk-_CV2+CV3+CV9;
+!MSE1_"CAR24(1)";	MSE2_"CAR24(2)";	MSE3_"CAR24(3)";	MSE4_"CAR24(4)";
+!MSE5_"CAR24(5)";
+ ZEF(r)=2.d0
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ ZIM1(r)=6.d0
+ ZEF1(r)=ZIM1(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)
+ NIZ1(r)=NE(r)*(ZEF(r)-1.d0)/(ZIM1(r)-1.d0)/ZIM1(r)
+ NI(r)=NE(r)*(ZIM1(r)-ZEF(r)+1.d0)/ZIM1(r)
+ NDEUT(r)=NI(r)-NIZ1(r)
+ VPOL(r)=VPSWW(r)
+ VTOR(r)=VTORX(r)
+ ER(r)=BTOR*((VTOR(r)/RTOR)*FRS(r)*MU(r)+VDIA(r)-VPOL(r))
+ CAR27(r)=GITG(r)
+ CAR28(r)=1.d0
+ CAR29(r)=VINT(CAR27)(r)/VINT(CAR28)(r)
+ CAR30(r)=1.d0+(ROTSH(r)/CAR29(r))**2.d0
+ CAR30(r)=1.d0/CAR30(r)
+ CAR30(r)=1.d0
+ PBOL1(r)=PRCAR(r)*NIZ1(r)*NE(r)-PBR1(r)
+ CAR1(r)=PBRAD(r)
+ >>> Warning: unrecognized variable PSYN1
+ CAR2(r)=PSYN1
+ >>> Warning: unrecognized variable PSYN1
+ PRAD(r)=PBOL1(r)+PBRAD(r)+PSYN1
+ =====   Initial distributions   =====
+ NE(r)=CV11*NEX(r)
+ TE(r)=CV12*TEX(r)
+ TI(r)=CV13*TIX(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  10     Te    TE(r)
+  2  20     Qet   QETOT(r)
+  3  10     HeNC  HNGSE(r)
+ >>> Warning: unrecognized variable HNASM
+  4  10     XiNC  HNASM
+  5  10     Ti    TI(r)
+  6  1.0    gamm  WORK(J,61)
+  7  10     ni    NI(r)
+  8  2      iota  MU(r)
+  9  5      PeEH  PEECR(r)
+ 10  20     Qit   QITOT(r)
+ 11  10     He    HE(r)
+ 12  10     Xi    XI(r)
+ 13  10     DN    CAR17(r)
+ 14  1.0    wExB  WORK(J,62)
+ 15  10     ne    NE(r)
+ 16  5      q     1.d0/MU(r)
+ 17  3      j     CU(r)
+ 18  3      jNB   CUBM(r)
+ 19  -28    Upl   UPL(r)
+ 20         mode  0.d0
+ 21  3      jLH   CULH(r)
+ 22  20     Qe    QE(r)
+ 23  50     PNBp  PBPER(r)
+ 24  10     nd    NDEUT(r)
+ 25  3      jOH   CUOHM(r)
+ 26  3      jBS   CUBS(r)
+ 27  3      jFW   CUICR(r)
+ 28  10     RLTi  RTOR/LTI(r)
+ 29  3      jEC   CUECR(r)
+ 30  20     Qi    QI(r)
+ 31  50     PNBl  PBLON(r)
+ 32  0.5    nz1   NIZ1(r)
+ 33  -1     ErVd  BTOR*VDIA(r)
+ 34  -1     ErVt  BTOR*FRS(r)*MU(r)*VTOR(r)/RTOR
+ 35  .5     PBM   PIBM(r)+PEBM(r)
+ 36  10     RLNe  RTOR/LNE(r)
+ 37  -1     ErVp  -VPOL(r)*BTOR
+ 38  -1     vtor  VTOR(r)
+ 39         grEr  GRAD(ER)(r)
+ 40         NCCH  HNCHC(r)
+ 41  -1     Er    ER(r)
+ 42         Zeff  ZEF(r)
+ 43         OmTo  VTOR(r)/RTOR
+ 44  10     RLTi  RTOR/LTI(r)
+ 45  -1     vpol  ABS(VPOL(r))
+ 46  2      shr   SHEAR(r)
+ 47  10     RLTe  RTOR/LTE(r)
+ 48         NCSC  HNASC(r)
+ 49  5      PNBi  PIBM(r)
+ 50  .5     PRAD  PRAD(r)
+ 51  5      PeEH  PEECR(r)
+ 52  10     Pi    PI(r)
+ 53  .5     PEIC  PEICL(r)
+ 54  .5     PBr   PBRAD(r)
+ 55  5      PiIC  PIICR(r)
+ 56  10     P     PTOT(r)
+ 57  5      PNBe  PEBM(r)
+ >>> Warning: unrecognized variable PSYN1
+ 58  .5     PSyn  PSYN1
+ 59  5      PeLH  PELH(r)
+ 60  10     Pe    PE(r)
+ 61  .5     POH   POH(r)
+ 62  .5     PC    PBOL1(r)
+ 63  5      PeIC  PEICR(r)
+ 64  10     QT    QTOT(r)
+ 65  .5     PENL  PENLI(r)
+ 66         RHOH  RHO(r)/ROC
+ 67         GRHO  SLAT(r)/(ROC*VRS(r))
+ 68               0.d0
+ 69         RMIN  AMETR(r)
+ 70         VOLU  VOLUM(r)
+ 71               0.d0
+ 72               0.d0
+ 73         k     ELON(r)
+ 74               0.d0
+ 75         GRHO  G11(r)/(ROC*VRS(r)**2.d0)
+ 76               0.d0
+ 77         RMAJ  RTOR+SHIF(r)
+ 78         SURF  SLAT(r)
+ 79               0.d0
+ 80               0.d0
+ 81  -1     NBM1  NNBM1(r)
+ 82  -1     SNB1  SNIBM1(r)
+ 83  20     STHN  SNNBM(r)
+ 84  2      jFI   CUFI(r)
+ 85  -1     NBM3  NNBM3(r)
+ 86  -1     SNB3  SNIBM3(r)
+ 87  5      STM   SCUBM(r)
+ 88  100    QN    QN(r)
+ 89  -1     NBM2  NNBM2(r)
+ 90  -1     SNB2  SNIBM2(r)
+ 91  20     SE    SNEBM(r)
+ 92  20     niNB  NIBM(r)
+ 93               0.d0
+ 94               0.d0
+ 95  20     SNT   SNTOT(r)
+ 96  100    QNT   QNTOT(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         tauE  TAUE(a)
+ >>> Warning: unrecognized variable BETTB
+  2         bN    BETTB*ABC*BTOR/IPL
+  3         CV16  CV16
+  4         IBS   IBS(a)
+  5         INB   IBM(a)
+  6         IECR  IECR(a)
+  7         ILH   ILH(a)
+  8         H89   TAUE(a)/TITER(r)
+  9         t89   TITER(r)
+ 10         PTOT  QBEAM+QICR+QECR+QLH
+ 11         IIC   IICR(a)
+ 12         PNB   QBEAM
+ >>> Warning: unrecognized variable BETTB
+ 13         bt    BETTB
+ 14         bp    BETAJ(a)
+ 15         frv   NEAV(a)*1.d-1*GP*ABC**2.d0/IPL
+ 16         <ne>  NEAV(a)
+ 17         nGW   IPL/(1.d-1*GP*ABC**2.d0)
+ 18         frl   NECH(0)*1.d-1*GP*ABC**2.d0/IPL
+ 19         nel   NECH(0)
+ 20         ne0   NEH
+ 21         ni0   NIH
+ 22         nz0   NIZ1*
+ 23         Ipl   IPL
+ 24         li3   LI3(a)
+ 25         li    LINTR(RHO(NA))
+ 26         Ulc   UPL(a)
+ 27  5      q0    1.d0/MUH
+ 28  5      q95   1.d0/MU(9.5d-1*ROC)
+ 29  5      qmin  QMIN(a)
+ 30         rqmi  RFMAX(MU)(r)/ROC
+ 31  5      qa    1.d0/MU(a)
+ 32         roc   ROC
+ 33         ne0   NE(AFX(0.d0))
+ 34         ne2   NE(AFX(2.d-1))
+ 35         ne4   NE(AFX(4.d-1))
+ 36         ne9   NE(AFX(9.d-1))
+ 37         <Te>  TEAV(a)
+ 38         <Ti>  TIAV(a)
+ 39         ZEF   ZEF(a)
+ 40         Plos  CV15
+ 41         Ti0   TI(AFX(0.d0))
+ 42         Ti2   TI(AFX(2.d-1))
+ 43         Ti4   TI(AFX(4.d-1))
+ 44         Ti9   TI(AFX(9.d-1))
+ 45         Te0   TE(AFX(0.d0))
+ 46         Te2   TE(AFX(2.d-1))
+ 47         Te4   TE(AFX(4.d-1))
+ 48         Te9   TE(AFX(9.d-1))
+ 49         Wkin  WTOT(a)
+ 50         Wfir  (CV5+CV6)/WTOT(a)
+ 51         Wmhd  WTOT(a)+7.5d-1*CV6+1.5d0*CV5
+ 52         Wtot  WTOT(a)+CV5+CV6
+ 53         Wpar  CV5
+ 54         Wper  CV6
+ 55         QTOT  QTOT(a)
+ 56         QOH   QOH(a)
+ 57         QRAD  QRAD(a)
+ 58         QC    VINT(PBOL1)(r)
+ 59         QBr   VINT(CAR1)(r)
+ 60         QSyn  VINT(CAR2)(r)
+ 61         t98   THQ99(r)
+ 62         WID1  CMHD1
+ 63         WID2  CMHD2
+ 64         rho*  3.235d-3*SQRT(2.d0*TIAV(a))/(BTOR*ABC)

@@ -1,0 +1,102 @@
+ =====   Variables definition   =====
+ TAUMIN=1.d-3
+ TAUMAX=TAUMIN
+ TSCALE=-5.d0
+ DROUT=0.d0
+ DTOUT=TAUMIN
+ DPOUT=1.d1*TAUMIN
+ CF0=0.d0
+ =====   Initial distributions   =====
+ NE(r)=(1.d0+SIN(TIME))*FPR(r)+1.d0
+ TE(r)=1.d0+FPR(r)
+ TI(r)=1.d0+FPR(r)
+ CU(r)=1.d1/(GP*ABC**2.d0)
+ F0(r)=NE(r)
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -4     T_e   TE(r)
+  2         n_e   NE(r)
+  3         j     CU(r)
+  4         sigm  CC(r)
+  5  -4     T_i   TI(r)
+  6         n_i   NI(r)
+  7  1      mu    MU(r)
+  8         p_e   NE(r)*TE(r)
+  9         dTe   TE(r)-1.d0-FPR(r)
+ 10         dne   NE(r)-1.d0-FPR(r)
+ 11         Upl   UPL(r)
+ 12         jbs   CUBS(r)
+ 13         dTi   TI(r)-1.d0-FPR(r)
+ 14         dne   NE(r)-1.d0-FPR(r)
+ 15  5      q     1.d0/MU(r)
+ 16         p_i   NI(r)*TI(r)
+ 17         g11   G11(r)
+ 18         g22   G22(r)
+ 19         jbs   CUBS(r)
+ 20         tria  TRIA(r)
+ 21         V     VR(r)
+ 22         g33   G33(r)
+ 23  1      mu    MU(r)
+ 24         shif  SHIF(r)
+ 25         a     AMETR(r)
+ 26         Upl   UPL(r)
+ 27         j     CU(r)
+ 28         beta  BETAJ(r)
+ 29         Vo    VRO(r)
+ 30         IPOL  IPOL(r)
+ 31  5      q     1.d0/MU(r)
+ 32         elon  ELON(r)
+ 33  -3     PiN   -PINEU(r)
+ 34         Zeff  ZEF(r)
+ 35  -1     k_e   HE(r)
+ 36  -3     Pei   PEICL(r)
+ 37  -3     PeN   PENEU(r)+PENLI(r)
+ 38  1      N     NN(r)
+ 39  -1     Hinc  CHE4*HNGSI(r)
+ 40         PEGN  PEGN(r)
+ 41  -3     PGN   PEGN(r)+PIGN(r)
+ 42         TN    TN(r)
+ 43  -1     k_i   XI(r)
+ 44  -3     PeiG  PEIGN(r)
+ 45  -3     PEC   PEX(r)
+ 46  -3     Poh   PJOUL(r)
+ 47  -1     HAlc  CHE1*HAALC(r)
+ 48         PIGN  PIGN(r)
+ 49         tria  TRIA(r)
+ 50         shif  SHIF(r)
+ 51         beta  BETAJ(r)
+ 52         elon  ELON(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Pinp  QEX(a)+QJOUL(a)
+  2         <ne>  NEAV(a)
+  3  -3     Te0   TE(0)
+  4  -3     <Te>  TEAV(a)
+  5         V(a)  UPL(a)
+  6         ne  NECH(0)
+  7         Ti0   TI(0)
+  8  -3     <Ti>  TIAV(a)
+  9         Pech  QEX(a)
+ 10  .1     taux  WTOT(a)/(QJOUL(a))
+ 11  -1     Wblk  WTOT(a)
+ 12         taui  TAUEI(a)
+ 13  -1     We    WE(a)
+ 14  .1     tauE  TAUE(a)
+ 15  -1     Wi    WI(a)
+ 16  .1     IT89  TITER(r)
+ 17         Poh   QJOUL(a)
+ 18         li    LINT(a)
+ 19  1      betj  BETAJ(a)
+ 20         q(0)  1.d0/MU(0)
+ 21         Prad  QRAD(a)
+ 22         Ibs   IBS(a)
+ 23         ft    (1.d0+FRAMP(1.d0,1.d1))

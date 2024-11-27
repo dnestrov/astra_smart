@@ -1,0 +1,34 @@
+SMRT Smart project
+
+NA1             65
+AB              0.35
+AWALL           0.35
+RTOR            0.450
+ABC     0.0100  0.25
+ELONM           1.6
+ELONG   0.100   1.0
+ELONG   0.300   1.6
+TRICH           0.6
+TRIAN           0.0
+IPL     0.100   0.05
+IPL     0.200   0.1
+IPL     0.300   0.5
+BTOR    0.100   0.1
+BTOR    0.200   0.3
+BTOR    0.300   1.0
+ current[MA] in coils:DIV1 DIV2 PF2 PF1 SOL
+NAMEXP CCOIL NTIMES  3  POINTS  5
+0.01 0.1 0.3  
+ 0.0  0.0  0.0  0.0  10.0E-3 
+-1E-3  2E-3  1E-3 -3E-3  5.0E-3
+-2E-3  4E-3  2E-3 -6E-3  0.0E-3
+
+
+-1.01E-3  1.65E-3  0.39E-3 -3.21E-3  5.0E-3
+-2.01E-3  2.65E-3  1.39E-3 -6.21E-3  0.0
+NAMEXP VCOIL NTIMES  3   POINTS  5
+0.01 0.1 0.2  
+0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0  0.0 
+END

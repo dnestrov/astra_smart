@@ -1,0 +1,204 @@
+#!/bin/tcsh -f
+#############################################################################
+# Make Astra USER 
+#
+# The script updates astra_user folder with files form ASTRA extension 
+# 
+# SYNOPSIS
+#       ./MAUSER AROOT ASTRA_EXT AUSER PLATFORM
+#
+#    1st parameter AROOT ($1) must give an absolute (NB!) path 
+#	 or be empty 
+#    The 2nd parameter, ASTRA_EXT ($2), is the name of 
+#        astra extension folder (mostly from sbr/*)
+#    The 3nd parameter, AUSER ($3), is the name of newly created 
+#        or existing Astra User directory. 
+#        It can give an absolute or relative path or be empty. 
+#	 In the latter case, the user's directory "./astra" is created. 
+#
+#    User's Astra is installed as a link to the Astra kernel.
+#    The installation option is defined by 
+#    (i)  $4 (PLATFORM) value (single platform link), 
+#    (ii) environment variable ObjectCode (multi platform link).
+#
+# Example:
+# 
+# ./astra_smart/MAUSER_SMART . astra_smart astra_user Intel
+# 
+
+set IFMDS = yes
+set IFPYT = yes
+set IFNUB = no
+set IFSTR = no
+set IFGENRAY=no
+
+set OLDWD = `pwd`
+set AROOT = $1
+set AROOT = $AROOT/Astra
+set ASTRAEXT = $2
+set AUSER = $3
+set PLATF = $4
+if ( ${PLATF} != '' )	then
+   set OC = ${PLATF}
+endif
+if ( ${AROOT} == "" || ${AROOT} == "," ) set AROOT = $cwd/Astra
+if ( ${ASTRAEXT} == ${ASTRAEXT:t} ) set ASTRAEXT = $cwd/$ASTRAEXT
+if ( ${AROOT} == ${AROOT:t} ) set AROOT = $cwd/$AROOT
+if ( !(-e ${AROOT}) ) then
+   echo \ 
+   echo ">>> ERROR >>> "Astra kernel \"${AROOT}\" not found. Enter a name
+   echo "       "of the Astra kernel directory with a full absolute path 
+   echo -n "Astra> "  
+   set AROOT = $<
+   if ( ${AROOT} == '' ) exit
+   if ( -e ${AROOT} ) goto Continue
+   echo \ 
+   echo The root Astra directory \"${AROOT}\" is not found
+   goto  End
+endif
+echo '$AROOT ' = $AROOT
+echo '$AUSER ' = $AUSER
+echo '$ASTRAEXT ' = $ASTRAEXT
+echo '$PLATF' = $PLATF
+
+Continue:
+
+if ( ${AUSER} == "" || ${AUSER} == "," ) set AUSER = $cwd/astra
+
+#goto End
+Start:
+
+# Create a name with an absolute path
+if ( !(-e ${AUSER}) )	mkdir ${AUSER}
+cd ${AUSER}
+set AUSER = ${cwd:h}/$AUSER:t
+
+echo '$AUSER ' = $AUSER
+
+echo \ 
+echo \ \ \ For the directory \ \"${AUSER}\"
+echo \ \ \ linking to \ \"${ASTRAEXT}\"
+echo \ \ \ to be updated
+echo \ 
+
+cp    ${ASTRAEXT}/.exe/astrarc ${AUSER}/.exe
+cp    ${ASTRAEXT}/.exe/Checklbu ${AUSER}/.exe
+
+foreach SUBD ( sbr)
+   foreach A ( ${ASTRAEXT}/${SUBD}/* )
+     if ( !(-e "$SUBD/$A:t") ) ln -sf $A $SUBD/
+   end
+   echo  $SUBD
+end
+PYT: # Add python scripts necessary for MDS
+if ( ${IFPYT} == no) goto MDS
+foreach SUBD ( pyt)
+   mkdir $SUBD
+   foreach A ( ${ASTRAEXT}/${SUBD}/* )
+     if ( !(-e "$SUBD/$A:t") ) ln -sf $A $SUBD/
+   end
+   echo  $SUBD
+end
+
+MDS: # Add MDSplus interface files
+if ( ${IFMDS} == no) goto NUBEAM
+cd ${AUSER}
+    foreach A (${ASTRAEXT}/f902db_access.mod ${ASTRAEXT}/psu.mod ${ASTRAEXT}/tomdsastra2.mod ${ASTRAEXT}/tomdsvac2.mod ${ASTRAEXT}/mdslib.inc)
+	if ( !(-e "$A:t") ) ln -sf $A ./
+    end
+
+NUBEAM: # Add NUBEAM files
+if ( ${IFNUB} == no) goto NBlinkonly
+cd ${AUSER}
+    foreach A (${ASTRAEXT}/periodic_table_mod.mod ${ASTRAEXT}/nbi_types.mod ${ASTRAEXT}/asdrive_common.mod ${ASTRAEXT}/asdrive_namelist.mod )
+	if ( !(-e "$A:t") ) ln -sf $A ./
+    end
+    foreach SUBD (nub )
+    mkdir $SUBD
+	foreach A ( ${ASTRAEXT}/${SUBD}/* )
+	    if ( !(-e "$A:t") ) ln -sf $A $SUBD/
+	end
+	echo  $SUBD
+    end
+    if ( !(-e ${ASTRAEXT}/libasdrive.a) ) goto NUBEAMerror
+    cp ${ASTRAEXT}/libasdrive.a .usr/${OC}/libasdrive.a
+    chmod u+w .usr/${OC}/libasdrive.a
+goto GENRAY
+
+NBlinkonly:
+    cp ${ASTRAEXT}/libasdrive.a .usr/${OC}/libasdrive.a
+    chmod u+w .usr/${OC}/libasdrive.a
+
+
+GENRAY: # Add GENRAY
+if ( ${IFGENRAY} == no) goto STRAHL
+cd ${AUSER}
+mkdir genray genray1
+foreach SUBD ( genray genray1)
+    foreach A ( ${ASTRAEXT}/${SUBD}/* )
+	if ( !(-e "$A:t") ) ln -sf $A $SUBD/
+    end
+    echo  $SUBD
+end
+
+
+STRAHL: # Add STRAHL files
+if ( ${IFSTR} == no) goto Make_start
+cd ${AUSER}
+    foreach A (${ASTRAEXT}/*.inc ${ASTRAEXT}/*.atomdat ${ASTRAEXT}/strahl.control)
+	if ( !(-e "$A:t") ) ln -sf $A ./
+    end
+    mkdir nete param_files result str pec
+    foreach SUBD ( nete param_files result str pec)
+	foreach A ( ${ASTRAEXT}/${SUBD}/* )
+	    if ( !(-e "$A:t") ) ln -sf $A $SUBD/
+	end
+	echo  $SUBD
+    end
+    foreach SUBD ( atomdat )
+	ln -sf $SUBD ./
+	echo  $SUBD
+    end
+
+Make_start:
+echo \ 
+echo \ Creating ASTRA local files
+echo \ 
+cd ${AUSER}
+foreach SUBD (exp/equ)
+   echo $SUBD
+   foreach A ( ${ASTRAEXT}/${SUBD}/* )
+      if ( !(-e "$A:t") ) cp -r $A $SUBD/
+   end
+     cp -r -u ${AROOT}/${SUBD}/* $SUBD/
+end
+foreach SUBD (equ equ/log exp)
+   echo $SUBD
+   foreach A  (${ASTRAEXT}/${SUBD}/*)
+	echo $A:t
+        if ( !(-e "$A:t") ) ln -sf $A $SUBD/
+   end
+end
+chmod u+w equ/                >& /dev/null
+chmod u+w equ/*               >& /dev/null
+chmod u+w equ/*/*             >& /dev/null
+chmod u+w exp/                >& /dev/null
+chmod u+w exp/*               >& /dev/null
+chmod u+w exp/*/*             >& /dev/null
+chmod u+w exp/*/*/*           >& /dev/null
+
+
+echo "      *************************************************" >> memo
+echo "      **                                             **" >> memo
+echo "      **  THE ASTRA PROGRAMMING SYSTEM IS UPDATED    **" >> memo
+echo "      **                                             **" >> memo
+echo "      *************************************************" >> memo
+echo \  >> memo
+echo \  >> memo
+exit
+NUBEAMerror:
+echo  No NUBEAM library exists in ${ASTRAEXT}
+goto End
+End:
+echo \ 
+echo \ 

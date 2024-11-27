@@ -1,0 +1,78 @@
+ =====   Variables definition   =====
+ NNWM=3.d-1*CF4*NNCL
+ CV16=NEXAV(a)*CF16
+ >>> Warning: unrecognized variable CBM1
+ >>> Warning: unrecognized variable CBM4
+ >>> Warning: unrecognized variable CBM2
+ >>> Warning: unrecognized variable CBM3
+!TAUE_TAUEB_.01;	Taui_TAUEIB_.1; Taue_TAUEEB_.01;	Beta_BETAJB
+!UTB_UTB_5.;
+ CAR2(r)=CHE1*HAPYU(r)+CHE2*HAED(r)+CHE3*HARPL(r)+CF1*HAQ1(r)
+ CAR2(r)=1.d0/(1.d0/CAR2(r)+1.d0/(CBND4*HABOM(r)))
+ ZEF(r)=ZEFX(r)
+ =====   Initial distributions   =====
+ TE(r)=3.d0*CBM1*FPR(r)**(2.d0*CBM4)+1.d-1*CBND1
+ TI(r)=6.d-1*CFUS2+9.d-1*CFUS1*(1.d0-FLIN(r))
+ NE(r)=1.d-1*CBM2+2.d0*CBM3*(1.d0-FLIN(r))
+F0(r)=1
+F1(r)=1
+F2(r)=1
+F3(r)=1
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with U_tor = Const
+ =====   Equations & subroutines  =====
+ ---->  Subroutine  1: NEUT
+        is called at -99999<TIME< 99999 with dt=0.02  
+ ---->  Subroutine  2: SNEAV(CV16,.01*CF5,.2,0.)
+        is called at -99999<TIME< 99999 with dt=0.    
+ ---->  TI  is assigned
+ TI(r)=6.d-1*CFUS2+9.d-1*CFUS1*(1.d0-FLIN(r))
+ ---->  TE  is assigned
+ TE(r)=3.d0*CBM1*FPR(r)**(2.d0*CBM4)+1.d-1*CBND1
+ PE(r)=PJOUL(r)-CFUS3*PEICL(r)
+ ---->  Equation for NE 
+ NE(a_b)=CFUS4
+ DN(r)=CF2*CAR2(r)/2.d0
+ CN(r)=-VP(r)*CF14*FLIN(r)**2.d0*FPR(r)*3.d1
+ SNN(r)=SNNEU(r)
+ NE(r)=1.d-1*CBM2+2.d0*CBM3*(1.d0-FLIN(r))
+ ---->  Equation for CU 
+ CC(r)=CCSP(r)
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  -1     Te    TE(r)
+  2  -4     Ne    NE(r)
+  3  10.    Nui   NUIS(r)
+  4  -3     PiCl  PEICL(r)
+  5         Dn    DN(r)
+  6         q     1.d0/MU(r)
+  7         j     CU(r)
+ >>> Warning: unrecognized variable UT
+  8         Ut    UT
+  9  -1     Ti    TI(r)
+ 10         SN    SNTOT(r)
+ 11  10.    Nue   NUES(r)
+ 12  -3     Pjou  PJOUL(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         Ne0   NE(0)
+  2         Te0   TE(0)
+  3         Ti0   TI(0)
+  4  -1     <N>   NEAV(a)
+  5  -1     <Nx>  CV16
+  6         Wtot  WTOT(a)
+  7         WE    WE(a)
+  8         WI    WI(a)
+  9  3      Neb   NE(a)
+ 10  .1     Teb   TE(a)
+ 11         Tib   TI(a)
+ 12  -10    <Gs>  QN(a)
+ 13         Qei   QEICL(a)
+ 14  -2     Qjo   QJOUL(a)
+ 15  -10    Gn    QNTOT(a)
+ 16         NNCL  NNCL

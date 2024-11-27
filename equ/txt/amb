@@ -1,0 +1,139 @@
+ =====   Variables definition   =====
+ IPL=0.d0
+ NEQUIL=-1.d0
+!		CU=1.-.1*FPR;	IPL=.264;	NEQUIL=41;
+!G2\-G11*(DF2*grad(F2)+F2*10./(1+ER**2));	
+!G3\-G11*(DF3*grad(F3)+F3*(10.-5./(1+ER**2)));
+ ZEF(r)=1.d0
+ =====   Initial distributions   =====
+ TE(r)=1.1d0
+ TI(r)=1.1d0
+ NE(r)=2.d0
+F0(r)=1
+F1(r)=1
+ F2(r)=NE(r)
+ F3(r)=NE(r)
+F4(r)=1
+F5(r)=1
+F6(r)=1
+F7(r)=1
+F8(r)=1
+F9(r)=1
+ Start-up with U_tor = Const
+ =====   Equations & subroutines  =====
+ ---->  Equation for F2 
+ F2(r)=NE(r)
+ F2(a_b)=NE(a)
+ SF2(r)=CF1
+ DF2(r)=DF2(r)
+ VF2(r)=VF2(r)
+ ---->  Equation for F3 
+ F3(r)=NE(r)
+ F3(a_b)=NE(a)
+ SF3(r)=CF1
+ DF3(r)=DF3(r)
+ VF3(r)=VF3(r)
+ ---->  Subroutine  1: NCTJ2
+        is called at -99999<TIME< 99999 with dt=Def.  
+ ---->  Equation for NE 
+ NE(r)=2.d0
+ NE(a_b)=2.d0
+ SN(r)=1.d0
+ DN(r)=DF2(r)
+ CN(r)=VF2(r)
+ ---->  Equation for TE  with heat convective flux multipied by GN2E
+ GN2E=2.5
+ PE(r)=1.d0
+ HE(r)=1.d0
+ TE(r)=1.1d0
+ TE(a_b)=1.1d0
+ ---->  Equation for TI  with heat convective flux multipied by GN2I
+ GN2I=2.5
+ PI(r)=1.d0
+ XI(r)=1.d0
+ TI(r)=1.1d0
+ TI(a_b)=1.1d0
+ ---->  Equation for CU 
+ MV(r)=1.55d0
+ CC(r)=CCSP(r)
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1  10     Ge21  -WORK(J,21)
+  2  .5     v2    VF2(r)
+  3  5      -v3   -VF3(r)
+  4         E_r   ER(r)
+  5  -3     G_2   QF2(r)
+  6  .5     D_e   DF2(r)
+  7  5      D_i   DF3(r)
+  8         F_2   F2(r)
+  9  10     Gi22  -WORK(J,22)
+ 10  .5     Ve19  WORK(J,19)
+ 11  5      Vi20  -WORK(J,20)
+ 12         dE_r  WORK(J,23)
+ 13  -3     G_3   QF3(r)
+ 14  .5     De17  WORK(J,17)
+ 15  5      Di18  WORK(J,18)
+ 16         F_3   F3(r)
+ 17         C_11  WORK(J,1)
+ 18         C_12  WORK(J,2)
+ 19         C_13  WORK(J,3)
+ 20         C_14  WORK(J,4)
+ 21         C_21  WORK(J,5)
+ 22         C_22  WORK(J,6)
+ 23         C_23  WORK(J,7)
+ 24         C_24  WORK(J,8)
+ 25         C_31  WORK(J,9)
+ 26         C_32  WORK(J,10)
+ 27         C_33  WORK(J,11)
+ 28         C_34  WORK(J,12)
+ 29         C_41  WORK(J,13)
+ 30         C_42  WORK(J,14)
+ 31         C_43  WORK(J,15)
+ 32         C_44  WORK(J,16)
+ 33         q_e   QE(r)
+ 34         G_e   QN(r)
+ 35  -1     Q_e   QE(r)+GN2E*1.6d-3*TE(r)*QN(r)
+ 36               0.d0
+ 37         T_e   TE(r)
+ 38         n_e   NE(r)
+ 39  -1     Q_i   QI(r)+GN2I*1.6d-3*TI(r)*NI(r)/NE(r)*QN(r)
+ 40               0.d0
+ 41         q_i   QI(r)
+ 42               0.d0
+ 43  -1     q_e   QE(r)
+ 44         F2    F2(r)
+ 45         T_i   TI(r)
+ 46         n_i   NI(r)
+ 47  -1     q_i   QI(r)
+ 48         F3    F3(r)
+ 49         a     AMETR(r)
+ 50         iota  MU(r)
+ 51         j     CU(r)
+ 52         VR    VR(r)
+ 53         V     VOLUM(r)
+ 54         lamb  ELON(r)
+ 55         g33A  G33(r)
+ 56         SLAT  SLAT(r)
+ 57         rho   RHO(r)
+ 58         MV    MVX(r)
+ 59         g11A  G11(r)
+ 60         Vs    VRS(r)
+ 61         drda  DRODA(r)
+ 62         tria  TRIA(r)
+ 63         g22A  G22(r)
+ 64         Delt  SHIF(r)
+ 65         Zeff  ZEF(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         a     ABC
+  2         V     VOLUME
+  3         rho   ROC
+  4         NA1   NA1
+  5         i0    MU(0)
+  6         NAB   NAB
+  7         i1    MU(a)
+  8         NB1   NB1
+  9         Er    CV1
+ 10         rhoN  CV2
+ 11         mndE  FRMIN(CAR6)(r)
+ 12         mxdE  FRMAX(CAR6)(r)

@@ -1,0 +1,168 @@
+ =====   Variables definition   =====
+!============================================================
+ MESHEQ=4.1d1
+!============================================================
+ CNB1=1.6d1
+ CF1=6.d2
+ CF2=1.d-1
+!DN="work(j,102)";	! Take D from NCLASS
+!DN="work(j,125)";	! Take D from NCLASS
+!CN=-VP*VRHH;		! Switch off particle pinch
+!SN=SNEBM;		! NB particle source
+!
+!+!!!!SNN=SNNEU;	! Particle source from wall neutrals = SNNEU*NE
+!
+!============================================================
+ CF4=1.d0
+ CF3=0.d0
+!CAR3=PE+PI
+!============================================================
+!========	Electric field	=============================
+ CFUS1=5.d0*VINT(CAR1)(a)
+ CFUS2=CFUS1/(QETOT(a)+QITOT(a))
+!MIXINT(0.D0,2.D-3):;
+!============================================================
+!============================================================
+!betj_BETAJB_1;	li_LINTB;	beTr_BETRB;	tauE_TAUEB;
+!Pe_QETOTB_20; tauE_TAUEB_20;       PDT_CFUS1_40;_; !JET TFTR
+!Pi_QITOTB_20; PNBI_VINT(CAR3B)_20; Q_CFUS2_20;_; !JET TFTR
+!       PDT_CFUS1_50;         Q_CFUS2_20;  _;   tauE_TAUEB_10;  !JET TFTR
+!PNBI_VINT(CAR3B)_50;         Ti0_TIC_20;  _;      Te0_TEC_10; !JET TFTR
+!PeNB_VINT(CAR2B)_-10;	_;	PNBI_VINT(CAR3B)_20; tauE_TAUEB_20; !JET,TFTR
+!Pe_QETOTB_20;	_;	Pi_QITOTB_20; Q_CFUS2_20; PDT_CFUS1_20; !JET,TFTR
+!PeNB_VINT(CAR2B)_-10;	_;	PNBI_VINT(CAR3B)_20; tauE_TAUEB_100; !IST
+!Pe_QETOTB_100;	_;	Pi_QITOTB_100; Q_CFUS2_100; PDT_CFUS1_200;      !IST
+!============================================================
+!QINEU PINEU
+!JET:
+!QeSr\QETOT\1.5;	q_e\QE-1.6d-3*GN2E*TE*QN\1.5;
+!			q_i\QI-1.6d-3*GN2I*TI*NI/NE*QN\1.5; G_Sr\QNTOT\-9;!JET
+!QiSr\QITOT\1.5;	Ptot\PETOT+PITOT;	T_e\TE\2; n_e\NE\5; !JET
+!Q_e\QE\1.5;	TG_e\1.6d-3*GN2E*TE*QN\1.5;
+!			TG_i\1.6d-3*GN2E*TI*QN\1.5;	   G_Fl\QN\-9;
+!Q_i\QI\1.5;	S_n\SN;	T_i\TI\2;	n_i\NI\5; !JET
+!TFTR:
+!QeSr\QETOT\1.5;	q_e\QE-1.6d-3*GN2E*TE*QN\1.5;
+!			q_i\QI-1.6d-3*GN2I*TI*NI/NE*QN\1.5; G_Sr\QNTOT\-9;!TFTR
+!QiSr\QITOT\1.5;   Ptot\PETOT+PITOT;	T_e\TE\30; n_e\NE\5;           !TFTR
+!Q_e\QE\1.5;	TG_e\1.6d-3*GN2E*TE*QN\1.5;                            !TFTR
+!			TG_i\1.6d-3*GN2E*TI*QN\1.5;	   G_Fl\QN\-9; !TFTR
+!Q_i\QI\1.5;	S_n\SN;	T_i\TI\30;	n_i\NI\5;                      !TFTR
+!QeSr\QETOT\1.5;	q_e\QE-1.6d-3*GN2E*TE*QN\1.5;
+!			q_i\QI-1.6d-3*GN2I*TI*NI/NE*QN\1.5; G_Sr\QNTOT\-9;!IST
+!QiSr\QITOT\1.5;Ptot\PETOT+PITOT;	T_e\TE\40; n_e\NE\20;           !IST
+!Q_e\QE\1.5;	TG_e\1.6d-3*GN2E*TE*QN\1.5;                            !IST
+!			TG_i\1.6d-3*GN2E*TI*QN\1.5;	   G_Fl\QN\-9; !IST
+!Q_i\QI\1.5;	S_n\SN;	T_i\TI\40;	n_i\NI\20;                      !IST
+!QeSr\QETOT\-8;	q_e\QE-1.6d-3*GN2E*TE*QN\-8;
+!			q_i\QI-1.6d-3*GN2I*TI*NI/NE*QN\-8; G_Sr\QNTOT\-9;
+!QiSr\QITOT\-8;	Ptot\PETOT+PITOT;	T_e\TE\-2;		n_e\NE\-1;
+!Q_e\QE\-8;	TG_e\1.6d-3*GN2E*TE*QN\-8;
+!			TG_i\1.6d-3*GN2E*TI*QN\-8;	   G_Fl\QN\-9;
+!Q_i\QI\-8;	S_n\SN;	T_i\TI\-2;	n_i\NI\-1;
+!QeSr\QETOT\1.5;	q_e\QE-1.6d-3*GN2E*TE*QN\1.5;
+!			q_i\QI-1.6d-3*GN2I*TI*NI/NE*QN\1.5; G_Sr\QNTOT\-9;!JET
+!QiSr\QITOT\1.5;	Ptot\PETOT+PITOT;	T_e\TE\15; n_e\NE\5; !JET
+!Q_e\QE\1.5;	TG_e\1.6d-3*GN2E*TE*QN\1.5;
+!			TG_i\1.6d-3*GN2E*TI*QN\1.5;	   G_Fl\QN\-9;
+!Q_i\QI\1.5;	S_n\SN;	T_i\TI\15;	n_i\NI\5; !JET
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ NDEUT(r)=NI(r)
+ CAR2(r)=PE(r)
+ CAR3(r)=CF3*5.d-1*CF1*FPR(r)/6.25d2
+ VPOL(r)=VPSWW(r)
+ ER(r)=BTOR*(FRS(r)*MU(r)*VTOR(r)/RTOR+VDIA(r)-VPOL(r))
+ CAR1(r)=PDT(r)
+ =====   Initial distributions   =====
+ TE(r)=1.d-1+FPR(r)
+ TI(r)=1.d-1+FPR(r)
+ NE(r)=2.d0*FPR(r)+CF2
+ CU(r)=FPR(r)+1.d1
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         QeSr  QETOT(r)
+  2         q_e   QE(r)-1.6d-3*GN2E*TE(r)*QN(r)
+  3  3      q_i   QI(r)-1.6d-3*GN2I*TI(r)*NI(r)/NE(r)*QN(r)
+  4         G_Sr  QNTOT(r)
+  5         QiSr  QITOT(r)
+  6         Ptot  PETOT(r)+PITOT(r)
+  7         T_e   TE(r)
+  8         n_e   NE(r)
+  9         Q_e   QE(r)
+ 10         TG_e  1.6d-3*GN2E*TE(r)*QN(r)
+ 11         TG_i  1.6d-3*GN2E*TI(r)*QN(r)
+ 12         G_Fl  QN(r)
+ 13         Q_i   QI(r)
+ 14         S_n   SN(r)
+ 15         T_i   TI(r)
+ 16         n_i   NI(r)
+ 17  -1     gY    FP(r)
+ 18  -3     j     CU(r)
+ 19  -7     Pe    PETOT(r)
+ 20         V_NC  WORK(J,103)
+ 21  -4     T_e   TE(r)
+ 22         q     1.d0/MU(r)
+ 23         U_pl  UPL(r)
+ 24         k_i   XI(r)
+ 25         Vlt   UPL(r)
+ 26  -3     j_BS  CUBS(r)
+ 27  -7     Pi    PITOT(r)
+ 28         D_e   DN(r)
+ 29  -4     T_i   TI(r)
+ 30         CC    CC(r)
+ 31         Zeff  ZEF(r)
+ 32         k_e   HE(r)
+ 33         P_e   PETOT(r)
+ 34         Er    ER(r)
+ 35               0.d0
+ 36               0.d0
+ 37         nbmA  NIBM(r)
+ 38         Edia  BTOR*VDIA(r)
+ 39         PeDT  PEDTF(r)
+ 40         Pfus  PDTF(r)
+ 41         P_i   PITOT(r)
+ 42         Etor  BTOR*FRS(r)*MU(r)*VTOR(r)/RTOR
+ 43         SeA   SNEBM(r)
+ 44               0.d0
+ 45         rotA  SCUBM(r)
+ 46         Epol  BTOR*VPOL(r)
+ 47         PiDT  PIDTF(r)
+ 48               0.d0
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1  -4     Te0   TE(0)
+  2  -3     <Te>  TEAV(a)
+  3  -2     Teb   TE(a)
+  4         ne0   NE(0)
+  5  -4     Ti0   TI(0)
+  6  -3     <Ti>  TIAV(a)
+  7  -2     Tib   TI(a)
+  8         <ne>  NEAV(a)
+  9         Ipl   ITOT(a)
+ 10         q0    1.d0/MU(0)
+ 11         NbmA  VINT(NIBM)(a)
+ 12         SrtA  VINT(SCUBM)(a)
+ 13  1      betj  BETAJ(a)
+ 14         li    LINT(a)
+ 15         tauE  TAUE(a)
+ 16  -10    PeNB  VINT(CAR2)(a)
+ 17         Shs   SHIF(0)
+ 18  20     PDT   CFUS1
+ 19  10     Q     CFUS2
+ 20             
+ 21  10     tauE  TAUE(a)
+ 22  20     PNBI  VINT(CAR3)(a)
+ 23  20     Ti0   TI(0)
+ 24             
+ 25  20     Te0   TE(0)

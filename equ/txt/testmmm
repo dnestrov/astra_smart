@@ -1,0 +1,144 @@
+ =====   Variables definition   =====
+!--------------------------------------------------------------------------
+! Equ file "testmmm" is based on the MMM95 transport model
+!--------------------------------------------------------------------------
+!==================== Electron and ion densities ==========================
+ AIM1=9.d0
+!NIZ2=.0012*NE;	ZIM2=ZIAR;   AIM1=40;	! density and charge of Ar ions
+!==================== Plasma rotation =====================================
+!====================  Poloidal field equation ============================
+!==================== MMM95 transport model ===============================
+!    kin.ball.	Weiland	   res.ball.
+!    The following are growth rates and mode frequencies from the
+!    Weiland model for drift modes such as ITG and TEM.
+!    These arrays are intended for diagnostic output.
+!
+!  gamma(jm,jz) = growth rate for mode jm at point jz ( 1/sec )
+!  omega(jm,jz) = frequency for mode jm at point jz ( radians/sec )
+!
+!    All of the transport coefficients are given in the following two
+!    matricies for diffusion difthi and convection velthi in MKS units.
+!    See the LaTeX documentation for difthi and velthi just below.
+!
+!    NOTE:  difthi and velthi include all of the anomalous transport.
+!    There are no additional contributions to the heat fluxs from
+!    charged particle convection.
+!
+!  difthi(j1,j2,jz) = full matrix of anomalous transport diffusivities
+!  velthi(j1,jz)    = convective velocities
+!  vflux(j1,jz)     = flux matrix
+!        do  j1	= 1,jmxdim
+! maximum work(1:nrd,29+(4+jmxdim)*jmxdim<=2*nrd) ! currently jmxdim<19
+!           work(j,29+j1)       = ygamma(j1)
+!            work(j,29+j1+jmxdim) = yomega(j1)
+!            work(j,29+j1+jmxdim*2) = yvflux(j1)
+!            work(j,29+j1+jmxdim*3) = yvelthi(j1)
+!            do  j2	= 1,jmxdim
+!               work(j,29+j1+jmxdim*(3+j2)) = ydifthi(j1,j2)
+!            enddo
+!         enddo
+! Truncated output for most unstable mode:
+!         work(j,28) = 0.
+!         work(j,29) = 0.
+!         do  j1	= 1,jmxdim
+!            if (work(j,28) .lt. ygamma(j1))	then
+!                work(j,28) = ygamma(j1)
+!                work(j,29) = yomega(j1)
+!            endif
+!         enddo
+ AMAIN(r)=AMJ
+ ZMAIN(r)=ZMJ
+ NALF(r)=4.d-2*NE(r)
+ ZEF(r)=1.65d0
+ NDEUT(r)=4.7d-1*NE(r)
+ NTRIT(r)=NDEUT(r)
+ NIZ1(r)=2.d-2*NE(r)
+ ZIM1(r)=ZIBE(r)
+ NI(r)=NDEUT(r)+NTRIT(r)+NALF(r)+NIZ1(r)+NIZ2(r)
+ VTOR(r)=VTORX(r)
+ VPOL(r)=VPSWW(r)
+ ER(r)=BTOR*(FRS(r)*MU(r)*VTOR(r)/RTOR+VDIA(r)-VPOL(r))
+ =====   Initial distributions   =====
+ TE(r)=TEX(r)
+ TI(r)=TIX(r)
+ NE(r)=NEX(r)
+ CU(r)=FPR(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ Start-up with a prescribed CU distribution
+ =====   Equations & subroutines  =====
+ ---->  No equation for NE 
+ DN(r)=WORK(J,17)+WORK(J,21)+WORK(J,25)
+ ---->  No equation for TE 
+ HE(r)=WORK(J,18)+WORK(J,22)+WORK(J,26)
+ ---->  No equation for TI 
+ XI(r)=WORK(J,16)+WORK(J,20)+WORK(J,24)
+ ---->  Equation for CU 
+ HC(r)=HCKIM(r)
+ DC(r)=DCKIM(r)
+ XC(r)=XCKIM(r)
+ CU(r)=FPR(r)
+ CC(r)=CNHR(r)
+ CD(r)=CUBM(r)
+ ---->  Subroutine  1: MMM4B
+        is called at -Infty<TIME<+Infty with dt=Each_T
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         VTI   WORK(1,66)
+  2         VI    WORK(1,67)
+  3         VTE   WORK(1,68)
+  4         VIM   WORK(1,69)
+  5  5      HE    HE(r)
+  6  5      XI    XI(r)
+  7  5      DN    DN(r)
+  8  5      DF0   DF0(r)
+  9         DTI   WORK(1,78)
+ 10         DI    WORK(1,79)
+ 11         DTE   WORK(1,80)
+ 12         DIM   WORK(1,81)
+ 13         DTI   WORK(1,90)
+ 14         DI    WORK(1,91)
+ 15         DTE   WORK(1,92)
+ 16         DIM   WORK(1,93)
+ 17         DTI   WORK(1,78)
+ 18         DI    WORK(1,79)
+ 19         DTE   WORK(1,80)
+ 20         DIM   WORK(1,81)
+ 21         DTI   WORK(1,90)
+ 22         DI    WORK(1,91)
+ 23         DTE   WORK(1,92)
+ 24         DIM   WORK(1,93)
+ 25         DTI   WORK(1,102)
+ 26         DI    WORK(1,103)
+ 27         DTE   WORK(1,104)
+ 28         DIM   WORK(1,105)
+ 29         DTI   WORK(1,114)
+ 30         DI    WORK(1,115)
+ 31         DTE   WORK(1,116)
+ 32         DIM   WORK(1,117)
+ 33  -17    T_e   TE(r)
+ 34         gamm  WORK(J,28)
+ 35  5      D     DN(r)
+ 36         D_i   WORK(J,21)
+ 37  20     n_e   NE(r)
+ 38         Qfus  QDT(r)
+ 39  5      K_eW  WORK(J,22)
+ 40  5      K_iW  WORK(J,20)
+ 41  -17    T_i   TI(r)
+ 42         omeg  WORK(J,29)
+ 43  5      ke    HE(r)
+ 44  5      ki    XI(r)
+ 45  10     n_d   NDEUT(r)
+ 46  5      q     1.d0/MU(r)
+ 47  5      K_er  WORK(J,26)
+ 48  5      K_ir  WORK(J,24)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression

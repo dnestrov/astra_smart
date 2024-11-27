@@ -1,0 +1,54 @@
+ =====   Variables definition   =====
+ NEQUIL=7.6d1
+ CV1=(3.d-1*FJUMP(3.d0)-4.2d-2*FRAMP(3.d0,4.d0))*(1.d0-FJUMP(4.d0))
+ CV2=3.4d-1+1.1d-1*FRAMP(3.d0,4.d0)
+ CV3=8.d-2-3.2d-2*FRAMP(3.d0,4.d0)
+ CV4=AFVAL(MU,1.d0)(r)
+ ZEF(r)=2.d0
+ CAR1(r)=(FP(r)-FP))/(FP(a)-FP))
+ =====   Initial distributions   =====
+ NE(r)=NEX(r)
+ TE(r)=TEX(r)
+ TI(r)=TEX(r)
+ CU(r)=CC(r)
+ F0(r)=1
+ F1(r)=1
+ F2(r)=1
+ F3(r)=1
+ F4(r)=1
+ F5(r)=1
+ F6(r)=1
+ F7(r)=1
+ F8(r)=1
+ F9(r)=1
+ =====   Radial profiles output   =====
+  #  Scale  Name  Output expression
+  1         T_ex  TEX(r)
+  2         j     CU(r)
+  3         sh    SHEAR(r)
+  4         U_pl  UPL(r)
+  5         n_ex  NEX(r)
+  6               0.d0
+  7         mu    MU(r)
+  8         jEC   CAR2(r)
+  9         T_e   TE(r)
+ 10         j_OH  CUOHM(r)
+ 11         Zeff  ZEF(r)
+ 12         j_BS  CUBS(r)
+ 13         n_e   NE(r)
+ 14         j_EC  CD(r)
+ 15  5      q     1.d0/MU(r)
+ 16         sigm  CC(r)
+ 17  1      psiN  CAR1(r)
+ =====   Time dependent values output   =====
+  #  Scale  Name  Output expression
+  1         jmax  CV1
+  2         IEC   ICD(a)
+  3         res   CV2
+  4             
+  5         wEC   CV3
+  6  1      sr    SHEAR(CV4)
+  7             
+  8         rq1   CV4
+  9         NB1   NB1
+ 10         NA1   NA1

@@ -1,0 +1,70 @@
+ 5   0  ! NEQUI - number of equivalent coil and stab.groups (or coil series)
+1
+          1.d5                  0. 0. 0. 0.      DIV1
+2
+          0.  0.012770719946548e+6 0. 0. 0.      DIV2
+3
+          0. 0.  0.017066446742690e+6 0. 0.      PF2
+4
+          0. 0. 0. 0.007650671844002e+6  0.      PF1
+5
+          0. 0. 0. 0.  0.005970267634029e+6      SOL
+
+ 
+
+ PFC       PFC all turns
+ Equiv.    Resis.
+ Sign      (micOM)
+ 
+/home/otto.asunta/git/ops/mds_trees/psu2pf_function/psu2pf_function.py 
+configuration_ID = 4
+#### PSU2PF_TABLE ###################
+# SOL,DIVT, DIVB, MC, BVLT, BVLB, BVUT, BVUB, PSHT1, PSHB1, PSHT2, PSHB2
+PSU2PF_TABLE = np.array([
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], # PSU1 (Sol)
+[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], # PSU2 (MC)
+[0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0], # PSU3 (BVL)
+[0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0], # PSU4 (BVU)
+[0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1] # PSU5 (PSH)
+])
+
+ 8   7  ! NEQUI - number of equivalent coil and stab.groups (or coil series)
+1
+          1.d5          0. 0. 0. 0. 0. 0. 0.        plasma filament
+2
+          0.  4.856217e+03 0. 0. 0. 0. 0. 0.       DIV 4.856217e+03 
+3
+          0. 0.  6.623561e+03 0. 0. 0. 0. 0.       BVL  6.623561e+03 
+4
+          0. 0. 0.   1.10245e+04 0. 0. 0. 0.       BVUT 1.10245e+04
+5
+          0. 0. 0. 0.   1.10245e+04 0. 0. 0.       BVUB 1.10245e+04
+6
+          0. 0. 0. 0. 0.  2.464735e+04 0. 0.       SOL 2.464735e+04
+7
+          0. 0. 0. 0. 0. 0.          1.d10 0.       MC  Taken off
+8
+          0. 0. 0. 0. 0. 0. 0.         1.d10         PSH Taken off
+ 
+
+
+ 8   7  ! NEQUI - number of equivalent coil and stab.groups (or coil series)
+1
+          1.d5    0. 0. 0. 0. 0. 0. 0.        plasma filament
+2
+          0.  1.e+03 0. 0. 0. 0. 0. 0.       DIV 4.856217e+03 
+3
+          0. 0. 1.e+03  0. 0. 0. 0. 0.       BVL  6.623561e+03 
+4
+          0. 0. 0. 1.e+03   0. 0. 0. 0.       BVUT 1.10245e+04
+5
+          0. 0. 0. 0. 1.e+03   0. 0. 0.       BVUB 1.10245e+04
+6
+          0. 0. 0. 0. 0.  1.e+03  0. 0.       SOL 2.464735e+04
+7
+          0. 0. 0. 0. 0. 0.  1.e+03  0.       MC  Taken off
+8
+          0. 0. 0. 0. 0. 0. 0.  1.e+03            PSH Taken off
+ 
+
+
